@@ -13,6 +13,8 @@ public record PipelineOptions
 
     public ICollection<string>? IgnoreCategories { get; set; }
 
+    public ICollection<string>? RunOnlyModules { get; set; }
+
     private bool _showProgressInConsole = AnsiConsole.Profile.Capabilities.Interactive;
     
     public bool ShowProgressInConsole
