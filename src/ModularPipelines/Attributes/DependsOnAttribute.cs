@@ -3,7 +3,7 @@ using ModularPipelines.Modules;
 namespace ModularPipelines.Attributes;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true, Inherited = true)]
-public class DependsOnAttribute : Attribute
+public class DependsOnAttribute : Attribute, IModuleRelation
 {
     public DependsOnAttribute(Type type)
     {

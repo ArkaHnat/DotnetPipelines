@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ModularPipelines.Examples": {
+      "commandName": "Project",
+      "commandLineArgs": "ReliantModule"
+    }
+  }
+}

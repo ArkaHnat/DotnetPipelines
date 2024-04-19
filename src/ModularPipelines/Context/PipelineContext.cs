@@ -127,11 +127,11 @@ internal class PipelineContext : IPipelineContext
     public TModule? GetModule<TModule>()
         where TModule : ModuleBase
     {
-        return ServiceProvider.GetServices<ModuleBase>().OfType<TModule>().SingleOrDefault();
+        return ServiceProvider.GetServices<IModule>().OfType<TModule>().SingleOrDefault();
     }
 
     public ModuleBase? GetModule(Type type)
     {
-        return ServiceProvider.GetServices<ModuleBase>().SingleOrDefault(module => module.GetType() == type);
+        return ServiceProvider.GetServices<IModule>().SingleOrDefault(module => module.GetType() == type) as ModuleBase;
     }
 }
