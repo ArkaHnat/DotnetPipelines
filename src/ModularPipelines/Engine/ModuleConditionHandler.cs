@@ -40,19 +40,19 @@ internal class ModuleConditionHandler : IModuleConditionHandler
         return !await IsRunnableCondition(module);
     }
 
-    public void UnskipDependencies(IEnumerable<DependsOnAttribute> attributes, IEnumerable<ModuleBase> modules)
+    public void UnskipDependencies(IEnumerable<IModuleRelation> attributes, IEnumerable<ModuleBase> modules)
     {
-        attributes.ToList().ForEach(a=>UnignoreDependencies(a, modules));
+        attributes.ToList().ForEach(a=>UnskipDependencies(a, modules));
     }
 
-    private IEnumerable<ModuleBase> UnignoreDependencies(DependsOnAttribute attribute, IEnumerable<ModuleBase> modules)
+    private IEnumerable<ModuleBase> UnskipDependencies(IModuleRelation attribute, IEnumerable<ModuleBase> modules)
     {
         var dependency = modules.FirstOrDefault(a => a.GetType() == attribute.Type);
         if (dependency != null)
         {
             dependency.SkipHandler.SetUnskip(SkipDecision.DoNotSkip);
             
-            return dependency.DependentModules.SelectMany(a=>UnignoreDependencies(a, modules)).ToList();
+            return dependency.DependentModules.SelectMany(a=>UnskipDependencies(a, modules)).ToList();
         }
 
         return Enumerable.Empty<ModuleBase>();
@@ -81,7 +81,7 @@ internal class ModuleConditionHandler : IModuleConditionHandler
             return true;
         }
 
-        return runOnlyModules.Contains(module.Type);
+        return runOnlyModules.Contains(module.TypeName);
     }
 
     private bool IsIgnoreCategory(ModuleBase module)

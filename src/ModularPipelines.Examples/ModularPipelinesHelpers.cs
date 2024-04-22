@@ -45,31 +45,34 @@ public static class ModularPipelinesHelpers
         }
 
         var aT = activatedType as ModuleBase;
-        collection.AddSingleton<IModule>(activatedType);
+        if (collection.All(a => a.ImplementationType != typeToActivate) && collection.All(a => a.ImplementationInstance?.GetType() != typeToActivate))
+        {
+            collection.AddSingleton<IModule>(activatedType);
 
         // Load OptionalDependency (dependsfor)
-        var relatedTypes = Types
-            .Where(a => a.GetCustomAttributes<DependencyForAttribute>(true).Any(a => a.Type == typeToActivate) && !collection.Any(x => x.ServiceType == a));
+            var relatedTypes = Types
+                .Where(a => a.GetCustomAttributes<DependencyForAttribute>(true).Any(a => a.Type == typeToActivate) && !collection.Any(x => x.ServiceType == a));
 
-        // loadOnlyDependencies
-        // IModuleRelation[] relations = [.. activatedType.DependentModules];
+            // loadOnlyDependencies
+            // IModuleRelation[] relations = [.. activatedType.DependentModules];
 
-        // Load Dependencies and Reliants
-        IModuleRelation[] relations = [.. aT!.DependentModules, .. aT.ReliantModules];
+            // Load Dependencies and Reliants
+            IModuleRelation[] relations = [.. aT!.DependentModules, .. aT.ReliantModules];
 
-        foreach (var relatedType in relatedTypes)
-        {
-            if (collection.All(x => x.ServiceType != relatedType) && collection.All(a =>a.ImplementationInstance?.GetType() != relatedType))
+            foreach (var relatedType in relatedTypes)
             {
-                ActivateDependencies(collection, relatedType);
+                if (collection.All(x => x.ServiceType != relatedType) && collection.All(a =>a.ImplementationInstance?.GetType() != relatedType))
+                {
+                    ActivateDependencies(collection, relatedType);
+                }
             }
-        }
 
-        foreach (var relation in relations)
-        {
-            if (collection.All(x => x.ServiceType != relation.Type) && collection.All(a=>a.ImplementationInstance?.GetType()!=relation.Type))
+            foreach (var relation in relations)
             {
-                ActivateDependencies(collection, relation.Type);
+                if (collection.All(x => x.ServiceType != relation.Type) && collection.All(a=>a.ImplementationInstance?.GetType()!=relation.Type))
+                {
+                    ActivateDependencies(collection, relation.Type);
+                }
             }
         }
     }

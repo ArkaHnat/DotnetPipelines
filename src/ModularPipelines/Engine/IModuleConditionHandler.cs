@@ -7,5 +7,5 @@ internal interface IModuleConditionHandler
 {
     Task<bool> ShouldIgnore(ModuleBase module);
 
-    void UnskipDependencies(IEnumerable<DependsOnAttribute> attributes, IEnumerable<ModuleBase> modules);
+    void UnskipDependencies(IEnumerable<IModuleRelation> attributes, IEnumerable<ModuleBase> modules);
 }
