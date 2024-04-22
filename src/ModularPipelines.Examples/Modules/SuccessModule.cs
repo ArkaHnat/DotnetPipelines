@@ -8,7 +8,7 @@ public class SuccessModule : Module
     /// <inheritdoc/>
     protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
     {
-        await Task.Delay(TimeSpan.FromSeconds(15), cancellationToken);
+        await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
         return null;
     }
 }

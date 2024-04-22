@@ -80,7 +80,7 @@ internal class ProgressPrinter : IProgressPrinter
         table.AddColumn("Status");
         table.AddColumn("Start");
         table.AddColumn("End");
-        table.AddColumn(string.Empty);
+        table.AddColumn("Information");
 
         foreach (var module in pipelineSummary.Modules.OrderBy(x => x.EndTime))
         {

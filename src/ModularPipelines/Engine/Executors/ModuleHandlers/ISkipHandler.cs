@@ -8,5 +8,7 @@ internal interface ISkipHandler
 
     Task SetSkipped(SkipDecision skipDecision);
 
+    void SetUnskip(SkipDecision doNotSkip);
+
     Task<bool> HandleSkipped();
 }

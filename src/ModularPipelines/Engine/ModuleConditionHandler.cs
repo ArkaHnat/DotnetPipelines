@@ -2,6 +2,7 @@ using System.Reflection;
 using EnumerableAsyncProcessor.Extensions;
 using Microsoft.Extensions.Options;
 using ModularPipelines.Attributes;
+using ModularPipelines.Models;
 using ModularPipelines.Modules;
 using ModularPipelines.Options;
 
@@ -30,7 +31,31 @@ internal class ModuleConditionHandler : IModuleConditionHandler
             return true;
         }
 
+        if (!IsRunnableModule(module))
+        {
+            await module.SkipHandler.SetSkipped("The module was not in a runnable modules");
+            return true;
+        }
+
         return !await IsRunnableCondition(module);
+    }
+
+    public void UnskipDependencies(IEnumerable<DependsOnAttribute> attributes, IEnumerable<ModuleBase> modules)
+    {
+        attributes.ToList().ForEach(a=>UnignoreDependencies(a, modules));
+    }
+
+    private IEnumerable<ModuleBase> UnignoreDependencies(DependsOnAttribute attribute, IEnumerable<ModuleBase> modules)
+    {
+        var dependency = modules.FirstOrDefault(a => a.GetType() == attribute.Type);
+        if (dependency != null)
+        {
+            dependency.SkipHandler.SetUnskip(SkipDecision.DoNotSkip);
+            
+            return dependency.DependentModules.SelectMany(a=>UnignoreDependencies(a, modules)).ToList();
+        }
+
+        return Enumerable.Empty<ModuleBase>();
     }
 
     private bool IsRunnableCategory(ModuleBase module)
@@ -45,6 +70,18 @@ internal class ModuleConditionHandler : IModuleConditionHandler
         var category = module.GetType().GetCustomAttribute<ModuleCategoryAttribute>();
 
         return category != null && runOnlyCategories.Contains(category.Category);
+    }
+
+    private bool IsRunnableModule(ModuleBase module)
+    {
+        var runOnlyModules = _pipelineOptions.Value.RunOnlyModules?.ToArray();
+
+        if (runOnlyModules?.Any() != true)
+        {
+            return true;
+        }
+
+        return runOnlyModules.Contains(module.Type);
     }
 
     private bool IsIgnoreCategory(ModuleBase module)

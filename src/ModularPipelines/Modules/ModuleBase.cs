@@ -32,6 +32,8 @@ public abstract partial class ModuleBase : ITypeDiscriminator
     [JsonInclude]
     public string TypeDiscriminator { get; private set; }
 
+    public string Type => GetType().Name;
+
     internal bool IsStarted { get; private protected set; }
 
     internal List<DependsOnAttribute> DependentModules { get; } = [];
@@ -185,7 +187,12 @@ public abstract partial class ModuleBase : ITypeDiscriminator
 /// <typeparam name="T">Any data to return from the module.</typeparam>
 public abstract class ModuleBase<T> : ModuleBase
 {
-    internal readonly TaskCompletionSource<ModuleResult<T>> ModuleResultTaskCompletionSource = new();
+    internal TaskCompletionSource<ModuleResult<T>> ModuleResultTaskCompletionSource { get; private set; } = new();
+
+    internal void ResetTask() 
+    {
+        ModuleResultTaskCompletionSource = new();
+    }
 
     internal abstract IHistoryHandler<T> HistoryHandler { get; }
 

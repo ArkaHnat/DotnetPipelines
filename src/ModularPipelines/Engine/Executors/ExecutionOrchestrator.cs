@@ -55,7 +55,6 @@ internal class ExecutionOrchestrator : IExecutionOrchestrator
         cancellationToken.Register(() => _engineCancellationToken.CancelWithReason("The user's cancellation token passed into the pipeline was cancelled."));
 
         var organizedModules = await _pipelineInitializer.Initialize();
-        
         var runnableModules = organizedModules.RunnableModules.Select(x => x.Module).ToList();
 
         var start = DateTimeOffset.UtcNow;

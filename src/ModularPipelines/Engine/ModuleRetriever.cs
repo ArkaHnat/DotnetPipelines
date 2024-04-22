@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
 using EnumerableAsyncProcessor.Extensions;
+
 using ModularPipelines.Exceptions;
 using ModularPipelines.Extensions;
 using ModularPipelines.Models;
@@ -54,7 +55,8 @@ internal class ModuleRetriever : IModuleRetriever
         var modulesToProcess = _modules
             .Except(modulesToIgnore)
             .ToList();
-
+        
+        _moduleConditionHandler.UnskipDependencies(modulesToProcess.SelectMany(a => a.DependentModules), _modules);
         var runnableModulesWithEstimatatedDuration = await modulesToProcess.ToAsyncProcessorBuilder()
             .SelectAsync(async module =>
             {

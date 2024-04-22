@@ -175,6 +175,24 @@ public class PipelineHostBuilder
     }
 
     /// <summary>
+    /// Modules with the specified modules will be run, and any other modules ignored.
+    /// </summary>
+    /// <param name="modules">An array of any modules to be run.</param>
+    /// <returns>The same pipeline host builder.</returns>
+    public PipelineHostBuilder RunModules(params string[] modules)
+    {
+        return ConfigurePipelineOptions((_, options) =>
+        {
+            options.RunOnlyModules ??= new List<string>();
+
+            foreach (var module in modules)
+            {
+                options.RunOnlyModules.Add(module);
+            }
+        });
+    }
+
+    /// <summary>
     /// Modules with the specified categories will not be run.
     /// </summary>
     /// <param name="categories">An array of any categories to not be run.</param>
