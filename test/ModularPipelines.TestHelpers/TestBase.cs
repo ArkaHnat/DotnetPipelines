@@ -52,8 +52,8 @@ public abstract class TestBase
         var results = await host.ExecuteTest();
 
         return (
-            results.GetServices<ModuleBase>().OfType<T>().Single(),
-            results.GetServices<ModuleBase>().OfType<T2>().Single()
+            results.GetServices<IModule>().OfType<T>().Single(),
+            results.GetServices<IModule>().OfType<T2>().Single()
         );
     }
 
@@ -73,9 +73,9 @@ public abstract class TestBase
         var results = await host.ExecuteTest();
 
         return (
-            results.GetServices<ModuleBase>().OfType<T>().Single(),
-            results.GetServices<ModuleBase>().OfType<T2>().Single(),
-            results.GetServices<ModuleBase>().OfType<T3>().Single()
+            results.GetServices<IModule>().OfType<T>().Single(),
+            results.GetServices<IModule>().OfType<T2>().Single(),
+            results.GetServices<IModule>().OfType<T3>().Single()
         );
     }
 
@@ -97,10 +97,10 @@ public abstract class TestBase
         var results = await host.ExecuteTest();
 
         return (
-            results.GetServices<ModuleBase>().OfType<T>().Single(),
-            results.GetServices<ModuleBase>().OfType<T2>().Single(),
-            results.GetServices<ModuleBase>().OfType<T3>().Single(),
-            results.GetServices<ModuleBase>().OfType<T4>().Single()
+            results.GetServices<IModule>().OfType<T>().Single(),
+            results.GetServices<IModule>().OfType<T2>().Single(),
+            results.GetServices<IModule>().OfType<T3>().Single(),
+            results.GetServices<IModule>().OfType<T4>().Single()
         );
     }
 

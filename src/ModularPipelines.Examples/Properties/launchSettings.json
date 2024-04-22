@@ -2,7 +2,7 @@
   "profiles": {
     "ModularPipelines.Examples": {
       "commandName": "Project",
-      "commandLineArgs": "DependentOn3"
+      "commandLineArgs": "ReliantModule"
     }
   }
 }

@@ -9,9 +9,9 @@ internal class DependencyChainProvider : IDependencyChainProvider
 {
     public IReadOnlyList<ModuleDependencyModel> ModuleDependencyModels { get; }
 
-    public DependencyChainProvider(IEnumerable<ModuleBase> modules)
+    public DependencyChainProvider(IEnumerable<IModule> modules)
     {
-        ModuleDependencyModels = Detect(modules.Select(x => new ModuleDependencyModel(x)).ToList());
+        ModuleDependencyModels = Detect(modules.Select(a=>a.ToModule).Where(a=>a!=null).Select(x => new ModuleDependencyModel(x!)).ToList());
     }
 
     private List<ModuleDependencyModel> Detect(List<ModuleDependencyModel> allModules)
@@ -58,7 +58,7 @@ internal class DependencyChainProvider : IDependencyChainProvider
     private IEnumerable<ModuleDependencyModel> GetModuleReliants(ModuleDependencyModel moduleDependencyModel, IReadOnlyCollection<ModuleDependencyModel> allModules)
     {
         var customAttributes = moduleDependencyModel.Module.GetType().GetCustomAttributes<DependencyForAttribute>(true);
-
+        
         foreach (var dependencyForAttribute in customAttributes)
         {
             var dependency = GetModuleDependencyModel(dependencyForAttribute.Type, allModules);

@@ -1,9 +1,16 @@
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
+using ModularPipelines.Attributes;
 using ModularPipelines.Examples;
 using ModularPipelines.Examples.Modules;
 using ModularPipelines.Extensions;
 using ModularPipelines.Host;
+using ModularPipelines.Modules;
 using ModularPipelines.Options;
 
 await PipelineHostBuilder.Create()
@@ -36,6 +43,7 @@ await PipelineHostBuilder.Create()
             .AddModule<SubmodulesModule>()
             .AddModule<GitVersionModule>()
             .AddModule<GitLastCommitModule>();
+        // ModularPipelinesHelpers.InjectRequiredModulesAsync(collection, args).Wait();
+        collection.InjectRequiredModules(args);
     })
-    .RunModules(args)
     .ExecutePipelineAsync();

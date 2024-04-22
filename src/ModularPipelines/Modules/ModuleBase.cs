@@ -14,7 +14,7 @@ namespace ModularPipelines.Modules;
 /// A base class for all modules.
 /// </summary>
 [JsonConverter(typeof(TypeDiscriminatorConverter<ModuleBase>))]
-public abstract partial class ModuleBase : ITypeDiscriminator
+public abstract partial class ModuleBase : ITypeDiscriminator, IModule
 {
     /// <summary>
     /// Initialises a new instance of the <see cref="ModuleBase"/> class.
@@ -33,12 +33,19 @@ public abstract partial class ModuleBase : ITypeDiscriminator
     public string TypeDiscriminator { get; private set; }
 
     public string Type => GetType().Name;
+    public ModuleBase? ToModule
+    {
+        get
+        {
+            return GetType().IsAssignableTo(typeof(ModuleBase)) ? this as ModuleBase : null;
+        }
+    }
+
+    public List<IModuleRelation> DependentModules { get; } = [];
+
+    public List<IModuleRelation> ReliantModules { get; } = [];
 
     internal bool IsStarted { get; private protected set; }
-
-    internal List<DependsOnAttribute> DependentModules { get; } = [];
-
-    internal List<DependencyForAttribute> ReliantModules { get; } = [];
 
     internal abstract IWaitHandler WaitHandler { get; }
 
@@ -185,7 +192,7 @@ public abstract partial class ModuleBase : ITypeDiscriminator
 /// A base class for all modules.
 /// </summary>
 /// <typeparam name="T">Any data to return from the module.</typeparam>
-public abstract class ModuleBase<T> : ModuleBase
+public abstract class ModuleBase<T> : ModuleBase, IModule
 {
     internal TaskCompletionSource<ModuleResult<T>> ModuleResultTaskCompletionSource { get; private set; } = new();
 

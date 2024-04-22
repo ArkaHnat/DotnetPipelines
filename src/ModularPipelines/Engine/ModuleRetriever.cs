@@ -20,14 +20,14 @@ internal class ModuleRetriever : IModuleRetriever
     public ModuleRetriever(
         IModuleConditionHandler moduleConditionHandler,
         IModuleInitializer moduleInitializer,
-        IEnumerable<ModuleBase> modules,
+        IEnumerable<IModule> modules,
         ISafeModuleEstimatedTimeProvider estimatedTimeProvider
     )
     {
         _moduleConditionHandler = moduleConditionHandler;
         _moduleInitializer = moduleInitializer;
         _estimatedTimeProvider = estimatedTimeProvider;
-        _modules = modules.ToList();
+        _modules = modules.Cast<ModuleBase>().ToList();
     }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
