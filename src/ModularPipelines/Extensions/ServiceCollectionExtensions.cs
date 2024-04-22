@@ -21,7 +21,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddModule<TModule>(this IServiceCollection services)
         where TModule : ModuleBase
     {
-        return services.AddSingleton<ModuleBase, TModule>();
+        return services.AddSingleton<IModule, TModule>();
     }
 
     /// <summary>

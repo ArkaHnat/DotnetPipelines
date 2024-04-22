@@ -26,7 +26,7 @@ internal class ModuleRetriever : IModuleRetriever
         _moduleConditionHandler = moduleConditionHandler;
         _moduleInitializer = moduleInitializer;
         _estimatedTimeProvider = estimatedTimeProvider;
-        _modules = modules.Select(a=>a.ToModule!).ToList();
+        _modules = modules.Cast<ModuleBase>().ToList();
     }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
