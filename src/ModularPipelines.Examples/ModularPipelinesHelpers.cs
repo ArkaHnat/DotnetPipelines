@@ -36,7 +36,7 @@ public static class ModularPipelinesHelpers
         }
     }
 
-    private static void ActivateDependencies(IServiceCollection collection, Type typeToActivate, bool isRequiredModule = false)
+    private static void ActivateDependencies(IServiceCollection collection, Type typeToActivate, bool resolveRelatedModules = false)
     {
         var activatedType = Activator.CreateInstance(typeToActivate) as IModule;
         if (activatedType == null)

@@ -2,11 +2,13 @@ using ModularPipelines.Attributes;
 using ModularPipelines.Context;
 using ModularPipelines.Modules;
 
-namespace ModularPipelines.Examples.Modules;
+namespace ModularPipelines.Examples.Modules.FailedModules;
 
-[DependsOn<SuccessModule3>(IgnoreIfNotRegistered = true)]
-public class FailedModule : Module
+[DependsOn<NotLoadedModule>(IgnoreIfNotRegistered = true)]
+public class SuccessModuleWithLackingDependencies : Module
 {
+    protected override Task<bool> ShouldIgnoreFailures(IPipelineContext context, Exception exception) => Task.FromResult(true);
+
     /// <inheritdoc/>
     protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
     {

@@ -2,7 +2,7 @@
 using ModularPipelines.Context;
 using ModularPipelines.Modules;
 
-namespace ModularPipelines.Examples.Modules;
+namespace ModularPipelines.Examples.Modules.ResolveModules;
 
 [DependencyFor<ReliantModule>]
 public class DependencyForReliantModule : Module
