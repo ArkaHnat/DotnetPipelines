@@ -21,10 +21,11 @@ internal class UnusedModuleDetector : IUnusedModuleDetector
 
     public void Log()
     {
-        var registeredServices = _serviceContainerWrapper.ServiceCollection
-            .Where(x => x.ServiceType == typeof(ModuleBase))
-            .Select(x => x.ImplementationType);
+        var services = _serviceContainerWrapper.ServiceCollection
+            .Where(x => (x.ImplementationType!= null && x.ImplementationType.IsAssignableTo(typeof(ModuleBase))) || (x.ImplementationInstance != null && x.ImplementationInstance.GetType().IsAssignableTo(typeof(IModule))));
 
+        var registeredServices = services.Select(x => x.ImplementationType)
+                                    .Concat(services.Select(a=>a.ImplementationInstance?.GetType())).Distinct().Where(a=>a!=null);
         var allDetectedModules = _assemblyLoadedTypesProvider.GetLoadedTypesAssignableTo(typeof(ModuleBase));
 
         var unregisteredModules = allDetectedModules
@@ -37,7 +38,7 @@ internal class UnusedModuleDetector : IUnusedModuleDetector
         }
 
         Console.WriteLine();
-        _logger.LogWarning("Unregistered Modules: {Modules}", string.Join(Environment.NewLine, unregisteredModules));
+        _logger.LogWarning("Found [{Count}] unregistered Modules: {Modules}", unregisteredModules.Count, string.Join(Environment.NewLine, unregisteredModules));
         Console.WriteLine();
     }
 }
