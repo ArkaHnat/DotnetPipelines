@@ -1,9 +1,13 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+
+using ModularPipelines.Attributes;
 using ModularPipelines.DependencyInjection;
 using ModularPipelines.Interfaces;
 using ModularPipelines.Modules;
 using ModularPipelines.Requirements;
+
+using Vertical.SpectreLogger.Formatting;
 
 namespace ModularPipelines.Extensions;
 
@@ -12,6 +16,78 @@ namespace ModularPipelines.Extensions;
 /// </summary>
 public static class ServiceCollectionExtensions
 {
+    public static void ActivateDependencies(this IServiceCollection collection, Type typeToActivate, bool resolveRelatedModules = false)
+    {
+        if (collection.Any(x => x.ServiceType == typeToActivate) || collection.All(a => a.ImplementationInstance?.GetType() == typeToActivate))
+        {
+            return;
+        }
+           
+        var activatedType = Activator.CreateInstance(typeToActivate) as IModule;
+        if (activatedType == null)
+        {
+            return;
+        }
+
+        var aT = activatedType as ModuleBase;
+        if (collection.All(a => a.ImplementationType != typeToActivate) && collection.All(a => a.ImplementationInstance?.GetType() != typeToActivate))
+        {
+            collection.AddSingleton<IModule>(activatedType);
+
+            // Load OptionalDependency (dependsfor)
+            var relatedTypes = Assembly.GetCallingAssembly().GetTypes().Where(a => a.IsAssignableTo(typeof(ModuleBase)))
+               .Where(a => a.GetCustomAttributes<DependencyForAttribute>(true).Any(a => a.Type == typeToActivate) && !collection.Any(x => x.ServiceType == a));
+
+            // loadOnlyDependencies
+            // IModuleRelation[] relations = [.. activatedType.DependentModules];
+
+            // Load Dependencies and Reliants
+            IModuleRelation[] relations = [.. aT!.DependentModules, .. aT.ReliantModules];
+
+            foreach (var relatedType in relatedTypes)
+            {
+                if (collection.All(x => x.ServiceType != relatedType) && collection.All(a => a.ImplementationInstance?.GetType() != relatedType))
+                {
+                    ActivateDependencies(collection, relatedType);
+                }
+            }
+
+            foreach (var relation in relations)
+            {
+                if (collection.All(x => x.ServiceType != relation.Type) && collection.All(a => a.ImplementationInstance?.GetType() != relation.Type))
+                {
+                    ActivateDependencies(collection, relation.Type);
+                }
+            }
+        }
+    }
+
+    public static void AddModule<TModule>(this IServiceCollection collection, bool resolveRelatedModules = true)
+        where TModule : ModuleBase
+    {
+        var typeToActivate = typeof(TModule);
+        if (collection.All(a => a.ImplementationType != typeToActivate) && collection.All(a => a.ImplementationInstance?.GetType() != typeToActivate))
+        {
+            collection.AddSingleton<IModule, TModule>();
+
+            // Load OptionalDependency (dependsfor)
+            var relatedTypes = Assembly.GetCallingAssembly().GetTypes().Where(a => a.IsAssignableTo(typeof(ModuleBase)))
+                .Where(a => a.GetCustomAttributes<DependencyForAttribute>(true).Any(a => a.Type == typeToActivate) && !collection.Any(x => x.ServiceType == a));
+            if (resolveRelatedModules)
+            {
+                foreach (var relatedModule in typeToActivate.GetCustomAttributesIncludingBaseInterfaces<DependsOnAttribute>())
+                {
+                    collection.ActivateDependencies(relatedModule.Type, resolveRelatedModules);
+                }
+
+                foreach (var relatedModule in typeToActivate.GetCustomAttributesIncludingBaseInterfaces<DependencyForAttribute>())
+                {
+                    collection.ActivateDependencies(relatedModule.Type, resolveRelatedModules);
+                }
+            }
+        }
+    }
+
     /// <summary>
     /// Adds a Module to the pipeline.
     /// </summary>

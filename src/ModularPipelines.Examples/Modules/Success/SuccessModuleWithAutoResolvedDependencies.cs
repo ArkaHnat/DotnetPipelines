@@ -4,7 +4,7 @@ using ModularPipelines.Modules;
 
 namespace ModularPipelines.Examples.Modules.FailedModules;
 
-[DependsOn<NotLoadedModule>]
+[DependsOn<AutoLoadedModule>(ResolveIfNotRegistered = true)]
 public class SuccessModuleWithAutoResolvedDependencies : Module
 {
     protected override Task<bool> ShouldIgnoreFailures(IPipelineContext context, Exception exception) => Task.FromResult(true);
