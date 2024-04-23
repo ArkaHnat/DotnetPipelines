@@ -2,7 +2,7 @@ using ModularPipelines.Attributes;
 using ModularPipelines.Context;
 using ModularPipelines.Modules;
 
-namespace ModularPipelines.Examples.Modules;
+namespace ModularPipelines.Examples.Modules.Success;
 
 public class AutoLoadedModule : Module
 {
