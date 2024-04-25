@@ -3,6 +3,7 @@ using ModularPipelines.Attributes;
 using ModularPipelines.Context;
 using ModularPipelines.Examples.Modules.FailedModules;
 using ModularPipelines.Examples.Modules.Success;
+using ModularPipelines.Models;
 using ModularPipelines.Modules;
 
 namespace ModularPipelines.Examples.Modules;

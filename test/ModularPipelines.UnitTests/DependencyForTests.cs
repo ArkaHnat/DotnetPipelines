@@ -1,6 +1,7 @@
 using ModularPipelines.Attributes;
 using ModularPipelines.Context;
 using ModularPipelines.Exceptions;
+using ModularPipelines.Extensions;
 using ModularPipelines.Modules;
 using ModularPipelines.TestHelpers;
 using TUnit.Assertions.Extensions;
@@ -18,7 +19,22 @@ public class DependencyForTests : TestBase
             return await NothingAsync();
         }
     }
-
+    [DependencyFor<ReliantModule>(ResolveIfNotRegistered =true)]
+    private class DependencyModuleWithResolve : Module
+    {
+        protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+        {
+            return await NothingAsync();
+        }
+    }
+    [DependencyFor<ReliantModule>(ResolveIfNotRegistered = false)]
+    private class DependencyModuleWithoutResolve : Module
+    {
+        protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+        {
+            return await NothingAsync();
+        }
+    }
     private class ReliantModule : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
@@ -153,5 +169,58 @@ public class DependencyForTests : TestBase
                 .AddModule<ReliesOnNonModule>()
                 .ExecutePipelineAsync()).
             Throws.Exception().With.Message.EqualTo("ModularPipelines.Exceptions.ModuleFailedException is not a Module class");
+    }
+    
+    
+
+    [Test]
+    public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_Resolve_In_Parameter()
+    {
+        var pipelineSummary = await TestPipelineHostBuilder.Create()
+            .ConfigureServices((context, collection) =>
+            {
+                collection.AddModule<DependencyModuleWithoutResolve>(true);
+            }
+            )
+            .ExecutePipelineAsync();
+        await Assert.That(pipelineSummary.Status).Is.EqualTo(Status.Successful);
+
+        await Assert.That(pipelineSummary.Modules.Count).Is.EqualTo(2);
+    }
+
+    [Test]
+    public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_Resolve_In_Parameter2()
+    {
+        var pipelineSummary = await TestPipelineHostBuilder.Create()
+            .ConfigureServices((context, collection) =>
+            {
+                collection.AddModule<ReliantModule>(true);
+            }
+            )
+            .ExecutePipelineAsync();
+        await Assert.That(pipelineSummary.Status).Is.EqualTo(Status.Successful);
+
+        await Assert.That(pipelineSummary.Modules.Count).Is.EqualTo(2);
+    }
+    [Test]
+    public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_Resolve_On_Attribute2()
+    {
+        var pipelineSummary = await TestPipelineHostBuilder.Create()
+            .AddModule<ReliantModule>()
+            .ExecutePipelineAsync();
+
+        await Assert.That(pipelineSummary.Status).Is.EqualTo(Status.Successful);
+        await Assert.That(pipelineSummary.Modules.Count).Is.EqualTo(2);
+    }
+
+    [Test]
+    public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_Resolve_On_Attribute()
+    {
+        var pipelineSummary = await TestPipelineHostBuilder.Create()
+            .AddModule<DependencyModuleWithResolve>()
+            .ExecutePipelineAsync();
+
+        await Assert.That(pipelineSummary.Status).Is.EqualTo(Status.Successful);
+        await Assert.That(pipelineSummary.Modules.Count).Is.EqualTo(2);
     }
 }
