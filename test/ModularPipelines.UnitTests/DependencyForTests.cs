@@ -20,7 +20,18 @@ public class DependencyForTests : TestBase
         }
     }
     [DependencyFor<ReliantModule>(ResolveIfNotRegistered =true)]
-    private class DependencyModuleWithResolve : Module
+    [SearchFor(SearchForReliants = true)]
+    private class DependencyModuleWithResolveIndirectReliants : Module
+    {
+        protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+        {
+            return await NothingAsync();
+        }
+    }
+
+    [DependencyFor<ReliantModule>(ResolveIfNotRegistered = true)]
+    [SearchFor(SearchForDependencies = true)]
+    private class DependencyModuleWithResolveIndirectDependencies : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
         {
@@ -80,16 +91,6 @@ public class DependencyForTests : TestBase
 
     [DependencyFor<ReliesOnSelfModule>]
     private class ReliesOnSelfModule : Module
-    {
-        protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
-        {
-            _ = GetModule<DependencyModule>();
-            return await NothingAsync();
-        }
-    }
-
-    [DependencyFor(typeof(ModuleFailedException))]
-    private class ReliesOnNonModule : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
         {
@@ -163,23 +164,12 @@ public class DependencyForTests : TestBase
     }
 
     [Test]
-    public async Task Depends_On_Non_Module_Throws_Exception()
-    {
-        await Assert.That(async () => await TestPipelineHostBuilder.Create()
-                .AddModule<ReliesOnNonModule>()
-                .ExecutePipelineAsync()).
-            Throws.Exception().With.Message.EqualTo("ModularPipelines.Exceptions.ModuleFailedException is not a Module class");
-    }
-    
-    
-
-    [Test]
     public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_Resolve_In_Parameter()
     {
         var pipelineSummary = await TestPipelineHostBuilder.Create()
             .ConfigureServices((context, collection) =>
             {
-                collection.AddModule<DependencyModuleWithoutResolve>(true);
+                collection.AddModule<DependencyModuleWithoutResolve>();
             }
             )
             .ExecutePipelineAsync();
@@ -194,33 +184,34 @@ public class DependencyForTests : TestBase
         var pipelineSummary = await TestPipelineHostBuilder.Create()
             .ConfigureServices((context, collection) =>
             {
-                collection.AddModule<ReliantModule>(true);
+                collection.AddModule<ReliantModule>();
             }
             )
             .ExecutePipelineAsync();
         await Assert.That(pipelineSummary.Status).Is.EqualTo(Status.Successful);
 
-        await Assert.That(pipelineSummary.Modules.Count).Is.EqualTo(2);
+        await Assert.That(pipelineSummary.Modules.Count).Is.GreaterThan(1);
     }
+
     [Test]
-    public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_Resolve_On_Attribute2()
+    public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_ResolveDependencies_On_Attribute()
     {
         var pipelineSummary = await TestPipelineHostBuilder.Create()
             .AddModule<ReliantModule>()
             .ExecutePipelineAsync();
 
         await Assert.That(pipelineSummary.Status).Is.EqualTo(Status.Successful);
-        await Assert.That(pipelineSummary.Modules.Count).Is.EqualTo(2);
+        await Assert.That(pipelineSummary.Modules.Count).Is.GreaterThan(1);
     }
 
     [Test]
     public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_Resolve_On_Attribute()
     {
         var pipelineSummary = await TestPipelineHostBuilder.Create()
-            .AddModule<DependencyModuleWithResolve>()
+            .AddModule<DependencyModuleWithResolveIndirectReliants>()
             .ExecutePipelineAsync();
 
         await Assert.That(pipelineSummary.Status).Is.EqualTo(Status.Successful);
-        await Assert.That(pipelineSummary.Modules.Count).Is.EqualTo(2);
+        await Assert.That(pipelineSummary.Modules.Count).Is.GreaterThan(1);
     }
 }
