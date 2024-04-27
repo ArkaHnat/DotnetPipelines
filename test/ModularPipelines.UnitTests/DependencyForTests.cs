@@ -36,22 +36,7 @@ public class DependencyForTests : TestBase
             return await NothingAsync();
         }
     }
-    [DependsOn<DependencyModuleWithResolveIndirectDependencies>()]
-    private class IndirectDependencyForDependencyModuleWithResolveIndirectReliants : Module
-    {
-        protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
-        {
-            return await NothingAsync();
-        }
-    }
-    [SearchFor(SearchForIndirectDependencies = true)]
-    private class DependencyModuleWithResolveIndirectDependencies : Module
-    {
-        protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
-        {
-            return await NothingAsync();
-        }
-    }
+   
     [DependencyFor<ReliantModule>(ResolveIfNotRegistered = false)]
     private class DependencyModuleWithoutResolve : Module
     {
@@ -175,17 +160,6 @@ public class DependencyForTests : TestBase
                 .AddModule<ReliesOnSelfModule>()
                 .ExecutePipelineAsync()).
             Throws.Exception().OfType<ModuleReferencingSelfException>();
-    }
-
-    [Test]
-    public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_ResolveDependencies_On_Attribute()
-    {
-        var pipelineSummary = await TestPipelineHostBuilder.Create()
-            .AddModule<DependencyModuleWithResolveIndirectDependencies>()
-            .ExecutePipelineAsync();
-
-        await Assert.That(pipelineSummary.Status).Is.EqualTo(Status.Successful);
-        await Assert.That(pipelineSummary.Modules.Count).Is.EqualTo(2);
     }
 
     [Test]

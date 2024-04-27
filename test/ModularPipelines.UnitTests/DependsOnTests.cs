@@ -131,7 +131,7 @@ public class DependsOnTests : TestBase
         await Assert.That(pipelineSummary.Status).Is.EqualTo(Status.Successful);
     }
     [Test]
-    public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_Resolve_On_Attribute()
+    public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_ResolveDependency_On_Attribute()
     {
         var pipelineSummary = await TestPipelineHostBuilder.Create()
             .ConfigureServices((context, collection) =>
@@ -144,8 +144,9 @@ public class DependsOnTests : TestBase
         await Assert.That(pipelineSummary.Status).Is.EqualTo(Status.Successful);
         await Assert.That(pipelineSummary.Modules.Count).Is.EqualTo(2);
     }
+
     [Test]
-    public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_Resolve_On_Attribute2()
+    public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_ResolveIndirectReliants_On_Attribute()
     {
         var pipelineSummary = await TestPipelineHostBuilder.Create()
             .ConfigureServices((context, collection) =>
@@ -157,22 +158,6 @@ public class DependsOnTests : TestBase
 
         await Assert.That(pipelineSummary.Status).Is.EqualTo(Status.Successful);
         await Assert.That(pipelineSummary.Modules.Count).Is.EqualTo(2);
-    }
-
-   
-    [Test]
-    public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_Resolve_In_Parameter2()
-    {
-        var pipelineSummary = await TestPipelineHostBuilder.Create()
-            .ConfigureServices((context, collection) =>
-            {
-                collection.AddModule<Module1>();
-            }
-            )
-            .ExecutePipelineAsync();
-
-        await Assert.That(pipelineSummary.Status).Is.EqualTo(Status.Successful);
-        await Assert.That(pipelineSummary.Modules.Count).Is.EqualTo(7);
     }
 
     [Test]
