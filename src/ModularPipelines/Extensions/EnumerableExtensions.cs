@@ -16,7 +16,7 @@ public static class EnumerableExtensions
     public static T GetModule<T>(this IEnumerable<ModuleBase> modules)
         where T : ModuleBase
     {
-        return modules.OfType<T>().Single();
+        return (T) modules.Single(a =>a.GetType().IsAssignableTo(typeof(T)));
     }
 
     /// <summary>

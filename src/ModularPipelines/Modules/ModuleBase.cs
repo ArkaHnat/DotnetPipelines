@@ -34,6 +34,7 @@ public abstract partial class ModuleBase : ITypeDiscriminator, IModule
 
     public string TypeName => GetType().Name;
 
+    [JsonIgnore]
     public ModuleBase? ToModule
     {
         get

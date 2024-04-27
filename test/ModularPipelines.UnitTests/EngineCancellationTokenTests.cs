@@ -57,7 +57,7 @@ public class EngineCancellationTokenTests : TestBase
             .AddModule<Module1>()
             .BuildHostAsync();
 
-        var modules = host.RootServices.GetServices<ModuleBase>();
+        var modules = host.RootServices.GetServices<IModule>();
 
         var module1 = modules.GetModule<Module1>();
 
@@ -76,7 +76,7 @@ public class EngineCancellationTokenTests : TestBase
             .AddModule<LongRunningModule>()
             .BuildHostAsync();
 
-        var modules = host.RootServices.GetServices<ModuleBase>();
+        var modules = host.RootServices.GetServices<IModule>();
 
         var longRunningModule = modules.GetModule<LongRunningModule>();
 
@@ -100,7 +100,7 @@ public class EngineCancellationTokenTests : TestBase
             .AddModule<LongRunningModuleWithoutCancellation>()
             .BuildHostAsync();
 
-        var modules = host.RootServices.GetServices<ModuleBase>();
+        var modules = host.RootServices.GetServices<IModule>();
 
         var longRunningModule = modules.GetModule<LongRunningModuleWithoutCancellation>();
 
