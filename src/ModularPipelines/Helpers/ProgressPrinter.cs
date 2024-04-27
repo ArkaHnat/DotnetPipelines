@@ -144,7 +144,7 @@ internal class ProgressPrinter : IProgressPrinter
 
         if (module.Exception != null)
         {
-            return $"[red]{module.Exception?.GetType().Name}: {module.Exception?.Message}[/]";
+            return $"[red]{module.Exception?.GetType().Name}[/]";
         }
 
         return string.Empty;
