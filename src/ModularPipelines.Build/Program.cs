@@ -28,22 +28,6 @@ await PipelineHostBuilder.Create()
         collection.Configure<CodeCovSettings>(context.Configuration.GetSection("CodeCov"));
 
         collection
-            .AddModule<RunUnitTestsModule>()
-            .AddModule<NugetVersionGeneratorModule>()
-            .AddModule<FindProjectsModule>()
-            .AddModule<FindProjectDependenciesModule>()
-            .AddModule<PackProjectsModule>()
-            .AddModule<PackageFilesRemovalModule>()
-            .AddModule<PackagePathsParserModule>()
-            .AddModule<CodeFormattedNicelyModule>()
-            .AddModule<GenerateReadMeModule>()
-            .AddModule<CodacyCodeCoverageUploader>()
-            .AddModule<CodeCovUploaderModule>()
-            .AddModule<FormatMarkdownModule>()
-            .AddModule<WaitForOtherOperatingSystemBuilds>()
-            .AddModule<DownloadCodeCoverageFromOtherOperatingSystemBuildsModule>()
-            .AddModule<MergeCoverageModule>()
-            .AddModule<ChangedFilesInPullRequestModule>()
             .AddModule<DependabotCommitsModule>()
             .AddPipelineModuleHooks<MyModuleHooks>();
 
