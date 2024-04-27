@@ -23,7 +23,6 @@ public class Tests
     }
 
     [Test]
-    [Ignore("Failed stub")]
     public void Fail()
     {
         Assert.Fail();
