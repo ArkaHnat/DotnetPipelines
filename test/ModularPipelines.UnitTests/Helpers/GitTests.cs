@@ -58,7 +58,7 @@ public class GitTests : TestBase
         
         await Assert.Multiple(() =>
         {
-            Assert.That(git.RootDirectory.Name).Is.EqualTo("ModularPipelines");
+            Assert.That(git.RootDirectory.Name).Is.EqualTo("DotnetPipelines");
             Assert.That(git.RootDirectory.ListFiles().Select(x => x.Name)).Does.Contain("README.md");
         });
     }
