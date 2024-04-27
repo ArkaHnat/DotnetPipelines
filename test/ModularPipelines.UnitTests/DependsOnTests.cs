@@ -18,6 +18,14 @@ public class DependsOnTests : TestBase
             return await NothingAsync();
         }
     }
+    [DependencyFor<ModuleWithResolveIndirectReliants>()]
+    private class Module4 : Module
+    {
+        protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+        {
+            return await NothingAsync();
+        }
+    }
 
     [DependsOn<Module1>]
     private class Module2 : Module
@@ -36,22 +44,24 @@ public class DependsOnTests : TestBase
             return await NothingAsync();
         }
     }
-    [DependsOn<Module1>(ResolveIfNotRegistered = true)]
-    private class Module3WithResolveDependency : Module
+    [DependsOn<Module1>()]
+    [SearchFor(SearchForDependencies = true)]
+    private class Module3WithResolveDirectDependency : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
         {
             return await NothingAsync();
         }
     }
-    [DependsOn<Module1>(ResolveIfNotRegistered = false)]
-    private class Module3WithoutResolveDependency : Module
+    [SearchFor(SearchForIndirectReliants = true)]
+    private class ModuleWithResolveIndirectReliants : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
         {
             return await NothingAsync();
         }
     }
+
     [DependsOn<Module1>(IgnoreIfNotRegistered = true)]
     private class Module3WithGetIfRegistered : Module
     {
@@ -126,7 +136,7 @@ public class DependsOnTests : TestBase
         var pipelineSummary = await TestPipelineHostBuilder.Create()
             .ConfigureServices((context, collection) =>
             {
-                collection.AddModule<Module3WithResolveDependency>();
+                collection.AddModule<Module3WithResolveDirectDependency>();
             }
             )
             .ExecutePipelineAsync();
@@ -140,7 +150,7 @@ public class DependsOnTests : TestBase
         var pipelineSummary = await TestPipelineHostBuilder.Create()
             .ConfigureServices((context, collection) =>
             {
-                collection.AddModule<Module1>();
+                collection.AddModule<ModuleWithResolveIndirectReliants>();
             }
             )
             .ExecutePipelineAsync();
@@ -149,21 +159,7 @@ public class DependsOnTests : TestBase
         await Assert.That(pipelineSummary.Modules.Count).Is.EqualTo(2);
     }
 
-    [Test]
-    public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_Resolve_In_Parameter()
-    {
-        var pipelineSummary = await TestPipelineHostBuilder.Create()
-            .ConfigureServices((context, collection) =>
-                {
-                    collection.AddModule<Module3WithoutResolveDependency>();
-                }
-            )
-            .ExecutePipelineAsync();
-
-        await Assert.That(pipelineSummary.Status).Is.EqualTo(Status.Successful);
-        await Assert.That(pipelineSummary.Modules.Count).Is.EqualTo(2);
-    }
-
+   
     [Test]
     public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_Resolve_In_Parameter2()
     {
