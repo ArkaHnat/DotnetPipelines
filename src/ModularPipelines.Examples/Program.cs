@@ -8,6 +8,8 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using ModularPipelines.Attributes;
 using ModularPipelines.Examples;
 using ModularPipelines.Examples.Modules;
+using ModularPipelines.Examples.Modules.ResolveModules;
+using ModularPipelines.Examples.Modules.Success;
 using ModularPipelines.Extensions;
 using ModularPipelines.Host;
 using ModularPipelines.Modules;
@@ -43,7 +45,6 @@ await PipelineHostBuilder.Create()
             .AddModule<SubmodulesModule>()
             .AddModule<GitVersionModule>()
             .AddModule<GitLastCommitModule>();
-        // ModularPipelinesHelpers.InjectRequiredModulesAsync(collection, args).Wait();
         collection.InjectRequiredModules(args);
     })
     .ExecutePipelineAsync();
