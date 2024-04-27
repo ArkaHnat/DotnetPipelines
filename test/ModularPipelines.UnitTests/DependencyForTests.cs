@@ -19,9 +19,8 @@ public class DependencyForTests : TestBase
             return await NothingAsync();
         }
     }
-    [DependencyFor<ReliantModule>(ResolveIfNotRegistered =true)]
-    [SearchFor(SearchForReliants = true)]
-    private class DependencyModuleWithResolveIndirectReliants : Module
+    [DependencyFor<DependencyModuleWithResolveIndirectReliants>()]
+    private class IndirectDependencyModuleWithResolveIndirectReliants : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
         {
@@ -29,8 +28,23 @@ public class DependencyForTests : TestBase
         }
     }
 
-    [DependencyFor<ReliantModule>(ResolveIfNotRegistered = true)]
-    [SearchFor(SearchForDependencies = true)]
+    [SearchFor(SearchForIndirectReliants = true)]
+    private class DependencyModuleWithResolveIndirectReliants : Module
+    {
+        protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+        {
+            return await NothingAsync();
+        }
+    }
+    [DependsOn<DependencyModuleWithResolveIndirectDependencies>()]
+    private class IndirectDependencyForDependencyModuleWithResolveIndirectReliants : Module
+    {
+        protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+        {
+            return await NothingAsync();
+        }
+    }
+    [SearchFor(SearchForIndirectDependencies = true)]
     private class DependencyModuleWithResolveIndirectDependencies : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
@@ -164,44 +178,14 @@ public class DependencyForTests : TestBase
     }
 
     [Test]
-    public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_Resolve_In_Parameter()
-    {
-        var pipelineSummary = await TestPipelineHostBuilder.Create()
-            .ConfigureServices((context, collection) =>
-            {
-                collection.AddModule<DependencyModuleWithoutResolve>();
-            }
-            )
-            .ExecutePipelineAsync();
-        await Assert.That(pipelineSummary.Status).Is.EqualTo(Status.Successful);
-
-        await Assert.That(pipelineSummary.Modules.Count).Is.EqualTo(2);
-    }
-
-    [Test]
-    public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_Resolve_In_Parameter2()
-    {
-        var pipelineSummary = await TestPipelineHostBuilder.Create()
-            .ConfigureServices((context, collection) =>
-            {
-                collection.AddModule<ReliantModule>();
-            }
-            )
-            .ExecutePipelineAsync();
-        await Assert.That(pipelineSummary.Status).Is.EqualTo(Status.Successful);
-
-        await Assert.That(pipelineSummary.Modules.Count).Is.GreaterThan(1);
-    }
-
-    [Test]
     public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_ResolveDependencies_On_Attribute()
     {
         var pipelineSummary = await TestPipelineHostBuilder.Create()
-            .AddModule<ReliantModule>()
+            .AddModule<DependencyModuleWithResolveIndirectDependencies>()
             .ExecutePipelineAsync();
 
         await Assert.That(pipelineSummary.Status).Is.EqualTo(Status.Successful);
-        await Assert.That(pipelineSummary.Modules.Count).Is.GreaterThan(1);
+        await Assert.That(pipelineSummary.Modules.Count).Is.EqualTo(2);
     }
 
     [Test]
@@ -212,6 +196,6 @@ public class DependencyForTests : TestBase
             .ExecutePipelineAsync();
 
         await Assert.That(pipelineSummary.Status).Is.EqualTo(Status.Successful);
-        await Assert.That(pipelineSummary.Modules.Count).Is.GreaterThan(1);
+        await Assert.That(pipelineSummary.Modules.Count).Is.EqualTo(2);
     }
 }
