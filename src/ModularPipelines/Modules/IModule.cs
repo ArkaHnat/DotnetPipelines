@@ -2,5 +2,5 @@
 
 public interface IModule
 {
-    public ModuleBase? ToModule { get; }
+    public ModuleBase ToModule { get; }
 }

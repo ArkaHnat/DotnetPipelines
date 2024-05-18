@@ -35,11 +35,11 @@ public abstract partial class ModuleBase : ITypeDiscriminator, IModule
     public string TypeName => GetType().Name;
 
     [JsonIgnore]
-    public ModuleBase? ToModule
+    public ModuleBase ToModule
     {
         get
         {
-            return GetType().IsAssignableTo(typeof(ModuleBase)) ? this as ModuleBase : null;
+            return this;
         }
     }
 
@@ -49,7 +49,7 @@ public abstract partial class ModuleBase : ITypeDiscriminator, IModule
 
     internal bool IsStarted { get; private protected set; }
 
-    internal abstract IWaitHandler WaitHandler { get; }
+    internal abstract IEnumerable<(Type DependencyType, bool IgnoreIfNotRegistered)> GetModuleDependencies();
 
     internal abstract ICancellationHandler CancellationHandler { get; }
 
@@ -93,6 +93,8 @@ public abstract partial class ModuleBase : ITypeDiscriminator, IModule
     internal SkipDecision SkipResult { get; set; } = SkipDecision.DoNotSkip;
 
     internal abstract Task ExecutionTask { get; }
+    
+    internal abstract Task StartInternal();
 
     internal readonly CancellationTokenSource ModuleCancellationTokenSource = new();
 

@@ -11,7 +11,7 @@ internal class DependencyChainProvider : IDependencyChainProvider
 
     public DependencyChainProvider(IEnumerable<IModule> modules)
     {
-        ModuleDependencyModels = Detect(modules.Select(a=>a.ToModule).Where(a=>a!=null).Select(x => new ModuleDependencyModel(x!)).ToList());
+        ModuleDependencyModels = Detect(modules.Where(a => a.GetType().IsAssignableTo(typeof(ModuleBase))).Select(a=>a.ToModule).Select(x => new ModuleDependencyModel(x!)).ToList());
     }
 
     private List<ModuleDependencyModel> Detect(List<ModuleDependencyModel> allModules)

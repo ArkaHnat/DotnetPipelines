@@ -27,6 +27,8 @@ internal class SkipHandler<T> : BaseHandler<T>, ISkipHandler
 
         CallbackTask.Start(TaskScheduler.Default);
 
+        ModuleResultTaskCompletionSource.TrySetResult(new SkippedModuleResult<T>(Module, skipDecision));
+
         Logger.LogInformation("{Module} ignored because: {Reason} and no historical results were found", GetType().Name, skipDecision.Reason);
     }
 
