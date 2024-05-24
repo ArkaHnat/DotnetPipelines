@@ -3,9 +3,18 @@ using ModularPipelines.Modules;
 namespace ModularPipelines.Attributes;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true, Inherited = true)]
-public class DependsOnAttribute : Attribute, IModuleRelation
+public class AfterAttribute<TModule> : AfterAttribute
+    where TModule : ModuleBase
 {
-    public DependsOnAttribute(Type type)
+    public AfterAttribute() : base(typeof(TModule))
+    {
+    }
+}
+
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true, Inherited = true)]
+public class AfterAttribute : Attribute, IModuleRelation
+{
+    public AfterAttribute(Type type)
     {
         if (!type.IsAssignableTo(typeof(ModuleBase)))
         {
@@ -18,13 +27,4 @@ public class DependsOnAttribute : Attribute, IModuleRelation
     public Type Type { get; }
 
     public bool IgnoreIfNotRegistered { get; set; }
-}
-
-[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true, Inherited = true)]
-public class DependsOnAttribute<TModule> : DependsOnAttribute
-    where TModule : ModuleBase
-{
-    public DependsOnAttribute() : base(typeof(TModule))
-    {
-    }
 }

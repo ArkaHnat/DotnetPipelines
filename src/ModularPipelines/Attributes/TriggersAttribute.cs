@@ -3,9 +3,9 @@ using ModularPipelines.Modules;
 namespace ModularPipelines.Attributes;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true, Inherited = true)]
-public class DependsOnAttribute : Attribute, IModuleRelation
+public class TriggersAttribute : Attribute, IModuleRelation
 {
-    public DependsOnAttribute(Type type)
+    public TriggersAttribute(Type type)
     {
         if (!type.IsAssignableTo(typeof(ModuleBase)))
         {
@@ -21,10 +21,10 @@ public class DependsOnAttribute : Attribute, IModuleRelation
 }
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true, Inherited = true)]
-public class DependsOnAttribute<TModule> : DependsOnAttribute
+public class TriggersAttribute<TModule> : TriggersAttribute 
     where TModule : ModuleBase
 {
-    public DependsOnAttribute() : base(typeof(TModule))
+    public TriggersAttribute() : base(typeof(TModule))
     {
     }
 }

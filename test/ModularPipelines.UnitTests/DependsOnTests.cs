@@ -18,15 +18,7 @@ public class DependsOnTests : TestBase
             return await NothingAsync();
         }
     }
-    [DependencyFor<ModuleWithResolveIndirectReliants>()]
-    private class Module4 : Module
-    {
-        protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
-        {
-            return await NothingAsync();
-        }
-    }
-
+   
     [DependsOn<Module1>]
     private class Module2 : Module
     {
@@ -45,7 +37,7 @@ public class DependsOnTests : TestBase
         }
     }
     [DependsOn<Module1>()]
-    [SearchFor(SearchForDependencies = true)]
+    [Resolve(Dependencies = true)]
     private class Module3WithResolveDirectDependency : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
@@ -53,7 +45,16 @@ public class DependsOnTests : TestBase
             return await NothingAsync();
         }
     }
-    [SearchFor(SearchForIndirectReliants = true)]
+
+    [DependsOn<ModuleWithResolveIndirectReliants>]
+    private class ModuleWithDependsOnReliants : Module
+    {
+        protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+        {
+            return await NothingAsync();
+        }
+    }
+    [Resolve(IndirectDependency = true)]
     private class ModuleWithResolveIndirectReliants : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)

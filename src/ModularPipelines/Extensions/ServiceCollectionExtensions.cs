@@ -18,19 +18,20 @@ public static class ServiceCollectionExtensions
 {
     public static void ActivateDependencies(this IServiceCollection collection, Type typeToActivate, IEnumerable<Type> types)
     {
-        if (!collection.Any(x => x.ServiceType == typeToActivate || x.ImplementationType?.Name == typeToActivate.Name || x.ImplementationInstance?.GetType() == typeToActivate))
+        if (!collection.Any(x =>
+                x.ServiceType == typeToActivate || x.ImplementationType?.Name == typeToActivate.Name || x.ImplementationInstance?.GetType() == typeToActivate))
         {
             collection.AddSingleton(typeof(IModule), typeToActivate);
         }
-           
-        var searchFor = typeToActivate.GetCustomAttribute<SearchForAttribute>();
-            
-        if (searchFor == null)
+
+        var resolve = typeToActivate.GetCustomAttribute<Resolve>();
+
+        if (resolve == null)
         {
             return;
         }
 
-        if (searchFor.SearchForDependencies)
+        if (resolve.Dependencies)
         {
             foreach (var relatedModule in typeToActivate.GetCustomAttributesIncludingBaseInterfaces<DependsOnAttribute>())
             {
@@ -38,29 +39,56 @@ public static class ServiceCollectionExtensions
             }
         }
 
-        if (searchFor.SearchForReliants)
+        if (resolve.Reliants)
         {
-            foreach (var relatedModule in typeToActivate.GetCustomAttributesIncludingBaseInterfaces<DependencyForAttribute>())
+            var reliants = typeToActivate.GetCustomAttributesIncludingBaseInterfaces<DependencyForAttribute>();
+            foreach (var relatedModule in reliants)
             {
-                collection.ActivateDependencies(relatedModule.Type, types);
+                if (!IsAlreadyRegistered(collection, relatedModule.Type))
+                {
+                    collection.ActivateDependencies(relatedModule.Type, types);
+                }
             }
         }
 
-        if (searchFor.SearchForIndirectDependencies)
+        if (resolve.IndirectDependency)
         {
-            var indirectDependencies = types.Where(a => a.GetCustomAttributesIncludingBaseInterfaces<DependsOnAttribute>().Any(a => a.Type == typeToActivate));
+            var indirectDependencies = types.Where(a => a.GetCustomAttributesIncludingBaseInterfaces<DependsOnAttribute>()
+                .Any(a => a.Type == typeToActivate));
+
             foreach (var indirectDependency in indirectDependencies)
             {
                 collection.ActivateDependencies(indirectDependency, types);
             }
         }
 
-        if (searchFor.SearchForIndirectReliants)
+        if (resolve.IndirectReliants)
         {
-            var indirectReliants = types.Where(a => a.GetCustomAttributesIncludingBaseInterfaces<DependencyForAttribute>().Any(a => a.Type == typeToActivate));
+            var indirectReliants = types.Where(a => a.GetCustomAttributesIncludingBaseInterfaces<DependencyForAttribute>()
+                .Any(a => a.Type == typeToActivate));
+
             foreach (var indirectReliant in indirectReliants)
             {
                 collection.ActivateDependencies(indirectReliant, types);
+            }
+        }
+
+        if (resolve.TriggeringModules)
+        {
+            var modulesToTrigger = typeToActivate.GetCustomAttributes<TriggersAttribute>();
+            foreach (var indirectReliant in modulesToTrigger)
+            {
+                collection.ActivateDependencies(indirectReliant.Type, types);
+            }
+        }
+
+        if (resolve.TriggeredByModules)
+        {
+            var modules = typeToActivate.GetCustomAttributes<TriggeredByAttribute>();
+
+            foreach (var module in modules)
+            {
+                collection.ActivateDependencies(module.Type, types);
             }
         }
     }
@@ -209,5 +237,11 @@ public static class ServiceCollectionExtensions
     internal static IServiceCollection AddServiceCollection(this IServiceCollection serviceCollection)
     {
         return serviceCollection.AddSingleton<IPipelineServiceContainerWrapper>(new PipelineServiceContainerWrapper(serviceCollection));
+    }
+
+    private static bool IsAlreadyRegistered(this IServiceCollection collection, Type typeToActivate)
+    {
+        return collection.Any(x =>
+            x.ServiceType == typeToActivate || x.ImplementationType?.Name == typeToActivate.Name || x.ImplementationInstance?.GetType() == typeToActivate);
     }
 }

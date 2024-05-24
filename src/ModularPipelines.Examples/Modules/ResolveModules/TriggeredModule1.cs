@@ -4,8 +4,8 @@ using ModularPipelines.Modules;
 
 namespace ModularPipelines.Examples.Modules.ResolveModules;
 
-[DependsOn<DependencyModule>]
-public class ReliantModule : Module
+[Resolve(Dependencies = true, IndirectDependency = true, IndirectReliants = true, Reliants = true, TriggeringModules = true)]
+public class TriggeredModule1 : Module
 {
     /// <inheritdoc/>
     protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)

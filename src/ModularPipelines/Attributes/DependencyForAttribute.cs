@@ -18,8 +18,6 @@ public class DependencyForAttribute : Attribute, IModuleRelation
     public Type Type { get; }
 
     public bool IgnoreIfNotRegistered { get; set; }
-
-    public bool ResolveIfNotRegistered { get; set; }
 }
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true, Inherited = true)]

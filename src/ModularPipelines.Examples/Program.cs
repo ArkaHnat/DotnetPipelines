@@ -46,5 +46,6 @@ await PipelineHostBuilder.Create()
             .AddModule<GitVersionModule>()
             .AddModule<GitLastCommitModule>();
         collection.InjectRequiredModules(args);
+        collection.AddModule<TriggeredModule2>();
     })
     .ExecutePipelineAsync();
