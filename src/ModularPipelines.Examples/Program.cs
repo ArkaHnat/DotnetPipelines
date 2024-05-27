@@ -8,8 +8,10 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using ModularPipelines.Attributes;
 using ModularPipelines.Examples;
 using ModularPipelines.Examples.Modules;
+using ModularPipelines.Examples.Modules.FullGraph.Dependencies;
 using ModularPipelines.Examples.Modules.ResolveModules;
 using ModularPipelines.Examples.Modules.Success;
+using ModularPipelines.Examples.Modules.Triggers;
 using ModularPipelines.Extensions;
 using ModularPipelines.Host;
 using ModularPipelines.Modules;
@@ -47,5 +49,13 @@ await PipelineHostBuilder.Create()
             .AddModule<GitLastCommitModule>();
         collection.InjectRequiredModules(args);
         collection.AddModule<TriggeredModule2>();
+        collection.AddModule<FullGrapthMainModule>();
+        collection.AddModule<FullGrapthDependensOnModule1>();
+        collection.AddModule<FullGrapthDependensOnModule2>();
+        collection.AddModule<FullGrapthReliantModule1>();
+        collection.AddModule<FullGrapthReliantModule2>();
+        collection.AddModule<FullGraphMainTriggerModule>();
+        collection.AddModule<FullGraphTiggeredByModule>();
+        collection.AddModule<FullGrapthTriggeringModule>();
     })
     .ExecutePipelineAsync();
