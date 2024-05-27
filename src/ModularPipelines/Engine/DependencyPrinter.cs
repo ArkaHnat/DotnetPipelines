@@ -86,6 +86,12 @@ internal class DependencyPrinter : IDependencyPrinter
                 continue;
             }
 
+            if (dashCount < 2)
+            {
+                dashCount = 3;
+                stringBuilder.Replace("-> ", "---> ");
+            }
+
             Append(stringBuilder, dependencyModel, dashCount - 2, alreadyPrinted);
         }
 
@@ -108,7 +114,8 @@ internal class DependencyPrinter : IDependencyPrinter
 
             if (dashCount < 2)
             {
-                dashCount = 2;
+                dashCount = 3;
+                stringBuilder.Replace("-> ", "---> ");
             }
 
             Append(stringBuilder, dependencyModel, dashCount - 2, alreadyPrinted);
