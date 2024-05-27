@@ -53,9 +53,9 @@ internal class PipelineInitializer : IPipelineInitializer
         Console.WriteLine();
 
         await _pipelineFileWriter.WritePipelineFiles();
-
+        _dependencyDetector.ResolveRelations();
         _dependencyDetector.Check();
-
+        
         await _pipelineSetupExecutor.OnStartAsync();
 
         await _requirementsChecker.CheckRequirementsAsync();

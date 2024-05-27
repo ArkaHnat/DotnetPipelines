@@ -47,9 +47,17 @@ public abstract partial class ModuleBase : ITypeDiscriminator, IModule
 
     public List<IModuleRelation> ReliantModules { get; } = [];
 
+    public List<IModuleRelation> TriggersModules { get; } = [];
+
+    public List<IModuleRelation> TriggeredByModules { get; } = [];
+
     internal bool IsStarted { get; private protected set; }
 
     internal abstract IEnumerable<(Type DependencyType, bool IgnoreIfNotRegistered)> GetModuleDependencies();
+
+    internal abstract IEnumerable<(Type DependencyType, bool IgnoreIfNotRegistered)> GetModuleReliants();
+
+    internal abstract IEnumerable<(Type DependencyType, bool IgnoreIfNotRegistered)> GetTriggerModules();
 
     internal abstract ICancellationHandler CancellationHandler { get; }
 

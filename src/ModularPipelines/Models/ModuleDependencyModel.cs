@@ -43,6 +43,49 @@ internal record ModuleDependencyModel(IModule Module)
                 yield break;
             }
         }
+
+        foreach (var moduleDependencyModel in IsTriggeredBy)
+        {
+            yield return moduleDependencyModel;
+
+            if (moduleDependencyModel.Module.GetType() == Module.GetType())
+            {
+                yield break;
+            }
+        }
+
+        foreach (var moduleDependencyModel in IsTriggeredBy.SelectMany(d => d.AllDescendantDependencies()))
+        {
+            yield return moduleDependencyModel;
+
+            if (moduleDependencyModel.Module.GetType() == Module.GetType())
+            {
+                yield break;
+            }
+        }
+    }
+
+    public IEnumerable<ModuleDependencyModel> AllTriggeredModules()
+    {
+        foreach (var moduleDependencyModel in IsTriggering)
+        {
+            yield return moduleDependencyModel;
+
+            if (moduleDependencyModel.Module.GetType() == Module.GetType())
+            {
+                yield break;
+            }
+        }
+
+        foreach (var moduleDependencyModel in IsTriggering.SelectMany(d => d.AllTriggeredModules()))
+        {
+            yield return moduleDependencyModel;
+
+            if (moduleDependencyModel.Module.GetType() == Module.GetType())
+            {
+                yield break;
+            }
+        }
     }
 
     public virtual bool Equals(ModuleDependencyModel? other)

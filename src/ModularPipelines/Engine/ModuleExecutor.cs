@@ -66,7 +66,7 @@ internal class ModuleExecutor : IModuleExecutor
             await ProcessKeyedNonParallelModules(keyedNonParallelModules.ToList(), moduleResults)
         );
 
-        var parallelModuleTasks = modules.Except(nonParallelModules)
+        var parallelModuleTasks = modules.Except(nonParallelModules).Where(a=>!a.ToModule.TriggeredByModules.Any())
             .Select(ExecuteAsync)
             .ToArray();
 
@@ -176,6 +176,13 @@ internal class ModuleExecutor : IModuleExecutor
             }
             finally
             {
+                var triggerModules = module.GetTriggerModules();
+
+                foreach (var triggerModule in triggerModules)
+                {
+                    await StartDependency(module, triggerModule.DependencyType, triggerModule.IgnoreIfNotRegistered);
+                }
+
                 if (!_pipelineOptions.Value.ShowProgressInConsole)
                 {
                     await _moduleDisposer.DisposeAsync(module);

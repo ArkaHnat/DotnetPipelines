@@ -34,6 +34,18 @@ public abstract partial class Module<T> : ModuleBase<T>
             .Select(dependsOnAttribute => (dependsOnAttribute.Type, dependsOnAttribute.IgnoreIfNotRegistered));
     }
 
+    internal override IEnumerable<(Type DependencyType, bool IgnoreIfNotRegistered)> GetModuleReliants()
+    {
+        return ReliantModules
+            .Select(dependsOnAttribute => (dependsOnAttribute.Type, dependsOnAttribute.IgnoreIfNotRegistered));
+    }
+
+    internal override IEnumerable<(Type DependencyType, bool IgnoreIfNotRegistered)> GetTriggerModules()
+    {
+        return TriggersModules
+            .Select(triggerAttribute => (triggerAttribute.Type, triggerAttribute.IgnoreIfNotRegistered));
+    }
+
     internal override IHistoryHandler<T> HistoryHandler { get; }
     
     internal override ICancellationHandler CancellationHandler { get; }
@@ -61,16 +73,6 @@ public abstract partial class Module<T> : ModuleBase<T>
         HookHandler = new HookHandler<T>(this);
         StatusHandler = new StatusHandler<T>(this);
         ErrorHandler = new ErrorHandler<T>(this);
-
-        foreach (var dependsOnAttribute in GetType().GetCustomAttributesIncludingBaseInterfaces<DependsOnAttribute>())
-        {
-            AddDependency(dependsOnAttribute);
-        }
-
-        foreach (var dependencyForAttribute in GetType().GetCustomAttributesIncludingBaseInterfaces<DependencyForAttribute>())
-        {
-            AddDependency(dependencyForAttribute);
-        }
     }
 
     internal override ModuleBase Initialize(IPipelineContext context)
@@ -222,6 +224,28 @@ public abstract partial class Module<T> : ModuleBase<T>
         };
 
         DependentModules.Add(dependsOnAttribute);
+    }
+
+    private void AddDependency(TriggersAttribute triggersAttribute)
+    {
+        var type = triggersAttribute.Type;
+
+        if (type == GetType())
+        {
+            throw new ModuleReferencingSelfException("A module cannot depend on itself");
+        }
+
+        if (!type.IsAssignableTo(typeof(ModuleBase)))
+        {
+            throw new Exception($"{type.FullName} must be a module to add as a dependency");
+        }
+
+        OnInitialised += (_, _) =>
+        {
+            Context.Logger.LogDebug("This module depends on {Module}", triggersAttribute.Type.Name);
+        };
+
+        TriggersModules.Add(triggersAttribute);
     }
 
     private void AddDependency(DependencyForAttribute dependencyForAttribute)

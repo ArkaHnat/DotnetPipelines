@@ -14,13 +14,16 @@ public class DependencyForTests : TestBase
     public async Task No_Exception_Thrown_When_Reliant_Module_Present()
     {
         var pipelineSummary = await TestPipelineHostBuilder.Create()
-            .AddModule<DependencyModule>()
             .AddModule<ReliantModule>()
+            .AddModule<DependencyModuleWithoutResolve>()
             .ExecutePipelineAsync();
 
         await Assert.That(pipelineSummary.Status)
             .Is
             .EqualTo(Status.Successful);
+        await Assert.That(pipelineSummary.Modules.Count)
+            .Is
+            .EqualTo(2);
     }
 
     [Test]

@@ -28,17 +28,25 @@ internal class DependencyPrinter : IDependencyPrinter
 
         foreach (var moduleDependencyModel in _dependencyChainProvider.ModuleDependencyModels.OrderBy(m => m.AllDescendantDependencies().Count()))
         {
+            var internalStringBuilder = new StringBuilder();
             if (alreadyPrinted.Contains(moduleDependencyModel))
             {
                 continue;
             }
 
-            stringBuilder.AppendLine();
-            Append(stringBuilder, moduleDependencyModel, 1, alreadyPrinted);
+            internalStringBuilder.AppendLine();
+            Append(internalStringBuilder, moduleDependencyModel, 1, alreadyPrinted);
+            var items = new List<string>(internalStringBuilder.ToString().Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries));
+            items.Sort();
+            var orderedString = string.Join("\r\n", items.ToArray().Reverse());
+            
+            stringBuilder.AppendLine(orderedString);
+
+            stringBuilder.AppendLine("\r\n");
         }
 
         alreadyPrinted.Clear();
-
+        
         Print(stringBuilder.ToString());
     }
 
@@ -58,11 +66,52 @@ internal class DependencyPrinter : IDependencyPrinter
         stringBuilder.Append(new string('-', dashCount));
         stringBuilder.Append('>');
         stringBuilder.Append(' ');
-        stringBuilder.AppendLine(moduleDependencyModel.Module.GetType().Name);
+        stringBuilder.AppendLine(moduleDependencyModel.Module.GetType()
+            .Name);
 
         foreach (var dependencyModel in moduleDependencyModel.IsDependencyFor)
         {
+            if (alreadyPrinted.Contains(dependencyModel))
+            {
+                continue;
+            }
+
             Append(stringBuilder, dependencyModel, dashCount + 2, alreadyPrinted);
+        }
+
+        foreach (var dependencyModel in moduleDependencyModel.IsDependentOn)
+        {
+            if (alreadyPrinted.Contains(dependencyModel))
+            {
+                continue;
+            }
+
+            Append(stringBuilder, dependencyModel, dashCount - 2, alreadyPrinted);
+        }
+
+        foreach (var dependencyModel in moduleDependencyModel.IsTriggering)
+        {
+            if (alreadyPrinted.Contains(dependencyModel))
+            {
+                continue;
+            }
+
+            Append(stringBuilder, dependencyModel, dashCount + 2, alreadyPrinted);
+        }
+
+        foreach (var dependencyModel in moduleDependencyModel.IsTriggeredBy)
+        {
+            if (alreadyPrinted.Contains(dependencyModel))
+            {
+                continue;
+            }
+
+            if (dashCount < 2)
+            {
+                dashCount = 2;
+            }
+
+            Append(stringBuilder, dependencyModel, dashCount - 2, alreadyPrinted);
         }
     }
 }
