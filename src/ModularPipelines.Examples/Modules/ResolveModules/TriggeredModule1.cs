@@ -4,7 +4,6 @@ using ModularPipelines.Modules;
 
 namespace ModularPipelines.Examples.Modules.ResolveModules;
 
-[Resolve(Dependencies = true, IndirectDependency = true, IndirectReliants = true, Reliants = true, TriggeringModules = true)]
 public class TriggeredModule1 : Module
 {
     /// <inheritdoc/>

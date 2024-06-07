@@ -24,71 +24,60 @@ public static class ServiceCollectionExtensions
             collection.AddSingleton(typeof(IModule), typeToActivate);
         }
 
-        var resolve = typeToActivate.GetCustomAttribute<Resolve>();
-
-        if (resolve == null)
+        foreach (var relatedModule in typeToActivate.GetCustomAttributesIncludingBaseInterfaces<DependsOnAttribute>())
         {
-            return;
-        }
-
-        if (resolve.Dependencies)
-        {
-            foreach (var relatedModule in typeToActivate.GetCustomAttributesIncludingBaseInterfaces<DependsOnAttribute>())
+            if (!IsAlreadyRegistered(collection, relatedModule.Type))
             {
                 collection.ActivateDependencies(relatedModule.Type, types);
             }
         }
 
-        if (resolve.Reliants)
+        var reliants = typeToActivate.GetCustomAttributesIncludingBaseInterfaces<DependencyForAttribute>();
+        foreach (var relatedModule in reliants)
         {
-            var reliants = typeToActivate.GetCustomAttributesIncludingBaseInterfaces<DependencyForAttribute>();
-            foreach (var relatedModule in reliants)
+            if (!IsAlreadyRegistered(collection, relatedModule.Type))
             {
-                if (!IsAlreadyRegistered(collection, relatedModule.Type))
-                {
-                    collection.ActivateDependencies(relatedModule.Type, types);
-                }
+                collection.ActivateDependencies(relatedModule.Type, types);
             }
         }
 
-        if (resolve.IndirectDependency)
+        var indirectReliants = types.Where(a => a.GetCustomAttributesIncludingBaseInterfaces<DependencyForAttribute>()
+            .Any(a => a.Type == typeToActivate));
+        foreach (var indirectReliant in indirectReliants)
         {
-            var indirectDependencies = types.Where(a => a.GetCustomAttributesIncludingBaseInterfaces<DependsOnAttribute>()
-                .Any(a => a.Type == typeToActivate));
-
-            foreach (var indirectDependency in indirectDependencies)
-            {
-                collection.ActivateDependencies(indirectDependency, types);
-            }
-        }
-
-        if (resolve.IndirectReliants)
-        {
-            var indirectReliants = types.Where(a => a.GetCustomAttributesIncludingBaseInterfaces<DependencyForAttribute>()
-                .Any(a => a.Type == typeToActivate));
-
-            foreach (var indirectReliant in indirectReliants)
+            if (!IsAlreadyRegistered(collection, indirectReliant))
             {
                 collection.ActivateDependencies(indirectReliant, types);
             }
         }
 
-        if (resolve.TriggeringModules)
+        var indirectDependencies = types.Where(a => a.GetCustomAttributesIncludingBaseInterfaces<DependsOnAttribute>()
+            .Any(a => a.Type == typeToActivate));
+
+        foreach (var indirectDependency in indirectDependencies)
         {
-            var modulesToTrigger = typeToActivate.GetCustomAttributes<TriggersAttribute>();
-            foreach (var indirectReliant in modulesToTrigger)
+            if (!IsAlreadyRegistered(collection, indirectDependency))
             {
-                collection.ActivateDependencies(indirectReliant.Type, types);
+                collection.ActivateDependencies(indirectDependency, types);
             }
         }
 
-        if (resolve.TriggeredByModules)
+        var modulesToTrigger = typeToActivate.GetCustomAttributesIncludingBaseInterfaces<TriggersAttribute>();
+        foreach (var relatedModule in modulesToTrigger)
         {
-            var modules = typeToActivate.GetCustomAttributes<TriggeredByAttribute>();
-
-            foreach (var module in modules)
+            if (!IsAlreadyRegistered(collection, relatedModule.Type))
             {
-                collection.ActivateDependencies(module.Type, types);
+                collection.ActivateDependencies(relatedModule.Type, types);
+            }
+        }
+
+        var modules = typeToActivate.GetCustomAttributesIncludingBaseInterfaces<TriggeredByAttribute>();
+
+        foreach (var relatedModule in modules)
+        {
+            if (!IsAlreadyRegistered(collection, relatedModule.Type))
+            {
+                collection.ActivateDependencies(relatedModule.Type, types);
             }
         }
     }

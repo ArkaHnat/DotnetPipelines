@@ -22,17 +22,6 @@ public class TriggeredByTests : TestBase
             .Is
             .EqualTo(Status.Successful);
     }
-    [Test]
-    public async Task Exception_Thrown_When_Triggered_Module_NotPresent()
-    {
-
-        await Assert.That(async () => await TestPipelineHostBuilder.Create()
-                .AddModule<TriggeringModule>()
-                .ExecutePipelineAsync())
-            .Throws
-            .Exception()
-            .OfAnyType();
-    }
 
     [Triggers<TriggeredModule>]
     private class TriggeringModule : Module
@@ -51,16 +40,6 @@ public class TriggeredByTests : TestBase
         }
     }
 
-    [Test]
-    public async Task Dependency_For_Self_Module_Throws_Exception()
-    {
-        await Assert.That(async () => await TestPipelineHostBuilder.Create()
-                .AddModule<TriggersSelfModule>()
-                .ExecutePipelineAsync())
-            .Throws
-            .Exception()
-            .OfType<ModuleReferencingSelfException>();
-    }
     [Triggers<TriggersSelfModule>]
     private class TriggersSelfModule : Module
     {

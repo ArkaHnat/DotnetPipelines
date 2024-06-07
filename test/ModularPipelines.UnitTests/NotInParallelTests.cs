@@ -29,8 +29,8 @@ public class NotInParallelTests
     }
 
     [ModularPipelines.Attributes.NotInParallel]
-    [DependsOn<ParallelDependency>]
-    public class NotParallelModuleWithParallelDependency : Module<string>
+    [DependsOn<ParallelDependency1>]
+    public class NotParallelModuleWithParallelDependency1 : Module<string>
     {
         protected override async Task<string?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
         {
@@ -38,8 +38,7 @@ public class NotInParallelTests
             return GetType().Name;
         }
     }
-
-    public class ParallelDependency : Module<string>
+    public class ParallelDependency1 : Module<string>
     {
         protected override async Task<string?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
         {
@@ -47,9 +46,26 @@ public class NotInParallelTests
             return GetType().Name;
         }
     }
-
+    public class ParallelDependency2 : Module<string>
+    {
+        protected override async Task<string?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
+            return GetType().Name;
+        }
+    }
     [ModularPipelines.Attributes.NotInParallel]
-    [DependsOn<NotParallelModuleWithParallelDependency>]
+    [DependsOn<ParallelDependency2>]
+    public class NotParallelModuleWithParallelDependency2 : Module<string>
+    {
+        protected override async Task<string?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
+            return GetType().Name;
+        }
+    }
+    [ModularPipelines.Attributes.NotInParallel]
+    [DependsOn<NotParallelModuleWithParallelDependency1>]
     public class NotParallelModuleWithNonParallelDependency : Module<string>
     {
         protected override async Task<string?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
@@ -78,8 +94,8 @@ public class NotInParallelTests
     public async Task NotInParallel_With_ParallelDependency()
     {
         var results = await TestPipelineHostBuilder.Create()
-            .AddModule<NotParallelModuleWithParallelDependency>()
-            .AddModule<ParallelDependency>()
+            .AddModule<NotParallelModuleWithParallelDependency2>()
+            .AddModule<ParallelDependency2>()
             .ExecutePipelineAsync();
 
         var firstModule = results.Modules.MinBy(x => x.EndTime)!;
@@ -92,8 +108,7 @@ public class NotInParallelTests
     public async Task NotInParallel_With_NonParallelDependency()
     {
         var results = await TestPipelineHostBuilder.Create()
-            .AddModule<NotParallelModuleWithParallelDependency>()
-            .AddModule<ParallelDependency>()
+            .AddModule<ParallelDependency1>()
             .AddModule<NotParallelModuleWithNonParallelDependency>()
             .ExecutePipelineAsync();
 

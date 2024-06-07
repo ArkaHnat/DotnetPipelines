@@ -11,22 +11,6 @@ namespace ModularPipelines.UnitTests;
 public class DependencyForTests : TestBase
 {
     [Test]
-    public async Task No_Exception_Thrown_When_Reliant_Module_Present()
-    {
-        var pipelineSummary = await TestPipelineHostBuilder.Create()
-            .AddModule<ReliantModule>()
-            .AddModule<DependencyModuleWithoutResolve>()
-            .ExecutePipelineAsync();
-
-        await Assert.That(pipelineSummary.Status)
-            .Is
-            .EqualTo(Status.Successful);
-        await Assert.That(pipelineSummary.Modules.Count)
-            .Is
-            .EqualTo(2);
-    }
-
-    [Test]
     public async Task No_Exception_Thrown_When_Reliant_Module_Present2()
     {
         var pipelineSummary = await TestPipelineHostBuilder.Create()
@@ -72,25 +56,15 @@ public class DependencyForTests : TestBase
     }
 
     [Test]
-    public async Task Exception_Thrown_When_Reliant_Module_Missing_And_Get_Module_Called()
-    {
-        await Assert.That(async () => await TestPipelineHostBuilder.Create()
-                .AddModule<Module3WithGet>()
-                .ExecutePipelineAsync())
-            .Throws
-            .Exception()
-            .OfAnyType();
-    }
-
-    [Test]
     public async Task Dependency_For_Self_Module_Throws_Exception()
     {
+
         await Assert.That(async () => await TestPipelineHostBuilder.Create()
                 .AddModule<ReliesOnSelfModule>()
                 .ExecutePipelineAsync())
             .Throws
             .Exception()
-            .OfType<ModuleReferencingSelfException>();
+            .OfType<DependencyCollisionException>();
     }
 
     [Test]
@@ -135,7 +109,6 @@ public class DependencyForTests : TestBase
     }
 
     [DependencyFor<DependencyModuleWithResolveIndirectReliants>]
-    [Resolve(Reliants = true)]
     private class IndirectDependencyModuleWithResolveIndirectReliants : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
@@ -144,7 +117,6 @@ public class DependencyForTests : TestBase
         }
     }
 
-    [Resolve(IndirectReliants = true)]
     private class DependencyModuleWithResolveIndirectReliants : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)

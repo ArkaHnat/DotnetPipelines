@@ -203,73 +203,7 @@ public abstract partial class Module<T> : ModuleBase<T>
     protected AsyncRetryPolicy<T?> CreateRetryPolicy(int count) =>
         Policy<T?>.Handle<Exception>()
             .WaitAndRetryAsync(count, i => TimeSpan.FromMilliseconds(i * i * 100));
-
-    private void AddDependency(DependsOnAttribute dependsOnAttribute)
-    {
-        var type = dependsOnAttribute.Type;
-
-        if (type == GetType())
-        {
-            throw new ModuleReferencingSelfException("A module cannot depend on itself");
-        }
-
-        if (!type.IsAssignableTo(typeof(ModuleBase)))
-        {
-            throw new Exception($"{type.FullName} must be a module to add as a dependency");
-        }
-
-        OnInitialised += (_, _) =>
-        {
-            Context.Logger.LogDebug("This module depends on {Module}", dependsOnAttribute.Type.Name);
-        };
-
-        DependentModules.Add(dependsOnAttribute);
-    }
-
-    private void AddDependency(TriggersAttribute triggersAttribute)
-    {
-        var type = triggersAttribute.Type;
-
-        if (type == GetType())
-        {
-            throw new ModuleReferencingSelfException("A module cannot depend on itself");
-        }
-
-        if (!type.IsAssignableTo(typeof(ModuleBase)))
-        {
-            throw new Exception($"{type.FullName} must be a module to add as a dependency");
-        }
-
-        OnInitialised += (_, _) =>
-        {
-            Context.Logger.LogDebug("This module depends on {Module}", triggersAttribute.Type.Name);
-        };
-
-        TriggersModules.Add(triggersAttribute);
-    }
-
-    private void AddDependency(DependencyForAttribute dependencyForAttribute)
-    {
-        var type = dependencyForAttribute.Type;
-
-        if (type == GetType())
-        {
-            throw new ModuleReferencingSelfException("A module cannot relies on itself");
-        }
-
-        if (!type.IsAssignableTo(typeof(ModuleBase)))
-        {
-            throw new Exception($"{type.FullName} must be a module to add as a reliant");
-        }
-
-        OnInitialised += (_, _) =>
-        {
-            Context.Logger.LogDebug("This module is reliant for {Module}", dependencyForAttribute.Type.Name);
-        };
-
-        ReliantModules.Add(dependencyForAttribute);
-    }
-
+    
     private void LogResult(T? executeResult)
     {
         if (!Context.Logger.IsEnabled(LogLevel.Debug))

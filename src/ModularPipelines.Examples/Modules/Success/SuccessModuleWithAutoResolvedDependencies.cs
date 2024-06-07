@@ -6,7 +6,6 @@ using ModularPipelines.Modules;
 namespace ModularPipelines.Examples.Modules.FailedModules;
 
 [DependsOn<AutoLoadedDependencyModule>]
-[Resolve(Dependencies = true, Reliants = false, IndirectDependency = false, IndirectReliants = false)]
 public class SuccessModuleWithAutoResolvedDependencies : Module
 {
     protected override Task<bool> ShouldIgnoreFailures(IPipelineContext context, Exception exception) => Task.FromResult(true);
@@ -20,7 +19,6 @@ public class SuccessModuleWithAutoResolvedDependencies : Module
 }
 
 [DependencyFor<AutoLoadedReliantModule>]
-[Resolve(Dependencies = false, Reliants = true, IndirectDependency = false, IndirectReliants = false)]
 public class SuccessModuleWithAutoResolvedReliants : Module
 {
     protected override Task<bool> ShouldIgnoreFailures(IPipelineContext context, Exception exception) => Task.FromResult(true);
@@ -33,7 +31,6 @@ public class SuccessModuleWithAutoResolvedReliants : Module
     }
 }
 
-[Resolve(Dependencies = false, Reliants = false, IndirectDependency = false, IndirectReliants = true)]
 public class SuccessModuleWithAutoResolvedIndirectReliants : Module
 {
     protected override Task<bool> ShouldIgnoreFailures(IPipelineContext context, Exception exception) => Task.FromResult(true);
@@ -46,7 +43,6 @@ public class SuccessModuleWithAutoResolvedIndirectReliants : Module
     }
 }
 
-[Resolve(Dependencies = false, Reliants = false, IndirectDependency = true, IndirectReliants = false)]
 public class SuccessModuleWithAutoResolvedIndirectDependencies : Module
 {
     protected override Task<bool> ShouldIgnoreFailures(IPipelineContext context, Exception exception) => Task.FromResult(true);
@@ -59,7 +55,6 @@ public class SuccessModuleWithAutoResolvedIndirectDependencies : Module
     }
 }
 
-[Resolve(Dependencies = false, Reliants = false, IndirectDependency = true, IndirectReliants = true)]
 public class SuccessModuleWithAutoResolvedIndirectRelations : Module
 {
     protected override Task<bool> ShouldIgnoreFailures(IPipelineContext context, Exception exception) => Task.FromResult(true);

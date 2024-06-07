@@ -35,7 +35,14 @@ public class FailedPipelineTests : TestBase
             return await NothingAsync();
         }
     }
-
+    private class Module4 : Module
+    {
+        protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+        {
+            _ = GetModuleIfRegistered<Module2>();
+            return await NothingAsync();
+        }
+    }
     [DataDrivenTest(ExecutionMode.StopOnFirstException)]
     [DataDrivenTest(ExecutionMode.WaitForAllModules)]
     public async Task Given_Failing_Module_With_Dependent_Module_When_Fail_Fast_Then_Failures_Propagate(ExecutionMode executionMode)
@@ -71,7 +78,7 @@ public class FailedPipelineTests : TestBase
                 .ConfigurePipelineOptions((_, options)
                     => options.ExecutionMode = executionMode)
                 .AddModule<Module1>()
-                .AddModule<Module3>()
+                .AddModule<Module4>()
                 .ExecutePipelineAsync();
         await Assert.That(pipelineSummary.Status).Is.EqualTo(Status.Successful);
     }

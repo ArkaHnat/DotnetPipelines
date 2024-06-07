@@ -37,17 +37,6 @@ public class DependsOnTests : TestBase
     }
 
     [Test]
-    public async Task Exception_Thrown_When_Dependent_Module_Missing_And_No_Ignore_On_Attribute()
-    {
-        await Assert.That(async () => await TestPipelineHostBuilder.Create()
-                .AddModule<Module2>()
-                .ExecutePipelineAsync())
-            .Throws
-            .Exception()
-            .OfAnyType();
-    }
-
-    [Test]
     public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_Ignore_On_Attribute()
     {
         var pipelineSummary = await TestPipelineHostBuilder.Create()
@@ -57,22 +46,6 @@ public class DependsOnTests : TestBase
         await Assert.That(pipelineSummary.Status)
             .Is
             .EqualTo(Status.Successful);
-    }
-
-    [Test]
-    public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_ResolveDependency_On_Attribute()
-    {
-        var pipelineSummary = await TestPipelineHostBuilder.Create()
-            .ConfigureServices((context, collection) => { collection.AddModule<Module3WithResolveDirectDependency>(); })
-            .ExecutePipelineAsync();
-
-        await Assert.That(pipelineSummary.Status)
-            .Is
-            .EqualTo(Status.Successful);
-
-        await Assert.That(pipelineSummary.Modules.Count)
-            .Is
-            .EqualTo(2);
     }
 
     [Test]
@@ -104,17 +77,6 @@ public class DependsOnTests : TestBase
     }
 
     [Test]
-    public async Task Exception_Thrown_When_Dependent_Module_Missing_And_Get_Module_Called()
-    {
-        await Assert.That(async () => await TestPipelineHostBuilder.Create()
-                .AddModule<Module3WithGet>()
-                .ExecutePipelineAsync())
-            .Throws
-            .Exception()
-            .OfAnyType();
-    }
-
-    [Test]
     public async Task Depends_On_Self_Module_Throws_Exception()
     {
         await Assert.That(async () => await TestPipelineHostBuilder.Create()
@@ -122,7 +84,7 @@ public class DependsOnTests : TestBase
                 .ExecutePipelineAsync())
             .Throws
             .Exception()
-            .OfType<ModuleReferencingSelfException>();
+            .OfType<DependencyCollisionException>();
     }
 
     private class Module1 : Module
@@ -152,7 +114,6 @@ public class DependsOnTests : TestBase
     }
 
     [DependsOn<Module1>]
-    [Resolve(Dependencies = true)]
     private class Module3WithResolveDirectDependency : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
@@ -170,7 +131,6 @@ public class DependsOnTests : TestBase
         }
     }
 
-    [Resolve(IndirectDependency = true)]
     private class ModuleWithResolveIndirectReliants : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
