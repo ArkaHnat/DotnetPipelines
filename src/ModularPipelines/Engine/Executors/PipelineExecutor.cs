@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
+using ModularPipelines.Logging;
 using ModularPipelines.Models;
 using ModularPipelines.Modules;
 
@@ -38,12 +39,6 @@ internal class PipelineExecutor : IPipelineExecutor
         try
         {
             await _moduleExecutor.ExecuteAsync(runnableModules);
-        }
-        catch
-        {
-            // Give time for the console to update modules to Failed
-            await Task.Delay(TimeSpan.FromMilliseconds(500));
-            throw;
         }
         finally
         {
