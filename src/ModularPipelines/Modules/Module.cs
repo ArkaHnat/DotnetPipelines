@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ModularPipelines.Attributes;
 using ModularPipelines.Context;
@@ -26,12 +27,24 @@ public abstract class Module : Module<IDictionary<string, object>>, IModule;
 public abstract partial class Module<T> : ModuleBase<T>
 {
     private readonly Stopwatch _stopwatch = new();
-    private readonly object _startCheckLock = new();
-    
+
     internal override IEnumerable<(Type DependencyType, bool IgnoreIfNotRegistered)> GetModuleDependencies()
     {
-        return DependentModules
-            .Select(dependsOnAttribute => (dependsOnAttribute.Type, dependsOnAttribute.IgnoreIfNotRegistered));
+        foreach (var customAttribute in GetType().GetCustomAttributesIncludingBaseInterfaces<DependsOnAttribute>())
+        {
+            yield return AddDependency(customAttribute.Type, customAttribute.IgnoreIfNotRegistered);
+        }
+        
+        foreach (var customAttribute in GetType().GetCustomAttributesIncludingBaseInterfaces<DependsOnAllModulesInheritingFromAttribute>())
+        {
+            var types = Context.ServiceProvider.GetServices<ModuleBase>()
+                .Where(x => x.GetType().IsOrInheritsFrom(customAttribute.Type));
+            
+            foreach (var moduleBase in types)
+            {
+                yield return AddDependency(moduleBase.GetType(), false);   
+            }
+        }
     }
 
     internal override IEnumerable<(Type DependencyType, bool IgnoreIfNotRegistered)> GetModuleReliants()
@@ -156,7 +169,7 @@ public abstract partial class Module<T> : ModuleBase<T>
             StatusHandler.LogModuleStatus();
         }
     }
-    
+
     /// <summary>
     /// Gets the Module of type <see cref="TModule">{TModule}</see>.
     /// </summary>
@@ -203,7 +216,27 @@ public abstract partial class Module<T> : ModuleBase<T>
     protected AsyncRetryPolicy<T?> CreateRetryPolicy(int count) =>
         Policy<T?>.Handle<Exception>()
             .WaitAndRetryAsync(count, i => TimeSpan.FromMilliseconds(i * i * 100));
-    
+
+    private (Type Type, bool IgnoreIfNotRegistered) AddDependency(Type type, bool ignoreIfNotRegistered)
+    {
+        if (type == GetType())
+        {
+            throw new ModuleReferencingSelfException("A module cannot depend on itself");
+        }
+
+        if (!type.IsAssignableTo(typeof(ModuleBase)))
+        {
+            throw new Exception($"{type.FullName} must be a module to add as a dependency");
+        }
+
+        OnInitialised += (_, _) =>
+        {
+            Context.Logger.LogDebug("This module depends on {Module}", type.Name);
+        };
+
+        return (type, ignoreIfNotRegistered);
+    }
+
     private void LogResult(T? executeResult)
     {
         if (!Context.Logger.IsEnabled(LogLevel.Debug))
@@ -213,7 +246,7 @@ public abstract partial class Module<T> : ModuleBase<T>
 
         try
         {
-            Context.Logger.LogDebug("Module returned {Type}:", executeResult?.GetType().Name ?? typeof(T).Name);
+            Context.Logger.LogDebug("Module returned {Type}:", executeResult?.GetType().GetRealTypeName() ?? typeof(T).GetRealTypeName());
 
             if (executeResult is null)
             {
@@ -231,13 +264,13 @@ public abstract partial class Module<T> : ModuleBase<T>
             {
                 foreach (var o in enumerable.Cast<object>())
                 {
-                    Context.Logger.LogDebug("{Json}", JsonSerializer.Serialize(o, ModularPipelinesJsonSerializerSettings.Default));
+                    Context.Logger.LogDebug("{JsonUtils}", JsonSerializer.Serialize(o, ModularPipelinesJsonSerializerSettings.Default));
                 }
 
                 return;
             }
 
-            Context.Logger.LogDebug("{Json}", JsonSerializer.Serialize(executeResult));
+            Context.Logger.LogDebug("{JsonUtils}", JsonSerializer.Serialize(executeResult));
         }
         catch
         {
