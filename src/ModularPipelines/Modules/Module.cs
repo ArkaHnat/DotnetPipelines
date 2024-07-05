@@ -37,7 +37,7 @@ public abstract partial class Module<T> : ModuleBase<T>
         
         foreach (var customAttribute in GetType().GetCustomAttributesIncludingBaseInterfaces<DependsOnAllModulesInheritingFromAttribute>())
         {
-            var types = Context.ServiceProvider.GetServices<ModuleBase>()
+            var types = Context.ServiceProvider.GetServices<IModule>()
                 .Where(x => x.GetType().IsOrInheritsFrom(customAttribute.Type));
             
             foreach (var moduleBase in types)

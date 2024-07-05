@@ -69,10 +69,10 @@ public class DependsOnAllInheritingFromTests : TestBase
         
         await Assert.That(module4.StartTime).Is.GreaterThanOrEqualTo(module1.StartTime.Add(TimeSpan.FromSeconds(1)));
         await Assert.That(module4.StartTime).Is.GreaterThanOrEqualTo(module1.EndTime);
-        
+
         await Assert.That(module4.StartTime).Is.GreaterThanOrEqualTo(module2.StartTime.Add(TimeSpan.FromSeconds(1)));
         await Assert.That(module4.StartTime).Is.GreaterThanOrEqualTo(module2.EndTime);
-        
+
         await Assert.That(module4.StartTime).Is.GreaterThanOrEqualTo(module3.StartTime.Add(TimeSpan.FromSeconds(1)));
         await Assert.That(module4.StartTime).Is.GreaterThanOrEqualTo(module3.EndTime);
     }
