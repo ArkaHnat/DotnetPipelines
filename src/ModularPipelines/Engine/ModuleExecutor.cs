@@ -177,6 +177,12 @@ internal class ModuleExecutor : IModuleExecutor
                 }
                 finally
                 {
+                    var triggers = module.GetTriggerModules();
+                    foreach (var triggered in triggers)
+                    {
+                        await StartDependency(module, triggered.DependencyType, triggered.IgnoreIfNotRegistered);
+                    }
+
                     if (!_pipelineOptions.Value.ShowProgressInConsole)
                     {
                         await _moduleDisposer.DisposeAsync(module);

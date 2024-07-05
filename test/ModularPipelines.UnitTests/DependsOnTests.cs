@@ -84,7 +84,7 @@ public class DependsOnTests : TestBase
                 .ExecutePipelineAsync())
             .Throws
             .Exception()
-            .OfType<DependencyCollisionException>();
+            .OfType<ModuleReferencingSelfException>();
     }
 
     private class Module1 : Module

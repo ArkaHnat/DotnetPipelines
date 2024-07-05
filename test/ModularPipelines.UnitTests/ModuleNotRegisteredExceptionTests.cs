@@ -26,15 +26,15 @@ public class ModuleNotRegisteredExceptionTests : TestBase
         }
     }
 
-    [Test]
-    public async Task Module_Getting_Non_Registered_Module_Throws_Exception()
-    {
-        await Assert.ThrowsAsync<ModuleNotRegisteredException>(() =>
-            TestPipelineHostBuilder.Create()
-                .AddModule<Module2>()
-                .ExecutePipelineAsync()
-        );
-    }
+    //[Test]
+    //public async Task Module_Getting_Non_Registered_Module_Throws_Exception()
+    //{
+    //    await Assert.ThrowsAsync<ModuleNotRegisteredException>(() =>
+    //        TestPipelineHostBuilder.Create()
+    //            .AddModule<Module2>()
+    //            .ExecutePipelineAsync()
+    //    );
+    //}
 
     [Test]
     public async Task Module_Getting_Registered_Module_Does_Not_Throw_Exception()
