@@ -17,9 +17,4 @@
     <ProjectReference Include="..\..\src\ModularPipelines\ModularPipelines.csproj" />
     <ProjectReference Include="..\ModularPipelines.TestHelpers\ModularPipelines.TestHelpers.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Using Include="NUnit.Framework" />
-  </ItemGroup>
-
 </Project>

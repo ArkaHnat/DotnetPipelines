@@ -58,6 +58,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Tests", "t
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Azure.UnitTests", "test\ModularPipelines.Azure.UnitTests\ModularPipelines.Azure.UnitTests.csproj", "{0DAB08B0-E75B-4F4E-9BE0-1B70B4AA739B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Azure", "src\ModularPipelines.Azure\ModularPipelines.Azure.csproj", "{448A54B1-E130-464D-B7A0-8960F0CFC0BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -164,6 +166,10 @@ Global
 		{0DAB08B0-E75B-4F4E-9BE0-1B70B4AA739B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DAB08B0-E75B-4F4E-9BE0-1B70B4AA739B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DAB08B0-E75B-4F4E-9BE0-1B70B4AA739B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{448A54B1-E130-464D-B7A0-8960F0CFC0BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{448A54B1-E130-464D-B7A0-8960F0CFC0BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{448A54B1-E130-464D-B7A0-8960F0CFC0BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{448A54B1-E130-464D-B7A0-8960F0CFC0BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -194,6 +200,7 @@ Global
 		{5C0A5600-4CFF-49C1-8E20-40C28F870C28} = {F213898F-1E32-48F1-AB8C-83D2BD01A93B}
 		{89080A93-F626-4EF7-8930-9818C2E7C12A} = {F213898F-1E32-48F1-AB8C-83D2BD01A93B}
 		{0DAB08B0-E75B-4F4E-9BE0-1B70B4AA739B} = {F213898F-1E32-48F1-AB8C-83D2BD01A93B}
+		{448A54B1-E130-464D-B7A0-8960F0CFC0BE} = {87E9D101-2B57-4D04-9488-CF8E720AF379}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5905A5D-B4E1-4A7A-9279-0283D86A9F7F}
