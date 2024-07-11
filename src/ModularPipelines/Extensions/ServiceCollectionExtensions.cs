@@ -91,9 +91,9 @@ public static class ServiceCollectionExtensions
         {
             collection.AddSingleton<IModule, TModule>();
 
-            types ??= AppDomain.CurrentDomain
-                        .GetAssemblies()
-                        .SelectMany(a => a.GetTypes())
+            var entryAssembly = Assembly.GetEntryAssembly();
+
+            types ??= entryAssembly!.GetTypes()
                         .Where(t => t.IsAssignableTo(typeof(ModuleBase)))
                         .Where(t => !t.IsAbstract)
                         .ToArray();
