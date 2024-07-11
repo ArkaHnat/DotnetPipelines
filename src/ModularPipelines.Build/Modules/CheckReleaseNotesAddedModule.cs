@@ -1,6 +1,7 @@
 using ModularPipelines.Attributes;
 using ModularPipelines.Build.Attributes;
 using ModularPipelines.Context;
+using ModularPipelines.Git.Attributes;
 using ModularPipelines.Git.Extensions;
 using ModularPipelines.GitHub.Attributes;
 using ModularPipelines.Models;
@@ -10,7 +11,7 @@ using File = ModularPipelines.FileSystem.File;
 namespace ModularPipelines.Build.Modules;
 
 [RunOnLinux]
-[SkipOnMainBranch]
+[RunOnlyOnBranch("release")]
 [SkipIfDependabot]
 [DependsOn<ChangedFilesInPullRequestModule>]
 public class CheckReleaseNotesAddedModule : Module
