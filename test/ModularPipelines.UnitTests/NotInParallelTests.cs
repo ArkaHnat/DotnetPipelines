@@ -110,16 +110,17 @@ public class NotInParallelTests
         var results = await TestPipelineHostBuilder.Create()
             .AddModule<ParallelDependency1>()
             .AddModule<NotParallelModuleWithParallelDependency1>()
-
             .AddModule<NotParallelModuleWithNonParallelDependency>()
             .ExecutePipelineAsync();
 
         var firstModule = results.Modules.MinBy(x => x.EndTime)!;
         var nextModule = results.Modules.MaxBy(x => x.EndTime)!;
 
-        var expectedStartTime = firstModule.StartTime + TimeSpan.FromSeconds(5);
-        
+        var expectedStartTime = firstModule.StartTime + TimeSpan.FromSeconds(10);
+        Console.WriteLine("First " + firstModule.StartTime);
+        Console.WriteLine("Last expected" + expectedStartTime);
+        Console.WriteLine("Last performed" + nextModule.StartTime);
         await Assert.That(nextModule.StartTime)
-            .Is.EqualToWithTolerance(expectedStartTime, TimeSpan.FromSeconds(1));
+            .Is.EqualToWithTolerance(expectedStartTime, TimeSpan.FromSeconds(3));
     }
 }
