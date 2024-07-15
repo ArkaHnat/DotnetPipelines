@@ -139,15 +139,6 @@ public class DependsOnTests : TestBase
         }
     }
 
-    [ModularPipelines.Attributes.DependsOn(typeof(ModuleFailedException))]
-    private class DependsOnNonModule : Module
-    {
-        protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
-        {
-            _ = GetModuleIfRegistered<Module1>();
-            return await NothingAsync();
-        }
-    }
 
     [DependsOn<Module1>(IgnoreIfNotRegistered = true)]
     private class Module3WithGet : Module

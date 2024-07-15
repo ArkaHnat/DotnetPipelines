@@ -82,7 +82,7 @@ public class ModuleLoggerTests
             {
                 collection.Configure<MySecrets>(_.Configuration);
                 collection.AddLogging(builder => { builder.AddFile(file); });
-                collection.AddSingleton(typeof(ModuleBase), moduleType);
+                collection.AddSingleton(typeof(IModule), moduleType);
             })
             .SetLogLevel(LogLevel.Information)
             .BuildHostAsync();

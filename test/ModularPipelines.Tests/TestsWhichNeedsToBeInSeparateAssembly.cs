@@ -27,16 +27,6 @@ public class TestsWhichNeedsToBeInSeparateAssembly
         }
     }
 
-    [Attributes.DependsOn(typeof(ModuleFailedException))]
-    private class DependsOnNonModule : Module
-    {
-        protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
-        {
-            //_ = GetModule<Module1>();
-            return await NothingAsync();
-        }
-    }
-
     [Test]
     public async Task Depends_On_Non_Module_Throws_Exception()
     {
