@@ -168,4 +168,14 @@ public class DependsOnTests : TestBase
             return await NothingAsync();
         }
     }
+
+    [DependsOn<Module1>(IgnoreIfNotRegistered = true)]
+    private class Module3WithGetIfRegistered : Module
+    {
+        protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+        {
+            _ = GetModuleIfRegistered<Module1>();
+            return await NothingAsync();
+        }
+    }
 }
