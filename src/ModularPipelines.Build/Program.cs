@@ -8,6 +8,7 @@ using ModularPipelines.Build.Modules;
 using ModularPipelines.Build.Modules.LocalMachine;
 using ModularPipelines.Build.Settings;
 using ModularPipelines.Extensions;
+using ModularPipelines.GitHub.Options;
 using ModularPipelines.Host;
 using Octokit;
 using Octokit.Internal;
@@ -78,5 +79,5 @@ await PipelineHostBuilder.Create()
         }
     })
     .ConfigurePipelineOptions((context, options) => options.DefaultRetryCount = 3)
-    .SetLogLevel(LogLevel.Debug)
+    .SetLogLevel(Environment.GetEnvironmentVariable("RUNNER_DEBUG") == "1" ? LogLevel.Debug : LogLevel.Information)
     .ExecutePipelineAsync();
