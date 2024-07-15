@@ -65,7 +65,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           DOTNET_ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'Production' || 'Development' }}
-          NuGet__ApiKey: ${{ github.ref == 'refs/heads/main' && secrets.NuGet__ApiKey || null }}
+          NuGet__ApiKey: ${{ secrets.NuGet__ApiKey || null }}
           GitHub__Actor: ${{ github.actor }}
           GitHub__Repository__Id: ${{ github.repository_id }}
           GitHub__StandardToken: ${{ secrets.DOTNET_FORMAT_PUSH_TOKEN }}
