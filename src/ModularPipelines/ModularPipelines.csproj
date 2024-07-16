@@ -6,6 +6,7 @@
     
     <PropertyGroup>
         <Description>Write your pipelines in C#!</Description>
+        <AssemblyName>Dotnet$(MSBuildProjectName)</AssemblyName>
     </PropertyGroup>
     
     <ItemGroup>

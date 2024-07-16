@@ -2,47 +2,47 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.34909.67
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Analyzers", "src\ModularPipelines.Analyzers\ModularPipelines.Analyzers\ModularPipelines.Analyzers.csproj", "{C966BB10-DA52-42DD-9DAB-5BE7DCCA0817}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Analyzers", "src\ModularPipelines.Analyzers\ModularPipelines.Analyzers\DotnetModularPipelines.Analyzers.csproj", "{C966BB10-DA52-42DD-9DAB-5BE7DCCA0817}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Analyzers.CodeFixes", "src\ModularPipelines.Analyzers\ModularPipelines.Analyzers.CodeFixes\ModularPipelines.Analyzers.CodeFixes.csproj", "{261DCD48-E34E-4786-BC8C-1A05D18C25B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Analyzers.CodeFixes", "src\ModularPipelines.Analyzers\ModularPipelines.Analyzers.CodeFixes\DotnetModularPipelines.Analyzers.CodeFixes.csproj", "{261DCD48-E34E-4786-BC8C-1A05D18C25B4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Analyzers.Package", "src\ModularPipelines.Analyzers\ModularPipelines.Analyzers.Package\ModularPipelines.Analyzers.Package.csproj", "{ADBA7EBF-5F13-46EB-BF2C-AFF8B6F5DF42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Analyzers.Package", "src\ModularPipelines.Analyzers\ModularPipelines.Analyzers.Package\DotnetModularPipelines.Analyzers.Package.csproj", "{ADBA7EBF-5F13-46EB-BF2C-AFF8B6F5DF42}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Analyzers.Test", "src\ModularPipelines.Analyzers\ModularPipelines.Analyzers.Test\ModularPipelines.Analyzers.Test.csproj", "{07963809-4ED8-4C4E-95DA-21ECDF948B54}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Analyzers.Test", "src\ModularPipelines.Analyzers\ModularPipelines.Analyzers.Test\DotnetModularPipelines.Analyzers.Test.csproj", "{07963809-4ED8-4C4E-95DA-21ECDF948B54}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines", "src\ModularPipelines\ModularPipelines.csproj", "{67A40317-7A69-43A3-B71F-7F0D6298EB01}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines", "src\ModularPipelines\DotnetModularPipelines.csproj", "{67A40317-7A69-43A3-B71F-7F0D6298EB01}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Examples", "src\ModularPipelines.Examples\ModularPipelines.Examples.csproj", "{01A8D780-3D35-4BEF-A6E5-DEDBB3B44B41}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Examples", "src\ModularPipelines.Examples\DotnetModularPipelines.Examples.csproj", "{01A8D780-3D35-4BEF-A6E5-DEDBB3B44B41}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Azure", "src\ModularPipelines.Azure\ModularPipelines.Azure.csproj", "{7AB8AA64-9408-4FB4-865E-B888CEAF09B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Azure", "src\ModularPipelines.Azure\DotnetModularPipelines.Azure.csproj", "{7AB8AA64-9408-4FB4-865E-B888CEAF09B9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Git", "src\ModularPipelines.Git\ModularPipelines.Git.csproj", "{AE342AE7-F3A0-4BDE-857D-27EA710A3084}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Git", "src\ModularPipelines.Git\DotnetModularPipelines.Git.csproj", "{AE342AE7-F3A0-4BDE-857D-27EA710A3084}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.DotNet", "src\ModularPipelines.DotNet\ModularPipelines.DotNet.csproj", "{80B2A133-2188-4CD4-9DEA-4D6B8C15F1DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.DotNet", "src\ModularPipelines.DotNet\DotnetModularPipelines.DotNet.csproj", "{80B2A133-2188-4CD4-9DEA-4D6B8C15F1DD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.UnitTests", "test\ModularPipelines.UnitTests\ModularPipelines.UnitTests.csproj", "{937A2E0D-8D4B-4B36-848E-389CD789E141}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.UnitTests", "test\ModularPipelines.UnitTests\DotnetModularPipelines.UnitTests.csproj", "{937A2E0D-8D4B-4B36-848E-389CD789E141}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Build", "src\ModularPipelines.Build\ModularPipelines.Build.csproj", "{936B9B1B-D734-4757-95FE-257B852E3358}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Build", "src\ModularPipelines.Build\DotnetModularPipelines.Build.csproj", "{936B9B1B-D734-4757-95FE-257B852E3358}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.MicrosoftTeams", "src\ModularPipelines.MicrosoftTeams\ModularPipelines.MicrosoftTeams.csproj", "{FFBA91D0-9DC8-48A7-BD8E-6EF2E436F0AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.MicrosoftTeams", "src\ModularPipelines.MicrosoftTeams\DotnetModularPipelines.MicrosoftTeams.csproj", "{FFBA91D0-9DC8-48A7-BD8E-6EF2E436F0AF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Node", "src\ModularPipelines.Node\ModularPipelines.Node.csproj", "{1C075CAF-7409-4941-8622-E3D3DDD876AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Node", "src\ModularPipelines.Node\DotnetModularPipelines.Node.csproj", "{1C075CAF-7409-4941-8622-E3D3DDD876AB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Cmd", "src\ModularPipelines.Cmd\ModularPipelines.Cmd.csproj", "{BC8D3D41-EFC5-45BF-9A1F-766B3989BA4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Cmd", "src\ModularPipelines.Cmd\DotnetModularPipelines.Cmd.csproj", "{BC8D3D41-EFC5-45BF-9A1F-766B3989BA4E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Azure.Pipelines", "src\ModularPipelines.Azure.Pipelines\ModularPipelines.Azure.Pipelines.csproj", "{D927ABA0-0DEC-4370-99C7-2CC2B8B3992E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Azure.Pipelines", "src\ModularPipelines.Azure.Pipelines\DotnetModularPipelines.Azure.Pipelines.csproj", "{D927ABA0-0DEC-4370-99C7-2CC2B8B3992E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Docker", "src\ModularPipelines.Docker\ModularPipelines.Docker.csproj", "{D275C61D-E0DF-4D76-B70A-F49EB277E451}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Docker", "src\ModularPipelines.Docker\DotnetModularPipelines.Docker.csproj", "{D275C61D-E0DF-4D76-B70A-F49EB277E451}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Helm", "src\ModularPipelines.Helm\ModularPipelines.Helm.csproj", "{3A4CD1E9-E26E-481C-9B42-E1C9A32BF021}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Helm", "src\ModularPipelines.Helm\DotnetModularPipelines.Helm.csproj", "{3A4CD1E9-E26E-481C-9B42-E1C9A32BF021}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Kubernetes", "src\ModularPipelines.Kubernetes\ModularPipelines.Kubernetes.csproj", "{8D9D763A-4BFA-4A34-8CFB-7318F204A2D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Kubernetes", "src\ModularPipelines.Kubernetes\DotnetModularPipelines.Kubernetes.csproj", "{8D9D763A-4BFA-4A34-8CFB-7318F204A2D8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Terraform", "src\ModularPipelines.Terraform\ModularPipelines.Terraform.csproj", "{4FF0B74A-CC18-4B90-B50C-E8564F5136B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Terraform", "src\ModularPipelines.Terraform\DotnetModularPipelines.Terraform.csproj", "{4FF0B74A-CC18-4B90-B50C-E8564F5136B2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Email", "src\ModularPipelines.Email\ModularPipelines.Email.csproj", "{D2F0D130-50A7-46BB-B495-1B673C2A23A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Email", "src\ModularPipelines.Email\DotnetModularPipelines.Email.csproj", "{D2F0D130-50A7-46BB-B495-1B673C2A23A9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Ftp", "src\ModularPipelines.Ftp\ModularPipelines.Ftp.csproj", "{A740BDF2-742C-44AA-8449-293F693E4136}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Ftp", "src\ModularPipelines.Ftp\DotnetModularPipelines.Ftp.csproj", "{A740BDF2-742C-44AA-8449-293F693E4136}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{F213898F-1E32-48F1-AB8C-83D2BD01A93B}"
 EndProject
@@ -50,25 +50,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{87E9D1
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{0085C0A4-064F-432C-B2FE-A92518241B65}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Slack", "src\ModularPipelines.Slack\ModularPipelines.Slack.csproj", "{467FCE3D-2261-486A-ACD8-5D804C92DA01}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Slack", "src\ModularPipelines.Slack\DotnetModularPipelines.Slack.csproj", "{467FCE3D-2261-486A-ACD8-5D804C92DA01}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.TestsForTests", "test\ModularPipelines.TestsForTests\ModularPipelines.TestsForTests.csproj", "{B4A63CCF-229F-4EBE-AC85-778062C50930}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.TestsForTests", "test\ModularPipelines.TestsForTests\DotnetModularPipelines.TestsForTests.csproj", "{B4A63CCF-229F-4EBE-AC85-778062C50930}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.GitHub", "src\ModularPipelines.GitHub\ModularPipelines.GitHub.csproj", "{23A841CA-D773-4195-81A4-367544763909}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.GitHub", "src\ModularPipelines.GitHub\DotnetModularPipelines.GitHub.csproj", "{23A841CA-D773-4195-81A4-367544763909}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.TeamCity", "src\ModularPipelines.TeamCity\ModularPipelines.TeamCity.csproj", "{8AAA3556-797E-495E-9213-E78238C06947}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.TeamCity", "src\ModularPipelines.TeamCity\DotnetModularPipelines.TeamCity.csproj", "{8AAA3556-797E-495E-9213-E78238C06947}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Yarn", "src\ModularPipelines.Yarn\ModularPipelines.Yarn.csproj", "{966A259F-3AED-438A-A792-4B2574EA2F0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Yarn", "src\ModularPipelines.Yarn\DotnetModularPipelines.Yarn.csproj", "{966A259F-3AED-438A-A792-4B2574EA2F0E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Chocolatey", "src\ModularPipelines.Chocolatey\ModularPipelines.Chocolatey.csproj", "{4F9D2311-5B31-4A4C-BA8F-7A21B3E36C66}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Chocolatey", "src\ModularPipelines.Chocolatey\DotnetModularPipelines.Chocolatey.csproj", "{4F9D2311-5B31-4A4C-BA8F-7A21B3E36C66}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.WinGet", "src\ModularPipelines.WinGet\ModularPipelines.WinGet.csproj", "{AA41FF20-E41B-4219-A0CE-55007105C2D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.WinGet", "src\ModularPipelines.WinGet\DotnetModularPipelines.WinGet.csproj", "{AA41FF20-E41B-4219-A0CE-55007105C2D2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.TestHelpers", "test\ModularPipelines.TestHelpers\ModularPipelines.TestHelpers.csproj", "{5C0A5600-4CFF-49C1-8E20-40C28F870C28}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.TestHelpers", "test\ModularPipelines.TestHelpers\DotnetModularPipelines.TestHelpers.csproj", "{5C0A5600-4CFF-49C1-8E20-40C28F870C28}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Tests", "test\ModularPipelines.Tests\ModularPipelines.Tests.csproj", "{89080A93-F626-4EF7-8930-9818C2E7C12A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Tests", "test\ModularPipelines.Tests\DotnetModularPipelines.Tests.csproj", "{89080A93-F626-4EF7-8930-9818C2E7C12A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Azure.UnitTests", "test\ModularPipelines.Azure.UnitTests\ModularPipelines.Azure.UnitTests.csproj", "{0DAB08B0-E75B-4F4E-9BE0-1B70B4AA739B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Azure.UnitTests", "test\ModularPipelines.Azure.UnitTests\DotnetModularPipelines.Azure.UnitTests.csproj", "{0DAB08B0-E75B-4F4E-9BE0-1B70B4AA739B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ModularPipelines.Analyzers", "ModularPipelines.Analyzers", "{980A3521-6A61-4C8D-8621-E174ABA061A2}"
 EndProject
@@ -76,9 +76,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ModularPipelines.Examples",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ModularPipelines", "ModularPipelines", "{DE6C81F9-9E4A-4AA5-AD66-60E906997A2C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.AmazonWebServices", "src\ModularPipelines.AmazonWebServices\ModularPipelines.AmazonWebServices.csproj", "{DC02DAC7-2EE3-47B9-ACD7-C105B3087962}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.AmazonWebServices", "src\ModularPipelines.AmazonWebServices\DotnetModularPipelines.AmazonWebServices.csproj", "{DC02DAC7-2EE3-47B9-ACD7-C105B3087962}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Google", "src\ModularPipelines.Google\ModularPipelines.Google.csproj", "{F4A50CC1-B68F-485B-AC33-5FCC578EA1ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotnetModularPipelines.Google", "src\ModularPipelines.Google\DotnetModularPipelines.Google.csproj", "{F4A50CC1-B68F-485B-AC33-5FCC578EA1ED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -254,7 +254,7 @@ Global
 		{966A259F-3AED-438A-A792-4B2574EA2F0E} = {87E9D101-2B57-4D04-9488-CF8E720AF379}
 		{4F9D2311-5B31-4A4C-BA8F-7A21B3E36C66} = {87E9D101-2B57-4D04-9488-CF8E720AF379}
 		{AA41FF20-E41B-4219-A0CE-55007105C2D2} = {87E9D101-2B57-4D04-9488-CF8E720AF379}
-		{5C0A5600-4CFF-49C1-8E20-40C28F870C28} = {F213898F-1E32-48F1-AB8C-83D2BD01A93B}
+		{5C0A5600-4CFF-49C1-8E20-40C28F870C28} = {87E9D101-2B57-4D04-9488-CF8E720AF379}
 		{89080A93-F626-4EF7-8930-9818C2E7C12A} = {F213898F-1E32-48F1-AB8C-83D2BD01A93B}
 		{0DAB08B0-E75B-4F4E-9BE0-1B70B4AA739B} = {F213898F-1E32-48F1-AB8C-83D2BD01A93B}
 		{DC02DAC7-2EE3-47B9-ACD7-C105B3087962} = {87E9D101-2B57-4D04-9488-CF8E720AF379}

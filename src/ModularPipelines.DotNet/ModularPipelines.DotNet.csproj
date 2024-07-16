@@ -1,11 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>Helpers for interacting with dotnet CLI.</Description>
+    <AssemblyName>Dotnet$(MSBuildProjectName)</AssemblyName>
   </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\ModularPipelines\ModularPipelines.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ModularPipelines\ModularPipelines.csproj" />
+  </ItemGroup>
 
 </Project>

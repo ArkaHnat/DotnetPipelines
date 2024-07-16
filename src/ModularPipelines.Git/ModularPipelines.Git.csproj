@@ -2,6 +2,7 @@
     
   <PropertyGroup>
     <Description>Helpers for interacting with git.</Description>
+    <AssemblyName>Dotnet$(MSBuildProjectName)</AssemblyName>
   </PropertyGroup>
 
     <ItemGroup>
