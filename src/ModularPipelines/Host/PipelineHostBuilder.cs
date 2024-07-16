@@ -259,7 +259,7 @@ public class PipelineHostBuilder
         return this;
     }
 
-    internal async Task<IPipelineHost> BuildHostAsync()
+    public async Task<IPipelineHost> BuildHostAsync()
     {
         LoadModularPipelineAssembliesIfNotLoadedYet();
 

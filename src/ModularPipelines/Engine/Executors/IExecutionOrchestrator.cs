@@ -5,7 +5,7 @@ namespace ModularPipelines.Engine.Executors;
 /// <summary>
 /// Orchestrates executing the pipeline, with logging and exception handling.
 /// </summary>
-internal interface IExecutionOrchestrator
+public interface IExecutionOrchestrator
 {
     /// <summary>
     /// Executes the pipeline.
