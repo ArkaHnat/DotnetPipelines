@@ -14,13 +14,14 @@ using ModularPipelines.Modules;
 namespace ModularPipelines.Build.Modules;
 
 [DependsOn<RunUnitTestsModule>(Optional = true)]
-[DependsOn<PackagePathsParserModule>]
-public class UploadPackagesToNugetModule : Module<CommandResult[]>
+
+[DependsOn<UploadPackagesToNugetModule>]
+public class UnlistsPublishedNugetPackageModule : Module<CommandResult[]>
 {
     private readonly IOptions<NuGetSettings> _nugetSettings;
     private readonly IOptions<PublishSettings> _publishSettings;
 
-    public UploadPackagesToNugetModule(IOptions<NuGetSettings> nugetSettings, IOptions<PublishSettings> publishSettings)
+    public UnlistsPublishedNugetPackageModule(IOptions<NuGetSettings> nugetSettings, IOptions<PublishSettings> publishSettings)
     {
         _nugetSettings = nugetSettings;
         _publishSettings = publishSettings;
@@ -33,7 +34,7 @@ public class UploadPackagesToNugetModule : Module<CommandResult[]>
 
         foreach (var packagePath in packagePaths.Value!)
         {
-            context.Logger.LogInformation("Uploading {File}", packagePath);
+            context.Logger.LogInformation("Unlisting {File}", packagePath);
         }
 
         await base.OnBeforeExecute(context);
@@ -53,12 +54,11 @@ public class UploadPackagesToNugetModule : Module<CommandResult[]>
         var packagePaths = await GetModule<PackagePathsParserModule>();
 
         return await packagePaths.Value!
-            .SelectAsync(async nugetFile => await context.DotNet().Nuget.Push(new DotNetNugetPushOptions
+            .SelectAsync(async nugetFile => await context.DotNet().Nuget.Delete(new DotNetNugetDeleteOptions
             {
-                Path = nugetFile,
+                NonInteractive = true,
                 Source = "https://api.nuget.org/v3/index.json",
                 ApiKey = _nugetSettings.Value.ApiKey!,
-                SkipDuplicate = true,
             }, cancellationToken), cancellationToken: cancellationToken)
             .ProcessOneAtATime();
     }
