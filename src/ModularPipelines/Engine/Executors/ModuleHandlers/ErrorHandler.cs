@@ -36,7 +36,7 @@ internal class ErrorHandler<T> : BaseHandler<T>, IErrorHandler
 
         Module.Exception = exception;
 
-        if (await Module.ShouldIgnoreFailures(Context, exception))
+        if (await Module.ShouldIgnoreFailures(Context, exception) || Module.IsOptional)
         {
             await SaveFailedResult(exception);
         }

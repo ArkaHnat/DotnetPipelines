@@ -77,6 +77,17 @@ public class DependsOnTests : TestBase
     }
 
     [Test]
+    public async Task No_Exception_Thrown_When_DependandModuleIsFailedButItWasOptional()
+    {
+        var pipelineSummary = await TestPipelineHostBuilder.Create()
+            .AddModule<Module3WithGetIfRegistered>()
+            .ExecutePipelineAsync();
+
+        await Assert.That(pipelineSummary.Status)
+            .Is
+            .EqualTo(Status.Successful);
+    }
+    [Test]
     public async Task Depends_On_Self_Module_Throws_Exception()
     {
         await Assert.That(async () => await TestPipelineHostBuilder.Create()
@@ -87,6 +98,17 @@ public class DependsOnTests : TestBase
             .OfType<ModuleReferencingSelfException>();
     }
 
+    [Test]
+    public async Task ExpectPipeline_ToSucces_IfOptionalDependencyFailed()
+    {
+        var pipelineSummary = await TestPipelineHostBuilder.Create()
+            .AddModule<ModuleWithFailingOptionalDependency>()
+            .ExecutePipelineAsync();
+
+        await Assert.That(pipelineSummary.Status)
+            .Is
+            .EqualTo(Status.Successful);
+    }
     private class Module1 : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
@@ -138,8 +160,21 @@ public class DependsOnTests : TestBase
             return await NothingAsync();
         }
     }
-
-
+    private class AlwaysFailModule : Module
+    {
+        protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    [DependsOn<AlwaysFailModule>(Optional = true)]
+    private class ModuleWithFailingOptionalDependency : Module
+    {
+        protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+        {
+            return await NothingAsync();
+        }
+    }
     [DependsOn<Module1>(IgnoreIfNotRegistered = true)]
     private class Module3WithGet : Module
     {

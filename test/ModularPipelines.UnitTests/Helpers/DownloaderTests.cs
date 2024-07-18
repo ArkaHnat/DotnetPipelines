@@ -7,6 +7,7 @@ namespace ModularPipelines.UnitTests.Helpers;
 
 public class DownloaderTests : TestBase
 {
+    [Category("Integration")]
     [Test, Retry(3)]
     public async Task Can_Download()
     {

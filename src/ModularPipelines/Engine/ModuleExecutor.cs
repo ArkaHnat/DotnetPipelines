@@ -160,7 +160,7 @@ internal class ModuleExecutor : IModuleExecutor
 
                 foreach (var dependency in dependencies)
                 {
-                    await StartDependency(module, dependency.DependencyType, dependency.IgnoreIfNotRegistered);
+                    await StartDependency(module, dependency.DependencyType, dependency.IgnoreIfNotRegistered, dependency.Optional);
                 }
 
                 try
@@ -180,7 +180,7 @@ internal class ModuleExecutor : IModuleExecutor
                     var triggers = module.GetTriggerModules();
                     foreach (var triggered in triggers)
                     {
-                        await StartDependency(module, triggered.DependencyType, triggered.IgnoreIfNotRegistered);
+                        await StartDependency(module, triggered.DependencyType, triggered.IgnoreIfNotRegistered, false);
                     }
 
                     if (!_pipelineOptions.Value.ShowProgressInConsole)
@@ -192,7 +192,7 @@ internal class ModuleExecutor : IModuleExecutor
         }
     }
 
-    private async Task StartDependency(ModuleBase requestingModule, Type dependencyType, bool ignoreIfNotRegistered)
+    private async Task StartDependency(ModuleBase requestingModule, Type dependencyType, bool ignoreIfNotRegistered, bool optional)
     {
         _logger.LogDebug("Starting Dependency {Dependency} for Module {Module}", dependencyType.Name, requestingModule.GetType().Name);
         
@@ -211,11 +211,12 @@ internal class ModuleExecutor : IModuleExecutor
         
         requestingModule.Context.Logger.LogDebug("{RequestingModule} is waiting for {Module}", requestingModule.GetType().Name, dependencyType.Name);
 
+        module.IsOptional = optional;
         try
         {
             await StartModule(module);
         }
-        catch (Exception e) when (requestingModule.ModuleRunType == ModuleRunType.AlwaysRun)
+        catch (Exception e) when (requestingModule.ModuleRunType == ModuleRunType.AlwaysRun || optional)
         {
             _exceptionContainer.RegisterException(new AlwaysRunPostponedException($"{dependencyType.Name} threw an exception when {requestingModule.GetType().Name} was waiting for it as a dependency", e));
             requestingModule.Context.Logger.LogError(e, "Ignoring Exception due to 'AlwaysRun' set");

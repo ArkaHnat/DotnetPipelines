@@ -28,11 +28,11 @@ public abstract partial class Module<T> : ModuleBase<T>
 {
     private readonly Stopwatch _stopwatch = new();
 
-    internal override IEnumerable<(Type DependencyType, bool IgnoreIfNotRegistered)> GetModuleDependencies()
+    internal override IEnumerable<(Type DependencyType, bool IgnoreIfNotRegistered, bool Optional)> GetModuleDependencies()
     {
         foreach (var customAttribute in GetType().GetCustomAttributesIncludingBaseInterfaces<DependsOnAttribute>())
         {
-            yield return AddDependency(customAttribute.Type, customAttribute.IgnoreIfNotRegistered);
+            yield return AddDependency(customAttribute.Type, customAttribute.IgnoreIfNotRegistered, customAttribute.Optional);
         }
         
         foreach (var customAttribute in GetType().GetCustomAttributesIncludingBaseInterfaces<DependsOnAllModulesInheritingFromAttribute>())
@@ -42,7 +42,7 @@ public abstract partial class Module<T> : ModuleBase<T>
             
             foreach (var moduleBase in types)
             {
-                yield return AddDependency(moduleBase.GetType(), false);   
+                yield return AddDependency(moduleBase.GetType(), false, false);   
             }
         }
     }
@@ -217,7 +217,7 @@ public abstract partial class Module<T> : ModuleBase<T>
         Policy<T?>.Handle<Exception>()
             .WaitAndRetryAsync(count, i => TimeSpan.FromMilliseconds(i * i * 100));
 
-    private (Type Type, bool IgnoreIfNotRegistered) AddDependency(Type type, bool ignoreIfNotRegistered)
+    private (Type Type, bool IgnoreIfNotRegistered, bool Optional) AddDependency(Type type, bool ignoreIfNotRegistered, bool optional)
     {
         if (type == GetType())
         {
@@ -234,7 +234,7 @@ public abstract partial class Module<T> : ModuleBase<T>
             Context.Logger.LogDebug("This module depends on {Module}", type.Name);
         };
 
-        return (type, ignoreIfNotRegistered);
+        return (type, ignoreIfNotRegistered, optional);
     }
 
     private void LogResult(T? executeResult)
