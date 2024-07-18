@@ -6,5 +6,5 @@ public interface IGitVersioning
 {
     Task<GitVersionInformation> GetGitVersioningInformation();
 
-    public string DotnetToolName { get; };
+    public string DotnetToolName { get; }
 }
