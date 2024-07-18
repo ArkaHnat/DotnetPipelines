@@ -29,6 +29,7 @@ await PipelineHostBuilder.Create()
         collection.Configure<CodeCovSettings>(context.Configuration.GetSection("CodeCov"));
 
         collection
+            .AddModule<DotnetToolRestoreModule>()
             .AddModule<RunUnitTestsModule>()
             .AddModule<NugetVersionGeneratorModule>()
             .AddModule<FindProjectsModule>()
