@@ -3,6 +3,7 @@ using ModularPipelines.Context;
 using ModularPipelines.FileSystem;
 using ModularPipelines.Git.Models;
 using ModularPipelines.Options;
+using Polly;
 
 namespace ModularPipelines.Git;
 
@@ -15,6 +16,14 @@ internal class GitVersioning : IGitVersioning
 
     private static readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
     private static GitVersionInformation? _prefetchedGitVersionInformation;
+
+    public string DotnetToolName 
+    { 
+        get
+        {
+            return "GitVersion.Tool";
+        } 
+    }
 
     public GitVersioning(IFileSystemContext fileSystemContext, IGitInformation gitInformation, ICommand command)
     {
@@ -34,21 +43,13 @@ internal class GitVersioning : IGitVersioning
                 return _prefetchedGitVersionInformation;
             }
 
-            await _command.ExecuteCommandLineTool(new CommandLineToolOptions("dotnet")
-            {
-                Arguments = new[]
-                {
-                    "tool", "install", "--tool-path", _temporaryFolder.Path, "GitVersion.Tool",
-                },
-            });
-
             var gitVersionOutput = await _command.ExecuteCommandLineTool(
-                new CommandLineToolOptions(Path.Combine(_temporaryFolder, "dotnet-gitversion"))
+                new CommandLineToolOptions("dotnet")
                 {
                     WorkingDirectory = _gitInformation.Root.Path,
                     Arguments = new[]
                     {
-                        "/output", "json",
+                        "gitversion", "/output", "json",
                     },
                 });
 
