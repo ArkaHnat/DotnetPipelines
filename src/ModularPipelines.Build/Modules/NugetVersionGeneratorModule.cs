@@ -2,8 +2,11 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ModularPipelines.Build.Settings;
 using ModularPipelines.Context;
+using ModularPipelines.DotNet.Extensions;
 using ModularPipelines.Extensions;
+using ModularPipelines.Git;
 using ModularPipelines.Git.Extensions;
+using ModularPipelines.Models;
 using ModularPipelines.Modules;
 
 namespace ModularPipelines.Build.Modules;
@@ -23,7 +26,7 @@ public class NugetVersionGeneratorModule : Module<string>
         var gitVersionInformation = await context.Git().Versioning.GetGitVersioningInformation();
 
         var version = _publishSettings.Value.IsAlpha 
-            ? $"{gitVersionInformation.FullSemVer}-alpha{gitVersionInformation.CommitsSinceVersionSourcePadded!}" 
+            ? $"{gitVersionInformation.NuGetVersion}"
             : gitVersionInformation.FullSemVer!;
 
         context.LogOnPipelineEnd($"Generated Version Number: {version}");
