@@ -17,7 +17,6 @@ namespace ModularPipelines.Build.Modules;
 [DependsOn<FindProjectDependenciesModule>]
 
 [DependsOn<ChangedFilesInPullRequestModule>]
-[RunOnLinuxOnly]
 public class PackProjectsModule : Module<CommandResult[]>
 {
     /// <inheritdoc/>

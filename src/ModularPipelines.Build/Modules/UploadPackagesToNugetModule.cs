@@ -13,11 +13,10 @@ using ModularPipelines.Modules;
 
 namespace ModularPipelines.Build.Modules;
 
-[DependsOn<RunUnitTestsModule>]
+[DependsOn<RunUnitTestsModule>(Optional = true)]
+
+[DependsOn<PackProjectsModule>]
 [DependsOn<PackagePathsParserModule>]
-[RunOnLinuxOnly]
-[SkipIfNoGitHubToken]
-[RunOnLinuxOnly]
 public class UploadPackagesToNugetModule : Module<CommandResult[]>
 {
     private readonly IOptions<NuGetSettings> _nugetSettings;

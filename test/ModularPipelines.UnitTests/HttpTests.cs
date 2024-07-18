@@ -52,6 +52,7 @@ public class HttpTests : TestBase
         await Assert.That(logFile).Does.Contain("Server: GitHub.com");
     }
 
+    [Category("Integration")]
     [Test]
     public async Task When_Log_Response_False_Then_Do_Not_Log_Response()
     {
