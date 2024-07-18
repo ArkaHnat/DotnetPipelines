@@ -4,4 +4,5 @@ public enum ModuleRunType
 {
     AlwaysRun,
     OnSuccessfulDependencies,
+    BeforePipeline,
 }

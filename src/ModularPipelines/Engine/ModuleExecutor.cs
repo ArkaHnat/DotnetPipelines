@@ -51,6 +51,12 @@ internal class ModuleExecutor : IModuleExecutor
     {
         try
         {
+            var beforePipelineModules = modules.Where(a => a.ModuleRunType == ModuleRunType.BeforePipeline).ToList();
+            foreach (var beforePipelineModule in beforePipelineModules)
+            {
+                await StartModule(beforePipelineModule);
+            }
+
             var nonParallelModules = modules
                 .Where(x => x.GetType().GetCustomAttribute<NotInParallelAttribute>() != null)
                 .OrderBy(x => x.DependentModules.Count)
