@@ -73,6 +73,7 @@ csharp_space_between_method_call_empty_parameter_list_parentheses = false
 resharper_unused_member_global_highlighting = none
 resharper_not_accessed_positional_property_global_highlighting = none
 resharper_class_never_instantiated_global_highlighting = none
+csharp_style_prefer_primary_constructors = true:suggestion
 
 [*.{cs,vb}]
 #### Naming styles ####
@@ -145,3 +146,7 @@ dotnet_style_qualification_for_field = false:error
 dotnet_style_qualification_for_property = false:error
 dotnet_style_qualification_for_method = false:error
 dotnet_style_qualification_for_event = false:error
+dotnet_style_operator_placement_when_wrapping = beginning_of_line
+tab_width = 4
+indent_size = 4
+end_of_line = crlf
