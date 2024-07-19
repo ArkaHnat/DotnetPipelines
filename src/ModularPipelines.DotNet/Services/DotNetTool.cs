@@ -32,6 +32,11 @@ public class DotNetTool
         return await _command.ExecuteCommandLineTool(options ?? new DotnetToolRestoreOptions(), token);
     }
 
+    public async Task<CommandResult> Custom(DotnetCustomToolOptions? options = default, CancellationToken token = default)
+    {
+        return await _command.ExecuteCommandLineTool(options ?? new DotnetCustomToolOptions(string.Empty), token);
+    }
+
     public async Task<CommandResult> Update(DotNetToolUpdateOptions options, CancellationToken token = default)
     {
         return await _command.ExecuteCommandLineTool(options, token);

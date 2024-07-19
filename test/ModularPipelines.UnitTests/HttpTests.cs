@@ -13,6 +13,7 @@ namespace ModularPipelines.UnitTests;
 public class HttpTests : TestBase
 {
     [Test]
+    [Category("Integration")]
     public async Task Can_Send_Request_With_String_To_Request_Implicit_Conversion()
     {
         var result = await GetService<IHttp>((context, collection) => {});
@@ -23,6 +24,8 @@ public class HttpTests : TestBase
     }
 
     [Test]
+
+    [Category("Integration")]
     public async Task When_Log_Request_False_Then_Do_Not_Log_Request()
     {
         var file = Path.Combine(TestContext.WorkingDirectory, Guid.NewGuid().ToString("N") + ".txt");
@@ -86,6 +89,7 @@ public class HttpTests : TestBase
     [DataDrivenTest]
     [Arguments(true)]
     [Arguments(false)]
+    [Category("Integration")]
     public async Task Assert_LoggingHttpClient_Logs_As_Expected(bool customHttpClient)
     {
         var file = Path.Combine(TestContext.WorkingDirectory, Guid.NewGuid().ToString("N") + ".txt");

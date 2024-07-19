@@ -1,0 +1,37 @@
+{
+  "stryker-config": {
+    "solution": "./ModularPipelines.Merged.sln",
+    "mutation-level": "Basic",
+    "reporters": [
+      "progress",
+      "html",
+      "json",
+      "cleartext",
+      "cleartexttree",
+      "markdown"
+    ],
+    "project-info": { "version": "version" },
+    "concurrency": 2,
+    "thresholds": {
+      "high": 80,
+      "low": 60,
+      "break": 0
+    },
+    "ignore-mutations": [
+      "string",
+      "linq.First",
+      "linq.Sum"
+    ],
+    "stryker-config": {
+      "mutate": [ "!**/*.Generated.cs", "!**/*.g.cs" ],
+     "ignore-methods": [
+        "*Log",
+        "ToString",
+        "ConfigureAwait",
+        "*Exception.ctor",
+        "Console.Write*"
+      ],
+      "coverage-analysis": "perTestInIsolation",
+      "verbosity": "trace"
+    }
+  }
