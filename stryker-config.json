@@ -22,16 +22,15 @@
       "linq.First",
       "linq.Sum"
     ],
-    "stryker-config": {
-      "mutate": [ "!**/*.Generated.cs", "!**/*.g.cs" ],
-     "ignore-methods": [
-        "*Log",
-        "ToString",
-        "ConfigureAwait",
-        "*Exception.ctor",
-        "Console.Write*"
-      ],
-      "coverage-analysis": "perTestInIsolation",
-      "verbosity": "trace"
-    }
+    "mutate": [ "!**/*.Generated.cs", "!**/*.g.cs" ],
+    "ignore-methods": [
+      "*Log",
+      "ToString",
+      "ConfigureAwait",
+      "*Exception.ctor",
+      "Console.Write*"
+    ],
+    "coverage-analysis": "perTestInIsolation",
+    "verbosity": "trace"
   }
+}

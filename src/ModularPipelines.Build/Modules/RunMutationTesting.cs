@@ -10,7 +10,6 @@ namespace ModularPipelines.Build.Modules;
 
 public class RunMutationTesting : Module<CommandResult>
 {
-
     /// <inheritdoc/>
     protected override async Task<CommandResult?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
     {
