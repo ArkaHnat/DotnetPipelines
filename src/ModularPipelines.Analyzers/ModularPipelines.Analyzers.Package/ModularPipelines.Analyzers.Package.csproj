@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(MSBuildProjectFile)' == 'ModularPipelines.Analyzers.Package.csproj'">
-    <PackageId>ModularPipelines.Analyzers</PackageId>
-    <PackageTags>ModularPipelines.Analyzers, analyzers</PackageTags>
+    <PackageId>DotnetModularPipelines.Analyzers</PackageId>
+    <PackageTags>DotnetModularPipelines.Analyzers, analyzers</PackageTags>
     <DevelopmentDependency>false</DevelopmentDependency>
     <NoPackageAnalysis>true</NoPackageAnalysis>
 
