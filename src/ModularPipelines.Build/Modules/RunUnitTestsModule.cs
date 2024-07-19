@@ -26,7 +26,7 @@ public class RunUnitTestsModule : Module<CommandResult[]>
             .SelectAsync(async unitTestProjectFile => await context.DotNet().Run(new DotNetRunOptions
             {
                 Project = unitTestProjectFile.Path,
-                NoBuild = true,
+                NoBuild = false,
                 Framework = "net8.0",
                 Arguments = ["--coverage", "--coverage-output-format", "cobertura"],
                 Configuration = DotnetBuildModule.BuildConfiguration,
