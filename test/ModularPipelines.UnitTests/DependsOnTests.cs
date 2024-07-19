@@ -52,7 +52,7 @@ public class DependsOnTests : TestBase
     public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_ResolveIndirectReliants_On_Attribute()
     {
         var pipelineSummary = await TestPipelineHostBuilder.Create()
-            .ConfigureServices((context, collection) => { collection.AddModule<ModuleWithResolveIndirectReliants>(); })
+            .ConfigureServices((context, collection) => { collection.AddModule<ModuleWithResolveDependants>(); })
             .ExecutePipelineAsync();
 
         await Assert.That(pipelineSummary.Status)
@@ -118,6 +118,7 @@ public class DependsOnTests : TestBase
     }
 
     [DependsOn<Module1>]
+    [ResolveDependencies]
     private class Module2 : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
@@ -144,7 +145,7 @@ public class DependsOnTests : TestBase
         }
     }
 
-    [DependsOn<ModuleWithResolveIndirectReliants>]
+    [DependsOn<ModuleWithResolveDependants>]
     private class ModuleWithDependsOnReliants : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
@@ -153,7 +154,8 @@ public class DependsOnTests : TestBase
         }
     }
 
-    private class ModuleWithResolveIndirectReliants : Module
+    [ResolveIndirectDependants]
+    private class ModuleWithResolveDependants : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
         {
@@ -168,6 +170,7 @@ public class DependsOnTests : TestBase
         }
     }
     [DependsOn<AlwaysFailModule>(Optional = true)]
+    [ResolveDependencies]
     private class ModuleWithFailingOptionalDependency : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)

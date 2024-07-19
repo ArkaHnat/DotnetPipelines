@@ -7,6 +7,7 @@ using File = ModularPipelines.FileSystem.File;
 namespace ModularPipelines.Build.Modules;
 
 [DependsOn<FindProjectsModule>]
+[ResolveDependencies]
 public class FindProjectDependenciesModule : Module<FindProjectDependenciesModule.ProjectDependencies>
 {
     /// <inheritdoc/>

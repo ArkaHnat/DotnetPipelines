@@ -10,8 +10,8 @@ using Polly.Retry;
 
 namespace ModularPipelines.Build.Modules;
 
-[DependsOn<CodeFormattedNicelyModule>]
-[DependsOn<PackProjectsModule>]
+[DependsOn<DotnetBuildModule>]
+[ResolveDependencies]
 public class RunUnitTestsModule : Module<CommandResult[]>
 {
     protected override AsyncRetryPolicy<CommandResult[]?> RetryPolicy => CreateRetryPolicy(0);
@@ -29,7 +29,7 @@ public class RunUnitTestsModule : Module<CommandResult[]>
                 NoBuild = true,
                 Framework = "net8.0",
                 Arguments = ["--coverage", "--coverage-output-format", "cobertura"],
-                Configuration = Configuration.Release,
+                Configuration = DotnetBuildModule.BuildConfiguration,
                 EnvironmentVariables = new Dictionary<string, string?>
                 {
                     ["GITHUB_ACTIONS"] = null,

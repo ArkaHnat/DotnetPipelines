@@ -71,7 +71,7 @@ public class DependencyForTests : TestBase
     public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_Resolve_On_Attribute()
     {
         var pipelineSummary = await TestPipelineHostBuilder.Create()
-            .AddModule<DependencyModuleWithResolveIndirectReliants>()
+            .AddModule<DependencyModuleWithResolveDependants>()
             .ExecutePipelineAsync();
 
         await Assert.That(pipelineSummary.Status)
@@ -87,7 +87,7 @@ public class DependencyForTests : TestBase
     public async Task No_Exception_Thrown_When_Reliant_Module_Missing_And_Resolve_On_Attribute()
     {
         var pipelineSummary = await TestPipelineHostBuilder.Create()
-            .AddModule<IndirectDependencyModuleWithResolveIndirectReliants>()
+            .AddModule<IndirectDependencyModuleWithResolveDependants>()
             .ExecutePipelineAsync();
 
         await Assert.That(pipelineSummary.Status)
@@ -108,8 +108,9 @@ public class DependencyForTests : TestBase
         }
     }
 
-    [DependencyFor<DependencyModuleWithResolveIndirectReliants>]
-    private class IndirectDependencyModuleWithResolveIndirectReliants : Module
+    [DependencyFor<DependencyModuleWithResolveDependants>]
+    [ResolveDependents]
+    private class IndirectDependencyModuleWithResolveDependants : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
         {
@@ -117,7 +118,8 @@ public class DependencyForTests : TestBase
         }
     }
 
-    private class DependencyModuleWithResolveIndirectReliants : Module
+    [ResolveIndirectDependencies]
+    private class DependencyModuleWithResolveDependants : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
         {

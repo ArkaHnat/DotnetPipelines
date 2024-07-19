@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -24,42 +25,55 @@ public static class ServiceCollectionExtensions
             collection.AddSingleton(typeof(IModule), typeToActivate);
         }
 
-        foreach (var relatedModule in typeToActivate.GetCustomAttributesIncludingBaseInterfaces<DependsOnAttribute>())
+        if (typeToActivate.GetCustomAttribute<ResolveDependenciesAttribute>() != null)
         {
-            if (!IsAlreadyRegistered(collection, relatedModule.Type))
+            var dependencies = typeToActivate.GetCustomAttributesIncludingBaseInterfaces<DependsOnAttribute>();
+            foreach (var relatedModule in dependencies)
             {
-                collection.ActivateDependencies(relatedModule.Type, types);
+                if (!IsAlreadyRegistered(collection, relatedModule.Type))
+                {
+                    collection.ActivateDependencies(relatedModule.Type, types);
+                }
             }
         }
 
-        var reliants = typeToActivate.GetCustomAttributesIncludingBaseInterfaces<DependencyForAttribute>();
-        foreach (var relatedModule in reliants)
+        if (typeToActivate.GetCustomAttribute<ResolveDependentsAttribute>() != null)
         {
-            if (!IsAlreadyRegistered(collection, relatedModule.Type))
+            var reliants = typeToActivate.GetCustomAttributesIncludingBaseInterfaces<DependencyForAttribute>();
+            foreach (var relatedModule in reliants)
             {
-                collection.ActivateDependencies(relatedModule.Type, types);
+                if (!IsAlreadyRegistered(collection, relatedModule.Type))
+                {
+                    collection.ActivateDependencies(relatedModule.Type, types);
+                }
             }
         }
 
-        var indirectReliants = types.Where(a => a.GetCustomAttributesIncludingBaseInterfaces<DependencyForAttribute>()
+        if (typeToActivate.GetCustomAttribute<ResolveIndirectDependenciesAttribute>() != null)
+        {
+            var indirectReliants = types.Where(a => a.GetCustomAttributesIncludingBaseInterfaces<DependencyForAttribute>()
             .Any(a => a.Type == typeToActivate));
-        foreach (var indirectReliant in indirectReliants)
-        {
-            if (!IsAlreadyRegistered(collection, indirectReliant))
+            foreach (var indirectReliant in indirectReliants)
             {
-                collection.ActivateDependencies(indirectReliant, types);
+                if (!IsAlreadyRegistered(collection, indirectReliant))
+                {
+                    collection.ActivateDependencies(indirectReliant, types);
+                }
             }
         }
-
-        var indirectDependencies = types.Where(a => a.GetCustomAttributesIncludingBaseInterfaces<DependsOnAttribute>()
+        
+        if (typeToActivate.GetCustomAttribute<ResolveIndirectDependantsAttribute>() != null) 
+        { 
+            var indirectDependencies = types.Where(a => a.GetCustomAttributesIncludingBaseInterfaces<DependsOnAttribute>()
             .Any(a => a.Type == typeToActivate));
 
-        foreach (var indirectDependency in indirectDependencies)
-        {
-            if (!IsAlreadyRegistered(collection, indirectDependency))
+            foreach (var indirectDependency in indirectDependencies)
             {
-                collection.ActivateDependencies(indirectDependency, types);
-            }
+                if (!IsAlreadyRegistered(collection, indirectDependency))
+                {
+                    collection.ActivateDependencies(indirectDependency, types);
+                }
+            } 
         }
 
         var modulesToTrigger = typeToActivate.GetCustomAttributesIncludingBaseInterfaces<TriggersAttribute>();
