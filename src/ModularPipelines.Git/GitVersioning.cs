@@ -1,9 +1,12 @@
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using ModularPipelines.Context;
 using ModularPipelines.FileSystem;
 using ModularPipelines.Git.Models;
+using ModularPipelines.Logging;
 using ModularPipelines.Options;
 using Polly;
+using File = ModularPipelines.FileSystem.File;
 
 namespace ModularPipelines.Git;
 
@@ -11,6 +14,7 @@ internal class GitVersioning : IGitVersioning
 {
     private readonly IGitInformation _gitInformation;
     private readonly ICommand _command;
+    private readonly IModuleLoggerProvider _moduleLoggerProvider;
 
     private readonly Folder _temporaryFolder;
 
@@ -25,10 +29,12 @@ internal class GitVersioning : IGitVersioning
         } 
     }
 
-    public GitVersioning(IFileSystemContext fileSystemContext, IGitInformation gitInformation, ICommand command)
+
+    public GitVersioning(IFileSystemContext fileSystemContext, IGitInformation gitInformation, ICommand command, IModuleLoggerProvider moduleLoggerProvider)
     {
         _gitInformation = gitInformation;
         _command = command;
+        _moduleLoggerProvider = moduleLoggerProvider;
         _temporaryFolder = fileSystemContext.CreateTemporaryFolder();
     }
 
@@ -59,6 +65,29 @@ internal class GitVersioning : IGitVersioning
         finally
         {
             _semaphoreSlim.Release();
+        }
+    }
+
+    private async Task TryWriteConfigurationFile()
+    {
+        try
+        {
+            var file = new File(Path.Combine(_gitInformation.Root.Path, "GitVersion.yml"));
+            
+            if (!file.Exists)
+            {
+                await file.WriteAsync(
+                    """
+                    mode: ContinuousDeployment
+                    strategies:
+                      - Mainline
+                    """
+                );
+            }
+        }
+        catch (Exception e)
+        {
+            _moduleLoggerProvider.GetLogger().LogWarning(e, "Error defining GitVersion.yml configuration");
         }
     }
 }

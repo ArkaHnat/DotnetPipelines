@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using ModularPipelines.Attributes;
 using ModularPipelines.Exceptions;
 using ModularPipelines.Extensions;
+using ModularPipelines.Logging;
 using ModularPipelines.Models;
 using ModularPipelines.Modules;
 using ModularPipelines.Options;
@@ -158,7 +159,7 @@ internal class ModuleExecutor : IModuleExecutor
     {
         lock (_moduleDictionaryLock)
         {
-            return _moduleExecutionTasks.GetOrAdd(module, async @base =>
+            return _moduleExecutionTasks.GetOrAdd(module, @base => Task.Run(async () =>
             {
                 _logger.LogDebug("Starting Module {Module}", module.GetType().Name);
 
@@ -171,6 +172,8 @@ internal class ModuleExecutor : IModuleExecutor
 
                 try
                 {
+                    ModuleLogger.Values.Value = module.Context.Logger;
+                    
                     await _pipelineSetupExecutor.OnBeforeModuleStartAsync(module);
 
                     await module.StartInternal();
@@ -194,7 +197,7 @@ internal class ModuleExecutor : IModuleExecutor
                         await _moduleDisposer.DisposeAsync(module);
                     }
                 }
-            });
+            }));
         }
     }
 

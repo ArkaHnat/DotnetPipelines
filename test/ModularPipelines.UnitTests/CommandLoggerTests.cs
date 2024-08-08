@@ -5,20 +5,19 @@ using ModularPipelines.Enums;
 using ModularPipelines.Options;
 using ModularPipelines.TestHelpers;
 using NReco.Logging.File;
-using TUnit.Assertions.Extensions;
 using Vertical.SpectreLogger.Options;
 
 namespace ModularPipelines.UnitTests;
 
 public class CommandLoggerTests : TestBase
 {
-    [CombinativeTest]
+    [Test]
     public async Task Logs_As_Expected_With_Options(
-        [CombinativeValues(true, false)] bool logInput,
-        [CombinativeValues(true, false)] bool logOutput,
-        [CombinativeValues(true, false)] bool logError,
-        [CombinativeValues(true, false)] bool logExitCode,
-        [CombinativeValues(true, false)] bool logDuration)
+        [Matrix(true, false)] bool logInput,
+        [Matrix(true, false)] bool logOutput,
+        [Matrix(true, false)] bool logError,
+        [Matrix(true, false)] bool logExitCode,
+        [Matrix(true, false)] bool logDuration)
     {
         var file = await RunPowershellCommand("""
                                         echo Hello world!
