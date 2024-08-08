@@ -1,5 +1,4 @@
 using ModularPipelines.Models;
-using TUnit.Assertions.Extensions;
 
 namespace ModularPipelines.UnitTests.Models;
 
@@ -65,7 +64,7 @@ public class RequirementDecisionTests
         }
     }
 
-    [DataDrivenTest]
+    [Test]
     [Arguments(true)]
     [Arguments(false)]
     public async Task Of(bool success)

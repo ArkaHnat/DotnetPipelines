@@ -4,7 +4,6 @@ using ModularPipelines.Http;
 using ModularPipelines.Options;
 using ModularPipelines.TestHelpers;
 using NReco.Logging.File;
-using TUnit.Assertions.Extensions;
 using Vertical.SpectreLogger.Options;
 using File = System.IO.File;
 
@@ -82,7 +81,7 @@ public class HttpTests : TestBase
         await Assert.That(logFile).Does.Not.Contain("Server: GitHub.com");
     }
 
-    [DataDrivenTest]
+    [Test]
     [Arguments(true)]
     [Arguments(false)]
     public async Task Assert_LoggingHttpClient_Logs_As_Expected(bool customHttpClient)

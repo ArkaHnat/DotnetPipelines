@@ -4,7 +4,6 @@ using ModularPipelines.Enums;
 using ModularPipelines.Interfaces;
 using ModularPipelines.TestHelpers;
 using Moq;
-using TUnit.Assertions.Extensions;
 
 namespace ModularPipelines.UnitTests;
 
@@ -52,7 +51,7 @@ public class SmartCollapsableLoggingTests : TestBase
                        """);
     }
 
-    [DataDrivenTest]
+    [Test]
     [Arguments(BuildSystem.Jenkins)]
     [Arguments(BuildSystem.GitLab)]
     [Arguments(BuildSystem.Bitbucket)]

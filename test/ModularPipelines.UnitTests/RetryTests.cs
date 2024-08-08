@@ -3,10 +3,10 @@ using ModularPipelines.Exceptions;
 using ModularPipelines.Modules;
 using ModularPipelines.TestHelpers;
 using Polly.Retry;
-using TUnit.Assertions.Extensions;
 
 namespace ModularPipelines.UnitTests;
 
+[Retry(3)]
 public class RetryTests : TestBase
 {
     private class SuccessModule : Module

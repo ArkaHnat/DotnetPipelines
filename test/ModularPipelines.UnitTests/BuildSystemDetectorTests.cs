@@ -2,7 +2,6 @@ using ModularPipelines.Context;
 using ModularPipelines.Enums;
 using ModularPipelines.TestHelpers;
 using Moq;
-using TUnit.Assertions.Extensions;
 
 namespace ModularPipelines.UnitTests;
 
@@ -24,7 +23,7 @@ public class BuildSystemDetectorTests : TestBase
         await Assert.That(_buildSystemDetector.IsKnownBuildAgent).Is.False();
     }
 
-    [DataDrivenTest]
+    [Test]
     [Arguments("TF_BUILD")]
     [Arguments("TEAMCITY_VERSION")]
     [Arguments("GITHUB_ACTIONS")]
@@ -57,7 +56,7 @@ public class BuildSystemDetectorTests : TestBase
         }
     }
 
-    [DataDrivenTest]
+    [Test]
     [Arguments("TF_BUILD", BuildSystem.AzurePipelines)]
     [Arguments("TEAMCITY_VERSION", BuildSystem.TeamCity)]
     [Arguments("GITHUB_ACTIONS", BuildSystem.GitHubActions)]
