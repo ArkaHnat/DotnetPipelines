@@ -6,6 +6,8 @@ using ModularPipelines.Models;
 using ModularPipelines.Modules;
 using ModularPipelines.TestHelpers;
 using Spectre.Console;
+using AfterAttribute = TUnit.Core.AfterAttribute;
+using BeforeAttribute = TUnit.Core.BeforeAttribute;
 
 namespace ModularPipelines.UnitTests;
 
@@ -14,14 +16,14 @@ public class PipelineProgressTests
 {
     private static bool _originalInteractive;
 
-    [BeforeAllTestsInClass]
+    [Before(Class)]
     public static void Setup()
     {
         _originalInteractive = AnsiConsole.Profile.Capabilities.Interactive;
         AnsiConsole.Profile.Capabilities.Interactive = true;
     }
 
-    [AfterAllTestsInClass]
+    [After(Class)]
     public static void CleanUp()
     {
         AnsiConsole.Profile.Capabilities.Interactive = _originalInteractive;

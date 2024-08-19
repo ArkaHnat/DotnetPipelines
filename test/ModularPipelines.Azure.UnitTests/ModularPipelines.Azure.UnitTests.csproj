@@ -6,12 +6,6 @@
         <Nullable>enable</Nullable>
         <OutputType>Exe</OutputType>
     </PropertyGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.10.4" />
-    </ItemGroup>
-
-
     <ItemGroup>
       <ProjectReference Include="..\..\src\ModularPipelines.Azure\ModularPipelines.Azure.csproj" />
       <ProjectReference Include="..\ModularPipelines.TestHelpers\ModularPipelines.TestHelpers.csproj" />

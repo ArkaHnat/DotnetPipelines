@@ -29,7 +29,6 @@ internal class GitVersioning : IGitVersioning
         } 
     }
 
-
     public GitVersioning(IFileSystemContext fileSystemContext, IGitInformation gitInformation, ICommand command, IModuleLoggerProvider moduleLoggerProvider)
     {
         _gitInformation = gitInformation;

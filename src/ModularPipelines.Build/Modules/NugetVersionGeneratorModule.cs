@@ -26,7 +26,7 @@ public class NugetVersionGeneratorModule : Module<string>
         var gitVersionInformation = await context.Git().Versioning.GetGitVersioningInformation();
 
         var version = _publishSettings.Value.IsAlpha 
-            ? $"{gitVersionInformation.NuGetVersion}"
+            ? $"{gitVersionInformation.SemVer}{gitVersionInformation.PreReleaseLabelWithDash}"
             : gitVersionInformation.FullSemVer!;
 
         context.LogOnPipelineEnd($"Generated Version Number: {version}");

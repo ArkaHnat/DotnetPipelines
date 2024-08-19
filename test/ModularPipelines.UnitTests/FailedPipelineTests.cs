@@ -42,7 +42,7 @@ public class FailedPipelineTests : TestBase
             return await NothingAsync();
         }
     }
-    [DataDrivenTest]
+    [Test]
     [Arguments(ExecutionMode.StopOnFirstException)]
     [Arguments(ExecutionMode.WaitForAllModules)]
     public async Task Given_Failing_Module_With_Dependent_Module_When_Fail_Fast_Then_Failures_Propagate(ExecutionMode executionMode)

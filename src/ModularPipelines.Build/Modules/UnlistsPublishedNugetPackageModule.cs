@@ -14,7 +14,7 @@ using ModularPipelines.Modules;
 namespace ModularPipelines.Build.Modules;
 
 [DependsOn<RunUnitTestsModule>(Optional = true)]
-
+[DependsOn<PackagePathsParserModule>]
 [DependsOn<UploadPackagesToNugetModule>]
 public class UnlistsPublishedNugetPackageModule : Module<CommandResult[]>
 {
