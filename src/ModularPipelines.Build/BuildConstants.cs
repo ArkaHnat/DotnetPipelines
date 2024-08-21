@@ -2,6 +2,6 @@ namespace ModularPipelines.Build;
 
 public static class BuildConstants
 {
-    public const string Owner = "thomhurst";
-    public const string RepositoryName = "ModularPipelines";
+    public const string Owner = "ArkaHnat";
+    public const string RepositoryName = "DotnetPipelines";
 }

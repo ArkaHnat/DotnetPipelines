@@ -17,7 +17,6 @@ namespace ModularPipelines.Build.Modules;
 [DependsOn<FindProjectDependenciesModule>]
 [DependsOn<DotnetBuildModule>]
 [DependsOn<ChangedFilesInPullRequestModule>]
-[DependsOn<RunUnitTestsModule>]
 [ResolveDependencies]
 public class PackProjectsModule : Module<CommandResult[]>
 {

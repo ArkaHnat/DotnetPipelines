@@ -46,7 +46,6 @@ public class DependsOnTests : TestBase
             .Is
             .EqualTo(Status.Successful);
     }
-
     [Test]
     public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_ResolveIndirectReliants_On_Attribute()
     {
@@ -63,6 +62,7 @@ public class DependsOnTests : TestBase
             .EqualTo(2);
     }
 
+
     [Test]
     public async Task No_Exception_Thrown_When_Dependent_Module_Missing_And_Get_If_Registered_Called()
     {
@@ -75,17 +75,8 @@ public class DependsOnTests : TestBase
             .EqualTo(Status.Successful);
     }
 
-    [Test]
-    public async Task No_Exception_Thrown_When_DependandModuleIsFailedButItWasOptional()
-    {
-        var pipelineSummary = await TestPipelineHostBuilder.Create()
-            .AddModule<Module3WithGetIfRegistered>()
-            .ExecutePipelineAsync();
 
-        await Assert.That(pipelineSummary.Status)
-            .Is
-            .EqualTo(Status.Successful);
-    }
+
     [Test]
     public async Task Depends_On_Self_Module_Throws_Exception()
     {
@@ -96,7 +87,6 @@ public class DependsOnTests : TestBase
             .Exception()
             .OfType<ModuleReferencingSelfException>();
     }
-
     [Test]
     public async Task ExpectPipeline_ToSucces_IfOptionalDependencyFailed()
     {
@@ -177,6 +167,7 @@ public class DependsOnTests : TestBase
             return await NothingAsync();
         }
     }
+
     [DependsOn<Module1>(IgnoreIfNotRegistered = true)]
     private class Module3WithGet : Module
     {

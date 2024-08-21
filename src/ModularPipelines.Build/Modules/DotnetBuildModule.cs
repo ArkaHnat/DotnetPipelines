@@ -18,7 +18,7 @@ namespace ModularPipelines.Build.Modules;
 [ResolveDependencies]
 public class DotnetBuildModule : Module<CommandResult[]>
 {
-    public static string BuildConfiguration = Configuration.Debug;
+    public static string BuildConfiguration = Configuration.Release;
 
     /// <inheritdoc/>
     protected override async Task<CommandResult[]?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
