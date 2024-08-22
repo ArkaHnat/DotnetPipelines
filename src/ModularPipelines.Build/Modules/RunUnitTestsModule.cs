@@ -10,8 +10,8 @@ using Polly.Retry;
 
 namespace ModularPipelines.Build.Modules;
 
+// [DependsOn<DotnetBuildModule>]
 [DependsOn<CodeFormattedNicelyModule>]
-//[DependsOn<DotnetBuildModule>]
 [ResolveDependencies]
 public class RunUnitTestsModule : Module<CommandResult[]>
 {
@@ -27,7 +27,7 @@ public class RunUnitTestsModule : Module<CommandResult[]>
             .SelectAsync(async unitTestProjectFile => await context.DotNet().Run(new DotNetRunOptions
             {
                 Project = unitTestProjectFile.Path,
-                NoBuild = false,
+                NoBuild = true,
                 Framework = "net8.0",
                 Arguments = ["--coverage", "--coverage-output-format", "cobertura"],
                 Configuration = DotnetBuildModule.BuildConfiguration,
