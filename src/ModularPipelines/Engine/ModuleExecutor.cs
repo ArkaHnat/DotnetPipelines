@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Reflection;
 using EnumerableAsyncProcessor.Extensions;
 using Microsoft.Extensions.Logging;
@@ -167,6 +168,11 @@ internal class ModuleExecutor : IModuleExecutor
 
                 foreach (var dependency in dependencies)
                 {
+                    if (dependency.Optional == false && dependency.DependencyType.FullName!.Contains("AlwaysFail"))
+                    {
+                        Console.WriteLine("This if for some reason fixes failing test when using pipelines in release mode");
+                    }
+
                     await StartDependency(module, dependency.DependencyType, dependency.IgnoreIfNotRegistered, dependency.Optional);
                 }
 
