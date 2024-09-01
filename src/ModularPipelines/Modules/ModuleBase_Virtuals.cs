@@ -67,6 +67,4 @@ public partial class ModuleBase
     /// Gets whether the Module should run even if the pipeline has failed.
     /// </summary>
     public virtual ModuleRunType ModuleRunType => ModuleRunType.OnSuccessfulDependencies;
-
-    public bool IsOptional { get; internal set; }
 }

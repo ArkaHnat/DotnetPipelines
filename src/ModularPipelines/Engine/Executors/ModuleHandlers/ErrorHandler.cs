@@ -1,4 +1,6 @@
+using System.Reflection;
 using Microsoft.Extensions.Logging;
+using ModularPipelines.Attributes;
 using ModularPipelines.Enums;
 using ModularPipelines.Exceptions;
 using ModularPipelines.Models;
@@ -36,7 +38,14 @@ internal class ErrorHandler<T> : BaseHandler<T>, IErrorHandler
 
         Module.Exception = exception;
 
-        if (await Module.ShouldIgnoreFailures(Context, exception) || Module.IsOptional)
+        var module = (IModule) Module;
+
+        var reliantDependencies = module
+            .ToModule.
+            ReliantModules
+            .SelectMany(b => b.Type.GetCustomAttributes<DependsOnAttribute>());
+        var isOptional = reliantDependencies.Any() && reliantDependencies.All(a => a.Type == module.GetType() && a.Optional);
+        if (await Module.ShouldIgnoreFailures(Context, exception) || isOptional )
         {
             await SaveFailedResult(exception);
         }

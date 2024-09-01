@@ -226,7 +226,6 @@ internal class ModuleExecutor : IModuleExecutor
         
         requestingModule.Context.Logger.LogDebug("{RequestingModule} is waiting for {Module}", requestingModule.GetType().Name, dependencyType.Name);
 
-        module.IsOptional = optional;
         try
         {
             await StartModule(module);
