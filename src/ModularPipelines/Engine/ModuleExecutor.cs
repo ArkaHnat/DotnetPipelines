@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using ModularPipelines.Attributes;
 using ModularPipelines.Exceptions;
 using ModularPipelines.Extensions;
+using ModularPipelines.Helpers;
 using ModularPipelines.Logging;
 using ModularPipelines.Models;
 using ModularPipelines.Modules;
@@ -22,6 +23,7 @@ internal class ModuleExecutor : IModuleExecutor
     private readonly IModuleDisposer _moduleDisposer;
     private readonly IEnumerable<ModuleBase> _allModules;
     private readonly IExceptionContainer _exceptionContainer;
+    private readonly IParallelLimitProvider _parallelLimitProvider;
     private readonly ILogger<ModuleExecutor> _logger;
 
     private readonly ConcurrentDictionary<ModuleBase, Task<ModuleBase>> _moduleExecutionTasks = new();
@@ -36,6 +38,7 @@ internal class ModuleExecutor : IModuleExecutor
         IModuleDisposer moduleDisposer,
         IEnumerable<IModule> allModules,
         IExceptionContainer exceptionContainer,
+        IParallelLimitProvider parallelLimitProvider,
         ILogger<ModuleExecutor> logger)
     {
         _pipelineSetupExecutor = pipelineSetupExecutor;
@@ -46,6 +49,7 @@ internal class ModuleExecutor : IModuleExecutor
                 .IsAssignableTo(typeof(ModuleBase)))
             .Select(a => a.ToModule);
         _exceptionContainer = exceptionContainer;
+        _parallelLimitProvider = parallelLimitProvider;
         _logger = logger;
     }
 
@@ -56,7 +60,7 @@ internal class ModuleExecutor : IModuleExecutor
             var beforePipelineModules = modules.Where(a => a.ModuleRunType == ModuleRunType.BeforePipeline).ToList();
             foreach (var beforePipelineModule in beforePipelineModules)
             {
-                await StartModule(beforePipelineModule);
+                await StartModule(beforePipelineModule, false);
             }
 
             var nonParallelModules = modules
@@ -70,7 +74,7 @@ internal class ModuleExecutor : IModuleExecutor
 
             foreach (var nonParallelModule in unKeyedNonParallelModules)
             {
-                await StartModule(nonParallelModule);
+                await StartModule(nonParallelModule, false);
             }
 
             var keyedNonParallelModules = nonParallelModules
@@ -80,7 +84,7 @@ internal class ModuleExecutor : IModuleExecutor
             await ProcessKeyedNonParallelModules(keyedNonParallelModules.ToList());
 
             var parallelModuleTasks = modules.Except(nonParallelModules).Where(a => !a.ToModule.TriggeredByModules.Any())
-                .Select(StartModule)
+                .Select(x => StartModule(x, false))
                 .ToArray();
 
             if (_pipelineOptions.Value.ExecutionMode == ExecutionMode.StopOnFirstException)
@@ -100,7 +104,7 @@ internal class ModuleExecutor : IModuleExecutor
             {
                 try
                 {
-                    await StartModule(moduleBase);
+                    await StartModule(moduleBase, false);
                 }
                 catch
                 {
@@ -143,7 +147,7 @@ internal class ModuleExecutor : IModuleExecutor
 
                 try
                 {
-                    await StartModule(module);
+                    await StartModule(module, false);
                 }
                 finally
                 {
@@ -156,12 +160,14 @@ internal class ModuleExecutor : IModuleExecutor
             .ProcessInParallel();
     }
 
-    private Task<ModuleBase> StartModule(ModuleBase module)
+    private Task<ModuleBase> StartModule(ModuleBase module, bool isStartedAsDependencyForOtherModule)
     {
         lock (_moduleDictionaryLock)
         {
             return _moduleExecutionTasks.GetOrAdd(module, @base => Task.Run(async () =>
             {
+                using var semaphoreHandle = await WaitForParallelLimiter(module, isStartedAsDependencyForOtherModule);
+                
                 _logger.LogDebug("Starting Module {Module}", module.GetType().Name);
 
                 var dependencies = module.GetModuleDependencies();
@@ -173,7 +179,7 @@ internal class ModuleExecutor : IModuleExecutor
                         Console.WriteLine("This if for some reason fixes failing test when using pipelines in release mode");
                     }
 
-                    await StartDependency(module, dependency.DependencyType, dependency.IgnoreIfNotRegistered, dependency.Optional);
+                    await StartDependency(module, dependency.DependencyType, dependency.IgnoreIfNotRegistered);
                 }
 
                 try
@@ -195,7 +201,7 @@ internal class ModuleExecutor : IModuleExecutor
                     var triggers = module.GetTriggerModules();
                     foreach (var triggered in triggers)
                     {
-                        await StartDependency(module, triggered.DependencyType, triggered.IgnoreIfNotRegistered, false);
+                        await StartDependency(module, triggered.DependencyType, triggered.IgnoreIfNotRegistered);
                     }
 
                     if (!_pipelineOptions.Value.ShowProgressInConsole)
@@ -206,8 +212,21 @@ internal class ModuleExecutor : IModuleExecutor
             }));
         }
     }
+    
+    private async Task<IDisposable> WaitForParallelLimiter(ModuleBase module, bool isStartedAsDependencyForAnotherTest)
+    {
+        var parallelLimitAttributeType =
+            module.GetType().GetCustomAttributes<ParallelLimiterAttribute>().FirstOrDefault()?.Type;
+        
+        if (parallelLimitAttributeType != null)
+        {
+            return await _parallelLimitProvider.GetLock(parallelLimitAttributeType).WaitAsync();
+        }
 
-    private async Task StartDependency(ModuleBase requestingModule, Type dependencyType, bool ignoreIfNotRegistered, bool optional)
+        return NoOpDisposable.Instance;
+    }
+
+    private async Task StartDependency(ModuleBase requestingModule, Type dependencyType, bool ignoreIfNotRegistered)
     {
         _logger.LogDebug("Starting Dependency {Dependency} for Module {Module}", dependencyType.Name, requestingModule.GetType().Name);
         
@@ -228,9 +247,9 @@ internal class ModuleExecutor : IModuleExecutor
 
         try
         {
-            await StartModule(module);
+            await StartModule(module, true);
         }
-        catch (Exception e) when (requestingModule.ModuleRunType == ModuleRunType.AlwaysRun || optional)
+        catch (Exception e) when (requestingModule.ModuleRunType == ModuleRunType.AlwaysRun)
         {
             _exceptionContainer.RegisterException(new AlwaysRunPostponedException($"{dependencyType.Name} threw an exception when {requestingModule.GetType().Name} was waiting for it as a dependency", e));
             requestingModule.Context.Logger.LogError(e, "Ignoring Exception due to 'AlwaysRun' set");

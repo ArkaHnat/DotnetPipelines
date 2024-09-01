@@ -47,7 +47,7 @@ public sealed class Command(ICommandLogger commandLogger) : ICommand
             tool = options.Tool;
         }
 
-        var command = Cli.Wrap(tool).WithArguments(parsedArgs);
+        var command = Cli.Wrap(tool).WithArguments(SantiseArguments(parsedArgs));
 
         if (options.WorkingDirectory != null)
         {
@@ -66,13 +66,21 @@ public sealed class Command(ICommandLogger commandLogger) : ICommand
                 exitCode: 0,
                 runTime: TimeSpan.Zero,
                 standardOutput: "Dummy Output Response",
-                standardError: "Dummy Error Response"
+                standardError: "Dummy Error Response",
+                command.WorkingDirPath
             );
 
             return new CommandResult(command);
         }
 
         return await Of(command, options, cancellationToken);
+    }
+
+    private List<string> SantiseArguments(List<string> parsedArgs)
+    {
+        parsedArgs.RemoveAll(x => x.StartsWith("<"));
+        
+        return parsedArgs;
     }
 
     private static List<string> GetPrecedingArguments(object optionsObject)
@@ -116,10 +124,11 @@ public sealed class Command(ICommandLogger commandLogger) : ICommand
 
             _commandLogger.Log(options: options,
                 inputToLog: inputToLog,
-                result.ExitCode,
-                result.RunTime,
-                standardOutput,
-                standardError
+                exitCode: result.ExitCode,
+                runTime: result.RunTime,
+                standardOutput: standardOutput,
+                standardError: standardError,
+                commandWorkingDirPath: command.WorkingDirPath
             );
 
             if (result.ExitCode != 0 && options.ThrowOnNonZeroExitCode)
@@ -134,10 +143,11 @@ public sealed class Command(ICommandLogger commandLogger) : ICommand
         {
             _commandLogger.Log(options: options,
                 inputToLog: inputToLog,
-                e.ExitCode,
-                stopwatch.Elapsed,
-                standardOutput,
-                standardError
+                exitCode: e.ExitCode,
+                runTime: stopwatch.Elapsed,
+                standardOutput: standardOutput,
+                standardError: standardError,
+                commandWorkingDirPath: command.WorkingDirPath
             );
             throw;
         }
@@ -145,10 +155,11 @@ public sealed class Command(ICommandLogger commandLogger) : ICommand
         {
             _commandLogger.Log(options: options,
                 inputToLog: inputToLog,
-                -1,
-                stopwatch.Elapsed,
-                standardOutput,
-                standardError
+                exitCode: -1,
+                runTime: stopwatch.Elapsed,
+                standardOutput: standardOutput,
+                standardError: standardError,
+                commandWorkingDirPath: command.WorkingDirPath
             );
 
             throw;
