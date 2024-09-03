@@ -71,6 +71,8 @@ public class DotnetBuildModule : Module<CommandResult[]>
         {
             NoRestore = true,
             Configuration = BuildConfiguration,
+
+            // OutputDirectory = context.Git().RootDirectory+"/_buildOutput/" + projectFile.Name,
             ProjectSolution = projectFile,
             Properties = new KeyValue[]
                 {

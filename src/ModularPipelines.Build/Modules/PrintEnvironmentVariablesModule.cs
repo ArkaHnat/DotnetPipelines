@@ -12,7 +12,7 @@ public class PrintEnvironmentVariablesModule : Module
     {
         await Task.CompletedTask;
         
-        context.Logger.LogInformation("Environment Variables: {EnvVars}", JsonSerializer.Serialize(context.Environment.EnvironmentVariables.GetEnvironmentVariables(), new JsonSerializerOptions
+        context.Logger.LogInformation("Environment Variables: {EnvVars}", JsonSerializer.Serialize(context.Environment.EnvironmentVariables.GetEnvironmentVariables().OrderBy(a=>a.Key), new JsonSerializerOptions
         {
             ReferenceHandler = ReferenceHandler.IgnoreCycles,
             IgnoreReadOnlyFields = true,

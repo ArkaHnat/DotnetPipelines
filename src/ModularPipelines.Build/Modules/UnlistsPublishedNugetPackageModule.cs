@@ -16,6 +16,7 @@ namespace ModularPipelines.Build.Modules;
 [DependsOn<RunUnitTestsModule>(Optional = true)]
 [DependsOn<PackagePathsParserModule>]
 [DependsOn<UploadPackagesToNugetModule>]
+[ResolveDependencies]
 public class UnlistsPublishedNugetPackageModule : Module<CommandResult[]>
 {
     private readonly IOptions<NuGetSettings> _nugetSettings;

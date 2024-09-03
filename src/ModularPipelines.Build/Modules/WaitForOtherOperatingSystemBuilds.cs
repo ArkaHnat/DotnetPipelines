@@ -20,6 +20,7 @@ namespace ModularPipelines.Build.Modules;
 [SkipIfNoStandardGitHubToken]
 [DependsOn<RunUnitTestsModule>]
 [DependsOn<PackProjectsModule>]
+[ResolveDependents]
 public class WaitForOtherOperatingSystemBuilds : Module<List<WorkflowRun>>
 {
     /// <inheritdoc/>

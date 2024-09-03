@@ -16,6 +16,7 @@ namespace ModularPipelines.Build.Modules;
 [SkipIfNoStandardGitHubToken]
 [DependsOn<DownloadCodeCoverageFromOtherOperatingSystemBuildsModule>]
 [DependsOn<RunUnitTestsModule>]
+[ResolveDependencies]
 public class MergeCoverageModule : Module<File>
 {
     /// <inheritdoc/>
