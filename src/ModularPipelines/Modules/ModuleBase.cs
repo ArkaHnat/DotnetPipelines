@@ -1,5 +1,5 @@
-using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
+using System.Runtime.CompilerServices;
 using ModularPipelines.Attributes;
 using ModularPipelines.Context;
 using ModularPipelines.Engine;
@@ -53,6 +53,10 @@ public abstract partial class ModuleBase : ITypeDiscriminator, IModule
     public List<IModuleRelation> TriggeredByModules { get; } = [];
 
     internal bool IsStarted { get; private protected set; }
+
+    internal abstract IEnumerable<(Type DependencyType, bool IgnoreIfNotRegistered, bool Optional)> GetAfterModules();
+
+    internal abstract IEnumerable<(Type DependencyType, bool IgnoreIfNotRegistered, bool Optional)> GetBeforeModules();
 
     internal abstract IEnumerable<(Type DependencyType, bool IgnoreIfNotRegistered, bool Optional)> GetModuleDependencies();
 

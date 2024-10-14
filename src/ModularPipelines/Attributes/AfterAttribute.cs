@@ -26,5 +26,7 @@ public class AfterAttribute : Attribute, IModuleRelation
 
     public Type Type { get; }
 
+    public bool Optional { get; }
+
     public bool IgnoreIfNotRegistered { get; set; }
 }

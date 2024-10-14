@@ -28,6 +28,22 @@ public abstract partial class Module<T> : ModuleBase<T>
 {
     private readonly Stopwatch _stopwatch = new();
 
+    internal override IEnumerable<(Type DependencyType, bool IgnoreIfNotRegistered, bool Optional)> GetAfterModules()
+    {
+        foreach (var customAttribute in GetType().GetCustomAttributesIncludingBaseInterfaces<AfterAttribute>())
+        {
+            yield return AddDependency(customAttribute.Type, customAttribute.IgnoreIfNotRegistered, customAttribute.Optional);
+        }
+    }
+
+    internal override IEnumerable<(Type DependencyType, bool IgnoreIfNotRegistered, bool Optional)> GetBeforeModules()
+    {
+        foreach (var customAttribute in GetType().GetCustomAttributesIncludingBaseInterfaces<BeforeAttribute>())
+        {
+            yield return AddDependency(customAttribute.Type, customAttribute.IgnoreIfNotRegistered, customAttribute.Optional);
+        }
+    }
+
     internal override IEnumerable<(Type DependencyType, bool IgnoreIfNotRegistered, bool Optional)> GetModuleDependencies()
     {
         foreach (var customAttribute in GetType().GetCustomAttributesIncludingBaseInterfaces<DependsOnAttribute>())

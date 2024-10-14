@@ -166,11 +166,23 @@ internal class ModuleExecutor : IModuleExecutor
         {
             return _moduleExecutionTasks.GetOrAdd(module, @base => Task.Run(async () =>
             {
+                await WaitForBeforeModules(module);
+
                 using var semaphoreHandle = await WaitForParallelLimiter(module, isStartedAsDependencyForOtherModule);
-                
+
                 _logger.LogDebug("Starting Module {Module}", module.GetType().Name);
 
                 var dependencies = module.GetModuleDependencies();
+                
+                foreach (var dependency in module.GetAfterModules())
+                {
+                    if (dependency.Optional == false && dependency.DependencyType.FullName!.Contains("AlwaysFail"))
+                    {
+                        Console.WriteLine("This if for some reason fixes failing test when using pipelines in release mode");
+                    }
+
+                    await StartDependency(module, dependency.DependencyType, dependency.IgnoreIfNotRegistered);
+                }
 
                 foreach (var dependency in dependencies)
                 {
@@ -185,7 +197,7 @@ internal class ModuleExecutor : IModuleExecutor
                 try
                 {
                     ModuleLogger.Values.Value = module.Context.Logger;
-                    
+
                     await _pipelineSetupExecutor.OnBeforeModuleStartAsync(module);
 
                     await module.StartInternal();
@@ -204,6 +216,16 @@ internal class ModuleExecutor : IModuleExecutor
                         await StartDependency(module, triggered.DependencyType, triggered.IgnoreIfNotRegistered);
                     }
 
+                    foreach (var dependency in module.GetBeforeModules())
+                    {
+                        if (dependency.Optional == false && dependency.DependencyType.FullName!.Contains("AlwaysFail"))
+                        {
+                            Console.WriteLine("This if for some reason fixes failing test when using pipelines in release mode");
+                        }
+
+                        await StartDependency(module, dependency.DependencyType, dependency.IgnoreIfNotRegistered);
+                    }
+
                     if (!_pipelineOptions.Value.ShowProgressInConsole)
                     {
                         await _moduleDisposer.DisposeAsync(module);
@@ -212,7 +234,15 @@ internal class ModuleExecutor : IModuleExecutor
             }));
         }
     }
-    
+
+    private async Task WaitForBeforeModules(ModuleBase module)
+    {
+        var beforeTypes = module.GetBeforeModules();
+        var beforeModules = _allModules.Where(a => beforeTypes.Any(before => before.GetType() == a.GetType()));
+        var tasks = beforeModules.Select(a => a.ExecutionTask);
+        await Task.WhenAll(tasks);
+    }
+
     private async Task<IDisposable> WaitForParallelLimiter(ModuleBase module, bool isStartedAsDependencyForAnotherTest)
     {
         var parallelLimitAttributeType =

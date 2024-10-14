@@ -1,3 +1,4 @@
+using Microsoft.CodeAnalysis;
 using ModularPipelines.Modules;
 
 namespace ModularPipelines.Attributes;
@@ -18,6 +19,8 @@ public class BeforeAttribute : Attribute, IModuleRelation
     public Type Type { get; }
 
     public bool IgnoreIfNotRegistered { get; set; }
+
+    public bool Optional { get; }
 }
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true, Inherited = true)]
