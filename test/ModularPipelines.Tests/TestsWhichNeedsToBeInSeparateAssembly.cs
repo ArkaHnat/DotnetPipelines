@@ -4,6 +4,7 @@ using ModularPipelines.Context;
 using ModularPipelines.Exceptions;
 using ModularPipelines.Modules;
 using ModularPipelines.TestHelpers;
+using TUnit.Assertions.Extensions.Throws;
 
 namespace ModularPipelines.Tests;
 
@@ -30,18 +31,18 @@ public class TestsWhichNeedsToBeInSeparateAssembly
     [Test]
     public async Task Depends_On_Non_Module_Throws_Exception()
     {
-        await TUnit.Assertions.Assert.That(async () => await TestPipelineHostBuilder.Create()
+        await Assert.That(async () => await TestPipelineHostBuilder.Create()
                 .AddModule<ReliesOnNonModule>()
-                .ExecutePipelineAsync()).
-            Throws.Exception().With.Message.EqualTo("ModularPipelines.Exceptions.ModuleFailedException is not a Module class");
+                .ExecutePipelineAsync())
+            .ThrowsException().With.Message.Containing("ModularPipelines.Exceptions.ModuleFailedException is not a Module class");
     }
 
     [Test]
     public async Task Relies_On_Non_Module_Throws_Exception2()
     {
-        await TUnit.Assertions.Assert.That(async () => await TestPipelineHostBuilder.Create()
+        await Assert.That(async () => await TestPipelineHostBuilder.Create()
                 .AddModule<ReliesOnNonModule>()
                 .ExecutePipelineAsync()).
-            Throws.Exception().With.Message.EqualTo("ModularPipelines.Exceptions.ModuleFailedException is not a Module class");
+            ThrowsException().With.Message.Containing("ModularPipelines.Exceptions.ModuleFailedException is not a Module class");
     }
 }

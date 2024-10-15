@@ -9,6 +9,10 @@
 		<IsTestProject>true</IsTestProject>
 		<AssemblyName>Dotnet$(MSBuildProjectName)</AssemblyName>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="TUnit.Assertions" />
+	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\ModularPipelines\ModularPipelines.csproj" />
 		<ProjectReference Include="..\ModularPipelines.TestHelpers\ModularPipelines.TestHelpers.csproj" />

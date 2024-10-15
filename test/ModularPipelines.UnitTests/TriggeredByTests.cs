@@ -19,8 +19,7 @@ public class TriggeredByTests : TestBase
             .ExecutePipelineAsync();
 
         await Assert.That(pipelineSummary.Status)
-            .Is
-            .EqualTo(Status.Successful);
+            .IsEqualTo(Status.Successful);
     }
 
     [Triggers<TriggeredModule>]

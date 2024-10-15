@@ -9,6 +9,8 @@
         <PackageReference Include="Azure.ResourceManager" />
         <PackageReference Include="Azure.Identity" />
         <PackageReference Include="System.Text.Json" />
+	    <PackageReference Include="TUnit.Core" />
+        <PackageReference Include="TUnit.Assertions" />
         <ProjectReference Include="..\..\src\ModularPipelines\ModularPipelines.csproj" />
     </ItemGroup>
 </Project>

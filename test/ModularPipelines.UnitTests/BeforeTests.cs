@@ -4,6 +4,7 @@ using ModularPipelines.Exceptions;
 using ModularPipelines.Extensions;
 using ModularPipelines.Modules;
 using ModularPipelines.TestHelpers;
+using TUnit.Assertions.Extensions.Throws;
 using Status = ModularPipelines.Enums.Status;
 
 namespace ModularPipelines.UnitTests;
@@ -19,12 +20,11 @@ public class BeforeTests : TestBase
             .ExecutePipelineAsync();
 
         await Assert.That(pipelineSummary.Status)
-            .Is
-            .EqualTo(Status.Successful);
+            .IsEqualTo(Status.Successful);
 
         var module1 = pipelineSummary.Modules.FirstOrDefault(a => a.GetType() == typeof(Module1));
         var module2 = pipelineSummary.Modules.FirstOrDefault(a => a.GetType() == typeof(Module2));
-        await Assert.That(module1.EndTime).Is.GreaterThan(module2.StartTime);
+        await Assert.That(module1.EndTime).IsGreaterThan(module2.StartTime);
     }
 
     [Test]
@@ -35,8 +35,7 @@ public class BeforeTests : TestBase
             .ExecutePipelineAsync();
 
         await Assert.That(pipelineSummary.Status)
-            .Is
-            .EqualTo(Status.Successful);
+            .IsEqualTo(Status.Successful);
     }
 
     [Test]
@@ -45,8 +44,7 @@ public class BeforeTests : TestBase
         await Assert.That(async () => await TestPipelineHostBuilder.Create()
             .AddModule<Module4>()
             .ExecutePipelineAsync())
-            .Throws
-            .Exception()
+            .ThrowsException()
             .OfType<ModuleNotRegisteredException>();
     }
 

@@ -29,6 +29,9 @@ internal class ErrorHandler<T> : BaseHandler<T>, IErrorHandler
             Module.Status = Status.PipelineTerminated;
             Context.Logger.LogInformation("Pipeline has been canceled");
 
+            // Wait so this exception isn't propogated first and the actual exception from another module is
+            await Task.Delay(TimeSpan.FromSeconds(5));
+
             throw new PipelineCancelledException(Context.EngineCancellationToken);
         }
         else
@@ -63,7 +66,12 @@ internal class ErrorHandler<T> : BaseHandler<T>, IErrorHandler
 
     private bool IsModuleTimedOutException(Exception exception)
     {
-        var isTimeoutExceed = Module.EndTime - Module.StartTime >= Module.Timeout;
+        if (Module.Timeout == TimeSpan.Zero)
+        {
+            return false;
+        }
+        
+        var isTimeoutExceed = Module.Stopwatch.Elapsed >= Module.Timeout;
         return isTimeoutExceed && exception is ModuleTimeoutException or TaskCanceledException or OperationCanceledException;
     }
 

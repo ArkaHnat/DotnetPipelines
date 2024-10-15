@@ -19,14 +19,14 @@ public class DependabotCommitsModule : Module<List<string>>
             var latestRelease = await context.GitHub().Client.Repository.Release.GetLatest(repositoryInfo.Owner, repositoryInfo.RepositoryName);
 
             var commitsSinceRelease = await context.GitHub().Client.Repository.Commit.GetAll(repositoryInfo.Owner,
-                repositoryInfo.RepositoryName, new CommitRequest
-                {
-                    Sha = "main",
-                    Since = latestRelease.CreatedAt.AddMinutes(-2),
-                });
+            repositoryInfo.RepositoryName, new CommitRequest
+            {
+                Sha = "main",
+                Since = latestRelease.CreatedAt.AddMinutes(-2),
+            });
 
             var commits = commitsSinceRelease
-                .Where(x => x.Author.Login.StartsWith("dependabot"))
+                .Where(x => x.Author.Login.StartsWith("dependabot") || x.Author.Login.StartsWith("renovate-bot"))
                 .Select(x => x.Commit.Message.Split(Environment.NewLine))
                 .Select(x => x.FirstOrDefault())
                 .OfType<string>()
