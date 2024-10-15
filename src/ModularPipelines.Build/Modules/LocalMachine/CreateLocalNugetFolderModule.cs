@@ -14,8 +14,7 @@ public class CreateLocalNugetFolderModule : Module<Folder>
         var localNugetRepositoryFolder = 
             context.Git().RootDirectory
             .GetFolder("_buildOutput")
-            .GetFolder("DotnetPipelines")
-            .GetFolder("LocalNuget")
+            .GetFolder("NugetLocal")
             .Create();
 
         await Task.Yield();

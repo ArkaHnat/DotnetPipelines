@@ -15,10 +15,12 @@ namespace ModularPipelines.Build.Modules;
 [DependsOn<NugetVersionGeneratorModule>]
 [DependsOn<UploadPackagesToNugetModule>]
 [DependsOn<FindProjectsModule>]
+[DependsOn<PackagePathsParserModule>]
 [RunOnlyOnSpecificBuildSystem(Enums.BuildSystem.Unknown)]
 [ResolveDependencies]
 public class UnlistsPublishedNugetPackageModule : Module<CommandResult[]>
 {
+    private readonly List<string> ignoredPackages = new List<string>() { "DotnetModularPipelines.Analyzers.Package" };
     private readonly IOptions<NuGetSettings> _nugetSettings;
     private readonly IOptions<PublishSettings> _publishSettings;
     
@@ -36,11 +38,11 @@ public class UnlistsPublishedNugetPackageModule : Module<CommandResult[]>
     /// <inheritdoc/>
     protected override async Task OnBeforeExecute(IPipelineContext context)
     {
-        var packagePaths = await GetModule<PackagePathsParserModule>();
+        var projects = await GetModule<FindProjectsModule>();
 
-        foreach (var packagePath in packagePaths.Value!)
+        foreach (var project in projects.Value!)
         {
-            context.Logger.LogInformation("Unlisting {File}", packagePath);
+            context.Logger.LogInformation("Unlisting {File}", project);
         }
 
         await base.OnBeforeExecute(context);
@@ -59,15 +61,15 @@ public class UnlistsPublishedNugetPackageModule : Module<CommandResult[]>
 
         var projects = await GetModule<FindProjectsModule>();
         var packageVersion = await GetModule<NugetVersionGeneratorModule>();
-
-        return await projects.Value!
+        var res = await projects.Value!.Where(a=>ignoredPackages.Any(b=>a.Name.Contains(b)))
             .SelectAsync(async project => await context.DotNet().Nuget.Delete(new DotNetNugetDeleteOptions
             {
                 NonInteractive = true,
                 Source = "https://api.nuget.org/v3/index.json",
                 ApiKey = _nugetSettings.Value.ApiKey!,
-                Arguments = [project.NameWithoutExtension, packageVersion.Value!],
+                Arguments = ["Dotnet" + project.NameWithoutExtension, packageVersion.Value!],
             }, cancellationToken), cancellationToken: cancellationToken)
             .ProcessOneAtATime();
+        return res;
     }
 }
