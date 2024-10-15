@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <IsPackable>false</IsPackable>
-        <OutputType>Exe</OutputType>
+        <OutputType>Library</OutputType>
     </PropertyGroup>
     <ItemGroup>
         <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
@@ -12,6 +12,11 @@
         <PackageReference Include="NReco.Logging.File" />
         <PackageReference Include="RichardSzalay.MockHttp" />
         <PackageReference Include="System.Text.Json" />
+    	<PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+	    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
+
+		<PackageReference Include="TUnit.Core" />
+		<PackageReference Include="TUnit.Assertions" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\..\src\ModularPipelines.Azure.Pipelines\ModularPipelines.Azure.Pipelines.csproj" />

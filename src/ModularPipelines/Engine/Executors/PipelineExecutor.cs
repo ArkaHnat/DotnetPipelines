@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
-using ModularPipelines.Logging;
 using ModularPipelines.Models;
 using ModularPipelines.Modules;
 
@@ -50,14 +49,14 @@ internal class PipelineExecutor : IPipelineExecutor
 
             await _pipelineSetupExecutor.OnEndAsync(pipelineSummary);
         }
+        
+        _exceptionContainer.ThrowExceptions();
 
         if (exception != null)
         {
             throw exception;
         }
         
-        _exceptionContainer.ThrowExceptions();
-
         return pipelineSummary;
     }
 

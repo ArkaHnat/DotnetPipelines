@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using ModularPipelines.Enums;
 using ModularPipelines.Options;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace ModularPipelines.TestHelpers;
 

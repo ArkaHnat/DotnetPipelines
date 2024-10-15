@@ -1,8 +1,9 @@
+using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using ModularPipelines.Attributes;
 using ModularPipelines.Context;
-using ModularPipelines.Engine;
 using ModularPipelines.Engine.Executors.ModuleHandlers;
 using ModularPipelines.Enums;
 using ModularPipelines.Exceptions;
@@ -109,6 +110,8 @@ public abstract partial class ModuleBase : ITypeDiscriminator, IModule
 
     internal readonly CancellationTokenSource ModuleCancellationTokenSource = new();
 
+    internal readonly Stopwatch Stopwatch = new();
+    
     /// <summary>
     /// Gets the start time of the module.
     /// </summary>
@@ -137,6 +140,7 @@ public abstract partial class ModuleBase : ITypeDiscriminator, IModule
 
     internal abstract ModuleBase Initialize(IPipelineContext context);
 
+    internal readonly object SubModuleBasesLock = new();
     internal readonly List<SubModuleBase> SubModuleBases = new();
 
     internal EventHandler<SubModuleBase>? OnSubModuleCreated;
@@ -150,15 +154,32 @@ public abstract partial class ModuleBase : ITypeDiscriminator, IModule
     /// <param name="name">The name of the submodule.</param>
     /// <param name="action">The delegate that the submodule should execute.</param>
     /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-    protected async Task<T> SubModule<T>(string name, Func<Task<T>> action)
+    protected Task<T> SubModule<T>(string name, Func<Task<T>> action)
     {
-        var submodule = new SubModule<T>(GetType(), name, action);
+        lock (SubModuleBasesLock)
+        {
+            var existingSubModule = SubModuleBases.Find(x => x.Name == name);
+            if (existingSubModule != null)
+            {
+                if (existingSubModule.Status == Status.Successful && existingSubModule is SubModule<T> typedSubmodule)
+                {
+                    return typedSubmodule.Task;
+                }
 
-        OnSubModuleCreated?.Invoke(this, submodule);
+                if (existingSubModule.Status is Status.NotYetStarted or Status.Processing)
+                {
+                    throw new Exception("Use Distinct names for SubModules");
+                }
+            }
 
-        SubModuleBases.Add(submodule);
+            var submodule = new SubModule<T>(GetType(), name);
 
-        return await submodule.Task;
+            SubModuleBases.Add(submodule);
+
+            OnSubModuleCreated?.Invoke(this, submodule);
+
+            return submodule.Execute(action);
+        }
     }
 
     /// <summary>
@@ -189,15 +210,13 @@ public abstract partial class ModuleBase : ITypeDiscriminator, IModule
     /// <param name="name">The name of the submodule.</param>
     /// <param name="action">The delegate that the submodule should execute.</param>
     /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
-    protected async Task SubModule(string name, Func<Task> action)
+    protected Task SubModule(string name, Func<Task> action)
     {
-        var submodule = new SubModule(GetType(), name, action);
-
-        OnSubModuleCreated?.Invoke(this, submodule);
-
-        SubModuleBases.Add(submodule);
-
-        await submodule.Task;
+        return SubModule(name, async () =>
+        {
+            await action();
+            return 0;
+        });
     }
 
     protected EventHandler? OnInitialised { get; set; } 

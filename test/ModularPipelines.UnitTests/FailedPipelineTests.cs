@@ -3,6 +3,7 @@ using ModularPipelines.Context;
 using ModularPipelines.Modules;
 using ModularPipelines.Options;
 using ModularPipelines.TestHelpers;
+using TUnit.Assertions.Extensions.Throws;
 using Status = ModularPipelines.Enums.Status;
 
 namespace ModularPipelines.UnitTests;
@@ -53,7 +54,7 @@ public class FailedPipelineTests : TestBase
                 .AddModule<Module1>()
                 .AddModule<Module2>()
                 .AddModule<Module3>()
-                .ExecutePipelineAsync()).Throws.Exception()
+                .ExecutePipelineAsync()).ThrowsException()
             .OfAnyType();
     }
 
@@ -68,7 +69,7 @@ public class FailedPipelineTests : TestBase
                 .AddModule<Module1>()
                 .AddModule<Module2>()
                 .ExecutePipelineAsync()).
-            Throws.Exception().OfAnyType();
+            ThrowsException().OfAnyType();
     }
 
     [Test]
@@ -82,6 +83,6 @@ public class FailedPipelineTests : TestBase
                 .AddModule<Module1>()
                 .AddModule<Module4>()
                 .ExecutePipelineAsync();
-        await Assert.That(pipelineSummary.Status).Is.EqualTo(Status.Successful);
+        await Assert.That(pipelineSummary.Status).IsEqualTo(Status.Successful);
     }
 }

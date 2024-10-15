@@ -86,7 +86,7 @@ public class NotInParallelTests
         var firstModule = results.Modules.MinBy(x => x.EndTime)!;
         var nextModule = results.Modules.MaxBy(x => x.EndTime)!;
         await Assert.That(nextModule.StartTime)
-            .Is.GreaterThanOrEqualTo(firstModule.StartTime + TimeSpan.FromSeconds(5));
+            .IsGreaterThanOrEqualTo(firstModule.StartTime + TimeSpan.FromSeconds(5));
     }
 
     [Test]
@@ -100,7 +100,7 @@ public class NotInParallelTests
         var firstModule = results.Modules.MinBy(x => x.EndTime)!;
         var nextModule = results.Modules.MaxBy(x => x.EndTime)!;
         await Assert.That(nextModule.StartTime)
-            .Is.GreaterThanOrEqualTo(firstModule.StartTime + TimeSpan.FromSeconds(5));
+            .IsGreaterThanOrEqualTo(firstModule.StartTime + TimeSpan.FromSeconds(5));
     }
 
     [Test]
@@ -120,6 +120,6 @@ public class NotInParallelTests
         Console.WriteLine("Last expected" + expectedStartTime);
         Console.WriteLine("Last performed" + nextModule.StartTime);
         await Assert.That(nextModule.StartTime)
-            .Is.GreaterThanOrEqualTo(expectedStartTime);
+            .IsGreaterThanOrEqualTo(expectedStartTime);
     }
 }

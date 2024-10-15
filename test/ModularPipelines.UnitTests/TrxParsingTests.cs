@@ -3,7 +3,7 @@ using ModularPipelines.DotNet;
 using ModularPipelines.DotNet.Enums;
 using ModularPipelines.DotNet.Extensions;
 using ModularPipelines.DotNet.Options;
-using ModularPipelines.DotNet.Parsers.NUnitTrx;
+using ModularPipelines.DotNet.Parsers.Trx;
 using ModularPipelines.Enums;
 using ModularPipelines.Git.Extensions;
 using ModularPipelines.Modules;
@@ -43,15 +43,15 @@ public class TrxParsingTests : TestBase
     {
         var result = await RunModule<NUnitModule>();
 
-        await Assert.That(result.Result.Value!.Successful).Is.False();
+        await Assert.That(result.Result.Value!.Successful).IsFalse();
         
         await Assert.That(result.Result.Value!.UnitTestResults.Where(x => x.Outcome == TestOutcome.Failed))
-            .Has.Count().EqualTo(1);
+            .HasCount().EqualTo(1);
         
         await Assert.That(result.Result.Value!.UnitTestResults.Where(x => x.Outcome == TestOutcome.NotExecuted))
-            .Has.Count().EqualTo(1);
+            .HasCount().EqualTo(1);
         
         await Assert.That(result.Result.Value!.UnitTestResults.Where(x => x.Outcome == TestOutcome.Passed))
-            .Has.Count().EqualTo(2);
+            .HasCount().EqualTo(2);
     }
 }

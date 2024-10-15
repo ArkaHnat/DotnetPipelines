@@ -4,6 +4,7 @@ using ModularPipelines.Exceptions;
 using ModularPipelines.Modules;
 using ModularPipelines.TestHelpers;
 using TUnit.Assertions.Extensions;
+using TUnit.Assertions.Extensions.Throws;
 using Status = ModularPipelines.Enums.Status;
 
 namespace ModularPipelines.UnitTests;
@@ -19,8 +20,7 @@ public class DependencyForTests : TestBase
             .ExecutePipelineAsync();
 
         await Assert.That(pipelineSummary.Status)
-            .Is
-            .EqualTo(Status.Successful);
+            .IsEqualTo(Status.Successful);
     }
 
     [Test]
@@ -39,8 +39,7 @@ public class DependencyForTests : TestBase
             .ExecutePipelineAsync();
 
         await Assert.That(pipelineSummary.Status)
-            .Is
-            .EqualTo(Status.Successful);
+            .IsEqualTo(Status.Successful);
     }
 
     [Test]
@@ -51,8 +50,7 @@ public class DependencyForTests : TestBase
             .ExecutePipelineAsync();
 
         await Assert.That(pipelineSummary.Status)
-            .Is
-            .EqualTo(Status.Successful);
+            .IsEqualTo(Status.Successful);
     }
 
     [Test]
@@ -62,9 +60,7 @@ public class DependencyForTests : TestBase
         await Assert.That(async () => await TestPipelineHostBuilder.Create()
                 .AddModule<ReliesOnSelfModule>()
                 .ExecutePipelineAsync())
-            .Throws
-            .Exception()
-            .OfType<DependencyCollisionException>();
+                .ThrowsException().OfType<DependencyCollisionException>();
     }
 
     [Test]
@@ -75,12 +71,10 @@ public class DependencyForTests : TestBase
             .ExecutePipelineAsync();
 
         await Assert.That(pipelineSummary.Status)
-            .Is
-            .EqualTo(Status.Successful);
+            .IsEqualTo(Status.Successful);
 
         await Assert.That(pipelineSummary.Modules.Count)
-            .Is
-            .EqualTo(2);
+            .IsEqualTo(2);
     }
 
     [Test]
@@ -91,12 +85,10 @@ public class DependencyForTests : TestBase
             .ExecutePipelineAsync();
 
         await Assert.That(pipelineSummary.Status)
-            .Is
-            .EqualTo(Status.Successful);
+            .IsEqualTo(Status.Successful);
 
         await Assert.That(pipelineSummary.Modules.Count)
-            .Is
-            .EqualTo(2);
+            .IsEqualTo(2);
     }
 
     [DependencyFor<ReliantModule>]
