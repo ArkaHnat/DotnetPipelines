@@ -38,7 +38,7 @@ public class PipelineProgressTests
         }
     }
 
-    [DependsOn<Module1>]
+    [ModularPipelines.Attributes.DependsOn<Module1>]
     private class Module2 : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
@@ -48,7 +48,7 @@ public class PipelineProgressTests
         }
     }
 
-    [DependsOn<Module1>]
+    [ModularPipelines.Attributes.DependsOn<Module1>]
     private class Module3 : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
@@ -58,7 +58,7 @@ public class PipelineProgressTests
         }
     }
 
-    [DependsOn<Module1>]
+    [ModularPipelines.Attributes.DependsOn<Module1>]
     private class Module4 : Module
     {
         protected internal override Task<SkipDecision> ShouldSkip(IPipelineContext context)
@@ -72,7 +72,7 @@ public class PipelineProgressTests
         }
     }
 
-    [DependsOn<Module1>]
+    [ModularPipelines.Attributes.DependsOn<Module1>]
     private class Module5 : Module
     {
         protected internal override Task<bool> ShouldIgnoreFailures(IPipelineContext context, Exception exception)

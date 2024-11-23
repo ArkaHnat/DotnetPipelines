@@ -127,7 +127,7 @@ public class DependsOnTests : TestBase
         }
     }
 
-    [DependsOn<Module1>(IgnoreIfNotRegistered = true)]
+    [ModularPipelines.Attributes.DependsOn<Module1>(IgnoreIfNotRegistered = true)]
     private class Module3 : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)

@@ -163,7 +163,7 @@ public abstract partial class ModuleBase : ITypeDiscriminator, IModule
             {
                 if (existingSubModule.Status == Status.Successful && existingSubModule is SubModule<T> typedSubmodule)
                 {
-                    return typedSubmodule.Task;
+                    return typedSubmodule.SubModuleResultTaskCompletionSource.Task;
                 }
 
                 if (existingSubModule.Status is Status.NotYetStarted or Status.Processing)
