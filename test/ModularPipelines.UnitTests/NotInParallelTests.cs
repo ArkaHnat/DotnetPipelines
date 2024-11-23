@@ -29,7 +29,7 @@ public class NotInParallelTests
     }
 
     [ModularPipelines.Attributes.NotInParallel]
-    [DependsOn<ParallelDependency1>]
+    [ModularPipelines.Attributes.DependsOn<ParallelDependency1>]
     public class NotParallelModuleWithParallelDependency1 : Module<string>
     {
         protected override async Task<string?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
@@ -55,7 +55,7 @@ public class NotInParallelTests
         }
     }
     [ModularPipelines.Attributes.NotInParallel]
-    [DependsOn<ParallelDependency2>]
+    [ModularPipelines.Attributes.DependsOn<ParallelDependency2>]
     public class NotParallelModuleWithParallelDependency2 : Module<string>
     {
         protected override async Task<string?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
@@ -65,7 +65,7 @@ public class NotInParallelTests
         }
     }
     [ModularPipelines.Attributes.NotInParallel]
-    [DependsOn<NotParallelModuleWithParallelDependency1>]
+    [ModularPipelines.Attributes.DependsOn<NotParallelModuleWithParallelDependency1>]
     public class NotParallelModuleWithNonParallelDependency : Module<string>
     {
         protected override async Task<string?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)

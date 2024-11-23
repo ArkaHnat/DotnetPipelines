@@ -4,7 +4,6 @@ using ModularPipelines.Exceptions;
 using ModularPipelines.Extensions;
 using ModularPipelines.Modules;
 using ModularPipelines.TestHelpers;
-using TUnit.Assertions.Extensions.Throws;
 using Status = ModularPipelines.Enums.Status;
 
 namespace ModularPipelines.UnitTests;
@@ -44,8 +43,7 @@ public class BeforeTests : TestBase
         await Assert.That(async () => await TestPipelineHostBuilder.Create()
             .AddModule<Module4>()
             .ExecutePipelineAsync())
-            .ThrowsException()
-            .OfType<ModuleNotRegisteredException>();
+            .Throws<ModuleNotRegisteredException>();
     }
 
 
