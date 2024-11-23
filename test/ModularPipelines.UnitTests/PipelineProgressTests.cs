@@ -8,7 +8,6 @@ using ModularPipelines.TestHelpers;
 using Spectre.Console;
 using AfterAttribute = TUnit.Core.AfterAttribute;
 using BeforeAttribute = TUnit.Core.BeforeAttribute;
-using TUnit.Assertions.Extensions.Throws;
 
 namespace ModularPipelines.UnitTests;
 
@@ -134,6 +133,6 @@ public class PipelineProgressTests
                     .AddModule<Module6>()
                     .AddModule<Module7>()
                     .ExecutePipelineAsync()).
-            ThrowsException().OfType<ModuleFailedException>();
+            Throws<ModuleFailedException>();
     }
 }

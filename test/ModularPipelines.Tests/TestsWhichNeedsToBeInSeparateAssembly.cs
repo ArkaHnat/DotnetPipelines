@@ -4,7 +4,6 @@ using ModularPipelines.Context;
 using ModularPipelines.Exceptions;
 using ModularPipelines.Modules;
 using ModularPipelines.TestHelpers;
-using TUnit.Assertions.Extensions.Throws;
 
 namespace ModularPipelines.Tests;
 
@@ -34,7 +33,7 @@ public class TestsWhichNeedsToBeInSeparateAssembly
         await Assert.That(async () => await TestPipelineHostBuilder.Create()
                 .AddModule<ReliesOnNonModule>()
                 .ExecutePipelineAsync())
-            .ThrowsException().With.Message.Containing("ModularPipelines.Exceptions.ModuleFailedException is not a Module class");
+            .ThrowsException().WithMessage("ModularPipelines.Exceptions.ModuleFailedException is not a Module class");
     }
 
     [Test]
@@ -43,6 +42,6 @@ public class TestsWhichNeedsToBeInSeparateAssembly
         await Assert.That(async () => await TestPipelineHostBuilder.Create()
                 .AddModule<ReliesOnNonModule>()
                 .ExecutePipelineAsync()).
-            ThrowsException().With.Message.Containing("ModularPipelines.Exceptions.ModuleFailedException is not a Module class");
+            ThrowsException().WithMessage("ModularPipelines.Exceptions.ModuleFailedException is not a Module class");
     }
 }

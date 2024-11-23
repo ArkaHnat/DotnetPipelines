@@ -6,7 +6,6 @@ using ModularPipelines.Modules;
 using ModularPipelines.TestHelpers;
 using Status = ModularPipelines.Enums.Status;
 using TUnit;
-using TUnit.Assertions.Extensions.Throws;
 namespace ModularPipelines.UnitTests;
 
 public class DependsOnTests : TestBase
@@ -77,8 +76,8 @@ public class DependsOnTests : TestBase
     {
         await Assert.That(async () => await TestPipelineHostBuilder.Create()
                 .AddModule<DependsOnSelfModule>()
-                .ExecutePipelineAsync()).
-            ThrowsException().OfType<ModuleReferencingSelfException>();
+                .ExecutePipelineAsync())
+            .Throws<ModuleReferencingSelfException>();
     }
     [Test]
     public async Task ExpectPipeline_ToSucces_IfOptionalDependencyFailed()
@@ -189,7 +188,6 @@ public class DependsOnTests : TestBase
             return await NothingAsync();
         }
     }
-
     [DependsOn<DependsOnSelfModule>]
     private class DependsOnSelfModule : Module
     {
@@ -209,4 +207,5 @@ public class DependsOnTests : TestBase
             return await NothingAsync();
         }
     }
+
 }

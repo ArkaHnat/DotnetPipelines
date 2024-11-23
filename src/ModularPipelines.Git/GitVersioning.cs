@@ -48,14 +48,28 @@ internal class GitVersioning : IGitVersioning
                 return _prefetchedGitVersionInformation;
             }
 
+            await _command.ExecuteCommandLineTool(new CommandLineToolOptions("dotnet")
+            {
+                Arguments =
+                [
+                    "tool", 
+                    "install", 
+                    "--tool-path", _temporaryFolder.Path, 
+                    "GitVersion.Tool", 
+                    "--version", "6.*"
+                ],
+            });
+
+            await TryWriteConfigurationFile();
+
             var gitVersionOutput = await _command.ExecuteCommandLineTool(
                 new CommandLineToolOptions("dotnet")
                 {
                     WorkingDirectory = _gitInformation.Root.Path,
-                    Arguments = new[]
-                    {
-                        "gitversion", "/output", "json",
-                    },
+                    Arguments =
+                    [
+                        "/output", "json"
+                    ],
                 });
 
             return _prefetchedGitVersionInformation ??=
