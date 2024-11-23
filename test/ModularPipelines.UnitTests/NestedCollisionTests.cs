@@ -3,7 +3,6 @@ using ModularPipelines.Context;
 using ModularPipelines.Exceptions;
 using ModularPipelines.Modules;
 using ModularPipelines.TestHelpers;
-using TUnit.Assertions.Extensions.Throws;
 
 namespace ModularPipelines.UnitTests;
 
@@ -19,11 +18,11 @@ public class NestedCollisionTests
                 .AddModule<DependencyConflictModule4>()
                 .AddModule<DependencyConflictModule5>()
                 .ExecutePipelineAsync()).
-            ThrowsException().OfType<DependencyCollisionException>()
-                .And.ThrowsException().With.Message.EqualTo("Dependency collision detected: **DependencyConflictModule2** -> DependencyConflictModule3 -> DependencyConflictModule4 -> DependencyConflictModule5 -> **DependencyConflictModule2**");
+            Throws<DependencyCollisionException>()
+                .And.HasMessageEqualTo("Dependency collision detected: **DependencyConflictModule2** -> DependencyConflictModule3 -> DependencyConflictModule4 -> DependencyConflictModule5 -> **DependencyConflictModule2**");
     }
 
-    [DependsOn<DependencyConflictModule2>]
+    [ModularPipelines.Attributes.DependsOn<DependencyConflictModule2>]
     private class DependencyConflictModule1 : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
@@ -33,7 +32,7 @@ public class NestedCollisionTests
         }
     }
 
-    [DependsOn<DependencyConflictModule3>]
+    [ModularPipelines.Attributes.DependsOn<DependencyConflictModule3>]
     private class DependencyConflictModule2 : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
@@ -43,7 +42,7 @@ public class NestedCollisionTests
         }
     }
 
-    [DependsOn<DependencyConflictModule4>]
+    [ModularPipelines.Attributes.DependsOn<DependencyConflictModule4>]
     private class DependencyConflictModule3 : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
@@ -53,7 +52,7 @@ public class NestedCollisionTests
         }
     }
 
-    [DependsOn<DependencyConflictModule5>]
+    [ModularPipelines.Attributes.DependsOn<DependencyConflictModule5>]
     private class DependencyConflictModule4 : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
@@ -63,7 +62,7 @@ public class NestedCollisionTests
         }
     }
 
-    [DependsOn<DependencyConflictModule2>]
+    [ModularPipelines.Attributes.DependsOn<DependencyConflictModule2>]
     private class DependencyConflictModule5 : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)

@@ -3,8 +3,6 @@ using ModularPipelines.Context;
 using ModularPipelines.Exceptions;
 using ModularPipelines.Modules;
 using ModularPipelines.TestHelpers;
-using TUnit.Assertions.Extensions;
-using TUnit.Assertions.Extensions.Throws;
 using Status = ModularPipelines.Enums.Status;
 
 namespace ModularPipelines.UnitTests;
@@ -60,7 +58,7 @@ public class DependencyForTests : TestBase
         await Assert.That(async () => await TestPipelineHostBuilder.Create()
                 .AddModule<ReliesOnSelfModule>()
                 .ExecutePipelineAsync())
-                .ThrowsException().OfType<DependencyCollisionException>();
+                .Throws<DependencyCollisionException>();
     }
 
     [Test]

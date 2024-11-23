@@ -36,11 +36,11 @@ public class RunUnitTestsModule : Module<CommandResult[]>
                     ["GITHUB_ACTIONS"] = null,
                     ["GITHUB_STEP_SUMMARY"] = null,
                 },
-                Properties = new KeyValue[]
-                {
+                Properties =
+                [
                     new("RunAnalyzersDuringBuild", "false"),
-                    new("RunAnalyzers", "false"),
-                },
+                    new("RunAnalyzers", "false")
+                ],
             }, cancellationToken))
             .ProcessInParallel();
     }

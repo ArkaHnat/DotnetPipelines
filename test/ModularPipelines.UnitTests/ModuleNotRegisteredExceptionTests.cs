@@ -3,7 +3,6 @@ using ModularPipelines.Context;
 using ModularPipelines.Exceptions;
 using ModularPipelines.Modules;
 using ModularPipelines.TestHelpers;
-using TUnit.Assertions.Extensions.Throws;
 
 namespace ModularPipelines.UnitTests;
 
@@ -17,7 +16,7 @@ public class ModuleNotRegisteredExceptionTests : TestBase
         }
     }
 
-    [DependsOn<Module1>]
+    [ModularPipelines.Attributes.DependsOn<Module1>]
     private class Module2 : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)

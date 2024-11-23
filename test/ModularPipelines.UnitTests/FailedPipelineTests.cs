@@ -3,7 +3,6 @@ using ModularPipelines.Context;
 using ModularPipelines.Modules;
 using ModularPipelines.Options;
 using ModularPipelines.TestHelpers;
-using TUnit.Assertions.Extensions.Throws;
 using Status = ModularPipelines.Enums.Status;
 
 namespace ModularPipelines.UnitTests;
@@ -26,7 +25,7 @@ public class FailedPipelineTests : TestBase
         }
     }
 
-    [DependsOn<Module2>(IgnoreIfNotRegistered = true)]
+    [ModularPipelines.Attributes.DependsOn<Module2>(IgnoreIfNotRegistered = true)]
     private class Module3 : Module
     {
         protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
@@ -55,7 +54,7 @@ public class FailedPipelineTests : TestBase
                 .AddModule<Module2>()
                 .AddModule<Module3>()
                 .ExecutePipelineAsync()).ThrowsException()
-            .OfAnyType();
+            ;
     }
 
     [Test]
@@ -69,7 +68,7 @@ public class FailedPipelineTests : TestBase
                 .AddModule<Module1>()
                 .AddModule<Module2>()
                 .ExecutePipelineAsync()).
-            ThrowsException().OfAnyType();
+            ThrowsException();
     }
 
     [Test]

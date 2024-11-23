@@ -233,16 +233,31 @@ public class SubModuleTests : TestBase
     }
 
     [Test]
+    public async Task Submodule_With_Progress()
+    {
+        var module = await RunModule<SubModulesWithReturnTypeModule>(new TestHostSettings { ShowProgressInConsole = true });
+
+        var results = await module;
+
+        using (Assert.Multiple())
+        {
+            await Assert.That(results.ModuleResultType).IsEqualTo(ModuleResultType.Success);
+            await Assert.That(results.Value).IsEquivalentCollectionTo(new List<string> { "1", "2", "3" });
+            await Assert.That(module.SubModuleRunCount).IsEqualTo(3);
+        }
+    }
+
+    [Test]
     public async Task Submodule_With_Return_Type_Does_Not_Fail_And_Runs_Once()
     {
         var module = await RunModule<SubModulesWithReturnTypeModule>();
 
         var results = await module;
         
-        await using (Assert.Multiple())
+        using (Assert.Multiple())
         {
             await Assert.That(results.ModuleResultType).IsEqualTo(ModuleResultType.Success);
-            await Assert.That(results.Value).IsEquivalentTo(new List<string> { "1", "2", "3" });
+            await Assert.That(results.Value).IsEquivalentCollectionTo(new List<string> { "1", "2", "3" });
             await Assert.That(module.SubModuleRunCount).IsEqualTo(3);
         }
     }
@@ -254,7 +269,7 @@ public class SubModuleTests : TestBase
 
         var results = await module;
         
-        await using (Assert.Multiple())
+        using (Assert.Multiple())
         {
             await Assert.That(results.ModuleResultType).IsEqualTo(ModuleResultType.Success);
             await Assert.That(results.Value).IsNull();
@@ -269,10 +284,10 @@ public class SubModuleTests : TestBase
 
         var results = await module;
 
-        await using (Assert.Multiple())
+        using (Assert.Multiple())
         {
             await Assert.That(results.ModuleResultType).IsEqualTo(ModuleResultType.Success);
-            await Assert.That(results.Value!).IsEquivalentTo(new List<string> { "1", "2", "3" });
+            await Assert.That(results.Value!).IsEquivalentCollectionTo(new List<string> { "1", "2", "3" });
             await Assert.That(module.SubModuleRunCount).IsEqualTo(3);
         }
     }
@@ -284,7 +299,7 @@ public class SubModuleTests : TestBase
 
         var results = await module;
         
-        await using (Assert.Multiple())
+        using (Assert.Multiple())
         {
             await Assert.That(results.ModuleResultType).IsEqualTo(ModuleResultType.Success);
             await Assert.That(results.Value).IsNull();
@@ -297,10 +312,10 @@ public class SubModuleTests : TestBase
     {
         var moduleFailedException = await Assert.ThrowsAsync<ModuleFailedException>(RunModule<FailingSubModulesWithReturnTypeModule>);
 
-        await using (Assert.Multiple())
+        using (Assert.Multiple())
         {
             await Assert.That(moduleFailedException.InnerException).IsTypeOf(typeof(SubModuleFailedException));
-            await Assert.That(moduleFailedException.InnerException).HasMessage().EqualTo("The Sub-Module 1 has failed.");
+            await Assert.That(moduleFailedException.InnerException).HasMessageEqualTo("The Sub-Module 1 has failed.");
         }
     }
 
@@ -313,13 +328,13 @@ public class SubModuleTests : TestBase
 
         var moduleFailedException = await Assert.ThrowsAsync<ModuleFailedException>(RunModule<FailingSubModulesWithoutReturnTypeModule>);
 
-        await using (Assert.Multiple())
+        using (Assert.Multiple())
         {
             await Assert.That(moduleFailedException?.InnerException).IsTypeOf(typeof(SubModuleFailedException));
             await Assert.That(moduleFailedException!.InnerException!)
-                .HasMessage().EqualTo("The Sub-Module 1 has failed.")
-                .Or.HasMessage().EqualTo("The Sub-Module 2 has failed.")
-                .Or.HasMessage().EqualTo("The Sub-Module 3 has failed.");
+                .HasMessageEqualTo("The Sub-Module 1 has failed.")
+                .Or.HasMessageEqualTo("The Sub-Module 2 has failed.")
+                .Or.HasMessageEqualTo("The Sub-Module 3 has failed.");
         }
     }
 
@@ -328,10 +343,10 @@ public class SubModuleTests : TestBase
     {
         var moduleFailedException = await Assert.ThrowsAsync<ModuleFailedException>(RunModule<FailingSubModulesWithReturnTypeModuleSynchronous>);
 
-        await using (Assert.Multiple())
+        using (Assert.Multiple())
         {
             await Assert.That(moduleFailedException?.InnerException).IsTypeOf(typeof(SubModuleFailedException));
-            await Assert.That(moduleFailedException!.InnerException!).HasMessage().EqualTo("The Sub-Module 1 has failed.");
+            await Assert.That(moduleFailedException!.InnerException!).HasMessageEqualTo("The Sub-Module 1 has failed.");
         }
     }
 
@@ -340,10 +355,10 @@ public class SubModuleTests : TestBase
     {
         var moduleFailedException = await Assert.ThrowsAsync<ModuleFailedException>(RunModule<FailingSubModulesWithoutReturnTypeModuleSynchronous>);
 
-        await using (Assert.Multiple())
+        using (Assert.Multiple())
         {
             await Assert.That(moduleFailedException.InnerException).IsTypeOf(typeof(SubModuleFailedException));
-            await Assert.That(moduleFailedException.InnerException!).HasMessage().EqualTo("The Sub-Module 1 has failed.");
+            await Assert.That(moduleFailedException.InnerException!).HasMessageEqualTo("The Sub-Module 1 has failed.");
         }
     }
     
@@ -354,7 +369,7 @@ public class SubModuleTests : TestBase
 
         var module = (SucceedingSubModulesDoNotRetryModule) moduleFailedException.Module;
         
-        await using (Assert.Multiple())
+        using (Assert.Multiple())
         {
             await Assert.That(module._oneCount).IsEqualTo(1);
             await Assert.That(module._twoCount).IsEqualTo(1);
@@ -369,7 +384,7 @@ public class SubModuleTests : TestBase
 
         var module = (SucceedingSubModulesDoNotRetryModule_WithReturnType) moduleFailedException.Module;
         
-        await using (Assert.Multiple())
+        using (Assert.Multiple())
         {
             await Assert.That(module._oneCount).IsEqualTo(1);
             await Assert.That(module._twoCount).IsEqualTo(1);
