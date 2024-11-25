@@ -68,7 +68,7 @@ internal class GitVersioning : IGitVersioning
                     WorkingDirectory = _gitInformation.Root.Path,
                     Arguments =
                     [
-                        "/output", "json"
+                        "gitversion", "/output", "json"
                     ],
                 });
 
