@@ -28,8 +28,8 @@ public class RunUnitTestsModule : Module<CommandResult[]>
             {
                 Project = unitTestProjectFile.Path,
                 NoBuild = false,
-                Framework = "net8.0",
-                Arguments = ["--coverage", "--coverage-output-format", "cobertura", "--fail-fast"],
+                Framework = "net9.0",
+                Arguments = ["--coverage", "--coverage-output-format", "cobertura"],
                 Configuration = DotnetBuildModule.BuildConfiguration,
                 EnvironmentVariables = new Dictionary<string, string?>
                 {
