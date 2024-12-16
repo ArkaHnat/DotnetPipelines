@@ -20,8 +20,10 @@ public class DotnetBuildModule : Module<CommandResult[]>
 {
     public static string BuildConfiguration = Configuration.Release;
 
-    /// <inheritdoc/>
-    protected override async Task<CommandResult[]?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+	public static string DotnetVersion = "net9.0";
+
+	/// <inheritdoc/>
+	protected override async Task<CommandResult[]?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
     {
         var changedFiles = await GetModule<ChangedFilesInPullRequestModule>();
         var projectFiles = await GetModule<FindProjectDependenciesModule>();

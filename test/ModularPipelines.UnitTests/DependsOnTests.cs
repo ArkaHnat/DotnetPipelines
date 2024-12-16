@@ -98,7 +98,7 @@ public class DependsOnTests : TestBase
     public async Task Exception_Thrown_When_Dependent_Module_Missing_And_No_Ignore_On_Attribute()
     {
         await Assert.That(async () => await TestPipelineHostBuilder.Create()
-                .AddModule<Module2>()
+                .AddModule<ModuleWithNoResolveDependencies>()
                 .ExecutePipelineAsync())
             .ThrowsException();
     }
@@ -117,9 +117,16 @@ public class DependsOnTests : TestBase
         {
             return await NothingAsync();
         }
-    }
-
-    [ModularPipelines.Attributes.DependsOn<Module1>]
+	}
+	[ModularPipelines.Attributes.DependsOn<Module1>]
+	private class ModuleWithNoResolveDependencies : Module
+	{
+		protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+		{
+			return await NothingAsync();
+		}
+	}
+	[ModularPipelines.Attributes.DependsOn<Module1>]
     [ResolveDependencies]
     private class Module2 : Module
     {

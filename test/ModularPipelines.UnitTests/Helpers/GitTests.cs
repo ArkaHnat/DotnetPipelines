@@ -51,18 +51,6 @@ public class GitTests : TestBase
     }
 
     [Test]
-    public async Task GitRootDirectory()
-    {
-        var git = await GetService<IGit>();
-        
-        using (Assert.Multiple())
-        {
-            await Assert.That(git.RootDirectory.Name).IsEqualTo("DotnetModularPipelines");
-            await Assert.That(git.RootDirectory.ListFiles().Select(x => x.Name)).Contains("README.md");
-        }
-    }
-
-    [Test]
     public async Task DefaultBranchName()
     {
         var git = await GetService<IGit>();

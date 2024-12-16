@@ -28,7 +28,7 @@ public class RunUnitTestsModule : Module<CommandResult[]>
             {
                 Project = unitTestProjectFile.Path,
                 NoBuild = true,
-                Framework = "net9.0",
+                Framework = DotnetBuildModule.DotnetVersion,
                 Arguments = ["--coverage", "--coverage-output-format", "cobertura"],
                 Configuration = DotnetBuildModule.BuildConfiguration,
                 EnvironmentVariables = new Dictionary<string, string?>
