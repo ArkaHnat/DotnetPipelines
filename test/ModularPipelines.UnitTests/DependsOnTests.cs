@@ -119,7 +119,15 @@ public class DependsOnTests : TestBase
         }
     }
 
-    [ModularPipelines.Attributes.DependsOn<Module1>]
+	[ModularPipelines.Attributes.DependsOn<Module1>]
+	private class ModuleWithNoResolveDependencies : Module
+	{
+		protected override async Task<IDictionary<string, object>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+		{
+			return await NothingAsync();
+		}
+	}
+	[ModularPipelines.Attributes.DependsOn<Module1>]
     [ResolveDependencies]
     private class Module2 : Module
     {

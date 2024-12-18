@@ -39,7 +39,8 @@ public class RunUnitTestsModule : Module<CommandResult[]>
                 Properties =
                 [
                     new("RunAnalyzersDuringBuild", "false"),
-                    new("RunAnalyzers", "false")
+                    new("RunAnalyzers", "false"),
+                    new ("AltCover","false")
                 ],
             }, cancellationToken))
             .ProcessInParallel();
