@@ -30,7 +30,7 @@ public class GenerateReadMeModule : Module
         var projects = await GetModule<FindProjectsModule>();
 
         foreach (var project in projects.Value!
-                     .Where(x => !x.NameWithoutExtension.StartsWith("ModularPipelines.Analyzers")))
+                     .Where(x => !x.NameWithoutExtension.StartsWith("ModularPipelines.Analyzers") && !x.NameWithoutExtension.Contains("Test")))
         {
             await SubModule(project.NameWithoutExtension, () =>
             {

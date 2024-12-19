@@ -11,45 +11,48 @@ using File = ModularPipelines.FileSystem.File;
 
 namespace ModularPipelines.Build.Modules;
 
-[RunOnLinux]
-[SkipIfNoGitHubToken]
-[SkipIfNoStandardGitHubToken]
+//[SkipIfNoGitHubToken]
+//[SkipIfNoStandardGitHubToken]
 [DependsOn<DownloadCodeCoverageFromOtherOperatingSystemBuildsModule>]
 [DependsOn<RunUnitTestsModule>]
 [ResolveDependencies]
 public class MergeCoverageModule : Module<File>
 {
-    /// <inheritdoc/>
-    protected override async Task<File?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
-    {
-        var coverageFilesFromThisRun = context.Git().RootDirectory
-            .GetFiles(x => x.Name.Contains("cobertura") && x.Extension is ".xml");
+	/// <inheritdoc/>
+	protected override async Task<File?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+	{
+		var coverageFilesFromThisRun = context.Git().RootDirectory
+			.GetFiles(x => x.Name.Contains("cobertura") && x.Extension is ".xml").GroupBy(a => a.Folder)
+			.Select(group => group.OrderByDescending(file => file.CreationTime).First())
+			.ToList();
 
-        var coverageFilesFromOtherSystems = await GetModule<DownloadCodeCoverageFromOtherOperatingSystemBuildsModule>();
+		var coverageFilesFromOtherSystems = await GetModule<DownloadCodeCoverageFromOtherOperatingSystemBuildsModule>();
 
-        if (coverageFilesFromOtherSystems.Value?.Count is null or < 1)
-        {
-            context.Logger.LogInformation("No code coverage found from other operating systems");
-            return null;
-        }
+		List<File> coverageFiles = new();
+		if (!coverageFilesFromOtherSystems.SkipDecision.ShouldSkip)
+		{
+			if (coverageFilesFromOtherSystems.Value?.Count is null or < 1)
+			{
+				context.Logger.LogInformation("No code coverage found from other operating systems");
+				return null;
+			}
+			coverageFiles = coverageFilesFromThisRun
+			   .Concat(coverageFilesFromOtherSystems.Value ?? new())
+			   .Distinct()
+			   .ToList();
+		}
+		else
+		{
+			coverageFiles.AddRange(coverageFilesFromThisRun);
+		}
 
-        var coverageFiles = coverageFilesFromOtherSystems.Value!
-            .Concat(coverageFilesFromThisRun)
-            .Distinct()
-            .ToList();
+		var outputPath = context.Git().RootDirectory / "_buildOutput/cobertura.xml";
 
-        await context.Command.ExecuteCommandLineTool(new CommandLineToolOptions("dotnet")
-        {
-            Arguments = ["tool", "install", "--global", "dotnet-coverage"],
-        }, cancellationToken);
+		await context.Command.ExecuteCommandLineTool(new CommandLineToolOptions("dotnet-coverage")
+		{
+			Arguments = new[] { "merge", "--remove-input-files", "--output-format", "cobertura", "--output", outputPath.Path }.Concat(coverageFiles.Select(x => x.Path)),
+		}, cancellationToken);
 
-        var outputPath = Folder.CreateTemporaryFolder().GetFile("cobertura.xml").Path;
-
-        await context.Command.ExecuteCommandLineTool(new CommandLineToolOptions("dotnet-coverage")
-        {
-            Arguments = new[] { "merge", "--remove-input-files", "--output-format", "cobertura", "--output", outputPath }.Concat(coverageFiles.Select(x => x.Path)),
-        }, cancellationToken);
-
-        return outputPath;
-    }
+		return outputPath.Path;
+	}
 }

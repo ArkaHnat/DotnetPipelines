@@ -15,7 +15,8 @@ public class PackagePathsParserModule : Module<List<File>>
         var packPackagesModuleResult = await GetModule<PackProjectsModule>();
 
         return packPackagesModuleResult.Value!
-            .Select(x => x.StandardOutput)
+			.Where(x => !string.IsNullOrWhiteSpace(x.StandardOutput))
+			.Select(x => x.StandardOutput)
             .Select(x => x.Split("Successfully created package '")[1])
             .Select(x => x.Split("'.")[0])
             .Select(x => new File(x))

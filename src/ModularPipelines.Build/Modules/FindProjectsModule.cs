@@ -32,10 +32,6 @@ public class FindProjectsModule : Module<IReadOnlyList<File>>
             return false;
         }
 
-        if (path.Contains("Test", StringComparison.OrdinalIgnoreCase))
-        {
-            return false;
-        }
 
         if (path.EndsWith("ModularPipelines.Build.csproj")
             || path.Contains("Example"))
