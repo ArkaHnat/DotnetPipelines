@@ -14,10 +14,11 @@ public class PackagePathsParserModule : Module<List<File>>
     {
         var packPackagesModuleResult = await GetModule<PackProjectsModule>();
 
-        return packPackagesModuleResult.Value!
+		return packPackagesModuleResult.Value!
 			.Where(x => !string.IsNullOrWhiteSpace(x.StandardOutput))
 			.Select(x => x.StandardOutput)
-            .Select(x => x.Split("Successfully created package '")[1])
+            .Select(x => x.Split("Successfully created package '")[1] ?? null)
+            .Where(x=> x!= null)
             .Select(x => x.Split("'.")[0])
             .Select(x => new File(x))
             .ToList();
