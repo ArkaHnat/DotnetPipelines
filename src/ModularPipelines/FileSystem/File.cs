@@ -98,6 +98,20 @@ public class File : IEquatable<File>
 
         await contents.CopyToAsync(fileStream, cancellationToken);
     }
+    
+    public Task AppendAsync(string contents, CancellationToken cancellationToken = default)
+    {
+        ModuleLogger.Current.LogInformation("Writing to File: {Path}", this);
+        
+        return System.IO.File.AppendAllTextAsync(Path, contents, cancellationToken);
+    }
+
+    public Task AppendAsync(IEnumerable<string> contents, CancellationToken cancellationToken = default)
+    {
+        ModuleLogger.Current.LogInformation("Writing to File: {Path}", this);
+        
+        return System.IO.File.AppendAllLinesAsync(Path, contents, cancellationToken);
+    }
 
     /// <inheritdoc cref="FileSystemInfo.Exists"/>>
     public bool Exists => FileInfo.Exists;
@@ -144,6 +158,9 @@ public class File : IEquatable<File>
 
     /// <inheritdoc cref="FileSystemInfo.Extension"/>>
     public string Extension => FileInfo.Extension;
+
+    /// <inheritdoc cref="System.IO.FileInfo.Length"/>>
+    public long Length => FileInfo.Length;
 
     /// <inheritdoc cref="FileInfo.Delete"/>>
     public void Delete()
