@@ -48,9 +48,9 @@ public class MergeCoverageModule : Module<File>
 
 		var outputPath = context.Git().RootDirectory / "_buildOutput/cobertura.xml";
 
-		await context.Command.ExecuteCommandLineTool(new CommandLineToolOptions("dotnet-coverage")
+		await context.Command.ExecuteCommandLineTool(new CommandLineToolOptions("dotnet")
 		{
-			Arguments = new[] { "merge", "--remove-input-files", "--output-format", "cobertura", "--output", outputPath.Path }.Concat(coverageFiles.Select(x => x.Path)),
+			Arguments = new[] { "dotnet-coverage", "merge", "--remove-input-files", "--output-format", "cobertura", "--output", outputPath.Path }.Concat(coverageFiles.Select(x => x.Path)),
 		}, cancellationToken);
 
 		return outputPath.Path;
