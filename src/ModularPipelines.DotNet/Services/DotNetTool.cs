@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using ModularPipelines.Context;
 using ModularPipelines.DotNet.Options;
+using ModularPipelines.DotNet.Services.Tools;
 using ModularPipelines.Models;
 
 namespace ModularPipelines.DotNet.Services;
@@ -8,16 +9,17 @@ namespace ModularPipelines.DotNet.Services;
 [ExcludeFromCodeCoverage]
 public class DotNetTool
 {
-    public DotNetTool(
-        ICommand internalCommand
-    )
+    public DotNetTool(ICommand internalCommand, DotNetToolSonarScanner dotNetToolSonarScanner)
     {
         _command = internalCommand;
-    }
+		this.dotNetToolSonarScanner = dotNetToolSonarScanner;
+	}
 
     private readonly ICommand _command;
 
-    public async Task<CommandResult> Install(DotNetToolInstallOptions options, CancellationToken token = default)
+    private DotNetToolSonarScanner dotNetToolSonarScanner;
+
+	public async Task<CommandResult> Install(DotNetToolInstallOptions options, CancellationToken token = default)
     {
         return await _command.ExecuteCommandLineTool(options, token);
     }
@@ -51,4 +53,7 @@ public class DotNetTool
     {
         return await _command.ExecuteCommandLineTool(options, token);
     }
+
+	public DotNetToolSonarScanner SonarCubeScanner => dotNetToolSonarScanner;
+	
 }

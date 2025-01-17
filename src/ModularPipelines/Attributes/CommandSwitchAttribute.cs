@@ -7,6 +7,11 @@ public class CommandSwitchAttribute : Attribute
     {
         SwitchName = switchName;
     }
+	public CommandSwitchAttribute(string switchName, string separator)
+	{
+		SwitchName = switchName;
+		SwitchValueSeparator = separator;
+	}
 
     public string SwitchName { get; }
 
