@@ -4,6 +4,7 @@ using ModularPipelines.Exceptions;
 using ModularPipelines.Extensions;
 using ModularPipelines.Modules;
 using ModularPipelines.TestHelpers;
+using TUnit.Assertions.AssertConditions.Throws;
 using Status = ModularPipelines.Enums.Status;
 using TUnit;
 namespace ModularPipelines.UnitTests;

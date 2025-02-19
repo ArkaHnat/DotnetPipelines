@@ -69,14 +69,12 @@ await PipelineHostBuilder.Create()
         {
             collection.AddModule<CreateLocalNugetFolderModule>()
                 .AddModule<AddLocalNugetSourceModule>()
-                .AddModule<UploadPackagesToLocalNuGetModule>()
-                .AddModule<CheckReleaseNotesAddedModule>();
+                .AddModule<UploadPackagesToLocalNuGetModule>();
         }
         else
         {
             collection.AddModule<UploadPackagesToNugetModule>()
-                .AddModule<UpdateReleaseNotesModule>();
-            collection.AddModule<UnlistsPublishedNugetPackageModule>();
+                .AddModule<CreateReleaseModule>();
         }
     })
     .ConfigurePipelineOptions((context, options) => options.DefaultRetryCount = 3)

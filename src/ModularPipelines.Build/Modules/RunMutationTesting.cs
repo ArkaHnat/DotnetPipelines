@@ -1,5 +1,4 @@
-﻿using FluentAssertions.Equivalency;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using ModularPipelines.Context;
 using ModularPipelines.DotNet.Extensions;
