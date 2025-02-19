@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -48,7 +49,8 @@ internal class DependencyPrinter : IDependencyPrinter
             Append(internalStringBuilder, moduleDependencyModel, 1, alreadyPrinted);
             var items = new List<string>(internalStringBuilder.ToString().Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries));
             items.Sort();
-            var orderedString = string.Join("\r\n", items.ToArray().Reverse());
+            items.ToArray().Reverse();
+			var orderedString = string.Join("\r\n", items);
             
             stringBuilder.AppendLine(orderedString);
 

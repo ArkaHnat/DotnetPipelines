@@ -10,7 +10,7 @@ public record DotNetToolSonarScannerBeginOptions : DotNetOptions, IDotnetToolSon
 	{
 		CommandParts = ["tool", "run", IDotnetToolSonarScanner.PackageNameConst, "begin"];
 		ProjectKey = projectKey;
-		this.Organization = organization;
+		Organization = organization;
 	}
 
 	/// <summary>
