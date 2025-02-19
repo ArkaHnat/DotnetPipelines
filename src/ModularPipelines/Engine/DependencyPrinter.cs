@@ -50,7 +50,7 @@ internal class DependencyPrinter : IDependencyPrinter
             var items = new List<string>(internalStringBuilder.ToString().Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries));
             items.Sort();
             items.ToArray().Reverse();
-			var orderedString = string.Join("\r\n", items);
+
             
             stringBuilder.AppendLine(orderedString);
 

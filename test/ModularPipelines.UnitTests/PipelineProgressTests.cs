@@ -8,6 +8,7 @@ using ModularPipelines.TestHelpers;
 using Spectre.Console;
 using AfterAttribute = TUnit.Core.AfterAttribute;
 using BeforeAttribute = TUnit.Core.BeforeAttribute;
+using TUnit.Assertions.AssertConditions.Throws;
 
 namespace ModularPipelines.UnitTests;
 
