@@ -1,9 +1,8 @@
 using ModularPipelines.Context;
-using ModularPipelines.DotNet.Options;
 using ModularPipelines.Models;
 using System.Diagnostics.CodeAnalysis;
 
-namespace ModularPipelines.DotNet.Services.Tools;
+namespace ModularPipelines.DotNet.Services.Tools.SonarScanner;
 
 [ExcludeFromCodeCoverage]
 public class DotNetToolSonarScanner

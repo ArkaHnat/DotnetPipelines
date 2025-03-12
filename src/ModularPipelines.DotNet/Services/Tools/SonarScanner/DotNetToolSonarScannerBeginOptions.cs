@@ -2,7 +2,7 @@
 using ModularPipelines.DotNet.Options;
 using ModularPipelines.Options;
 
-namespace ModularPipelines.DotNet.Services.Tools;
+namespace ModularPipelines.DotNet.Services.Tools.SonarScanner;
 
 public record DotNetToolSonarScannerBeginOptions : DotNetOptions, IDotnetToolSonarScanner
 {
@@ -67,7 +67,7 @@ public record DotNetToolSonarScannerBeginOptions : DotNetOptions, IDotnetToolSon
 	/// Gets or sets /d:sonar.verbose=.<boolean>"
 	/// [optional] Sets the logging verbosity to detailed. Add this argument before sending logs for troubleshooting.
 	/// </summary>
-	[CommandSwitch("/d:sonar.verbose","=")]
+	[CommandSwitch("--include-auto-references")]
 	public bool? Verbose { get; set; }
 
 	/// <summary>

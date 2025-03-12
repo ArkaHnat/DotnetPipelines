@@ -3,7 +3,7 @@ using ModularPipelines.DotNet.Options;
 using ModularPipelines.Models;
 using System.Diagnostics.CodeAnalysis;
 
-namespace ModularPipelines.DotNet.Services.Tools;
+namespace ModularPipelines.DotNet.Services.Tools.Stryker;
 [ExcludeFromCodeCoverage]
 public class DotnetToolStryker
 {

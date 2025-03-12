@@ -1,6 +1,6 @@
 ﻿using ModularPipelines.Options;
 
-namespace ModularPipelines.DotNet.Services.Tools;
+namespace ModularPipelines.DotNet.Services.Tools.Stryker;
 
 public record DotnetToolStrykerOptions : CommandLineToolOptions
 {

@@ -1,4 +1,4 @@
-﻿namespace ModularPipelines.DotNet.Services.Tools;
+﻿namespace ModularPipelines.DotNet.Services.Tools.Stryker;
 
 public interface IDotnetToolStryker
 {

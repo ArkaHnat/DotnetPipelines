@@ -1,0 +1,58 @@
+<Solution>
+  <Folder Name="/ModularPipelines.Analyzers/">
+    <Project Path="src/ModularPipelines.Analyzers/ModularPipelines.Analyzers.CodeFixes/ModularPipelines.Analyzers.CodeFixes.csproj" />
+    <Project Path="src/ModularPipelines.Analyzers/ModularPipelines.Analyzers.Package/ModularPipelines.Analyzers.Package.csproj" />
+    <Project Path="src/ModularPipelines.Analyzers/ModularPipelines.Analyzers.Test/ModularPipelines.Analyzers.Test.csproj" />
+    <Project Path="src/ModularPipelines.Analyzers/ModularPipelines.Analyzers/ModularPipelines.Analyzers.csproj" />
+  </Folder>
+  <Folder Name="/ModularPipelines.Examples/">
+    <Project Path="src/ModularPipelines.Examples/ModularPipelines.Examples.csproj" />
+  </Folder>
+  <Folder Name="/ModularPipelines/" />
+  <Folder Name="/ModularPipelines/Build/">
+    <Project Path="src/ModularPipelines.Build/ModularPipelines.Build.csproj" />
+  </Folder>
+  <Folder Name="/ModularPipelines/Source/">
+    <Project Path="src/ModularPipelines.AmazonWebServices/ModularPipelines.AmazonWebServices.csproj" />
+    <Project Path="src/ModularPipelines.Azure.Pipelines/ModularPipelines.Azure.Pipelines.csproj" />
+    <Project Path="src/ModularPipelines.Azure/ModularPipelines.Azure.csproj" />
+    <Project Path="src/ModularPipelines.Chocolatey/ModularPipelines.Chocolatey.csproj" />
+    <Project Path="src/ModularPipelines.Cmd/ModularPipelines.Cmd.csproj" />
+    <Project Path="src/ModularPipelines.Docker/ModularPipelines.Docker.csproj" />
+    <Project Path="src/ModularPipelines.DotNet/ModularPipelines.DotNet.csproj" />
+    <Project Path="src/ModularPipelines.Email/ModularPipelines.Email.csproj" />
+    <Project Path="src/ModularPipelines.Ftp/ModularPipelines.Ftp.csproj" />
+    <Project Path="src/ModularPipelines.Git/ModularPipelines.Git.csproj" />
+    <Project Path="src/ModularPipelines.GitHub/ModularPipelines.GitHub.csproj" />
+    <Project Path="src/ModularPipelines.Google/ModularPipelines.Google.csproj" />
+    <Project Path="src/ModularPipelines.Helm/ModularPipelines.Helm.csproj" />
+    <Project Path="src/ModularPipelines.Kubernetes/ModularPipelines.Kubernetes.csproj" />
+    <Project Path="src/ModularPipelines.MicrosoftTeams/ModularPipelines.MicrosoftTeams.csproj" />
+    <Project Path="src/ModularPipelines.Node/ModularPipelines.Node.csproj" />
+    <Project Path="src/ModularPipelines.Slack/ModularPipelines.Slack.csproj" />
+    <Project Path="src/ModularPipelines.TeamCity/ModularPipelines.TeamCity.csproj" />
+    <Project Path="src/ModularPipelines.Terraform/ModularPipelines.Terraform.csproj" />
+    <Project Path="src/ModularPipelines.WinGet/ModularPipelines.WinGet.csproj" />
+    <Project Path="src/ModularPipelines.Yarn/ModularPipelines.Yarn.csproj" />
+    <Project Path="src/ModularPipelines/ModularPipelines.csproj" />
+  </Folder>
+  <Folder Name="/ModularPipelines/Test/">
+    <Project Path="test/ModularPipelines.Azure.UnitTests/ModularPipelines.Azure.UnitTests.csproj" />
+    <Project Path="test/ModularPipelines.TestHelpers/ModularPipelines.TestHelpers.csproj" />
+    <Project Path="test/ModularPipelines.Tests/ModularPipelines.Tests.csproj" />
+    <Project Path="test/ModularPipelines.TestsForTests/ModularPipelines.TestsForTests.csproj" />
+    <Project Path="test/ModularPipelines.UnitTests/ModularPipelines.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".config/dotnet-tools.json" />
+    <File Path=".editorconfig" />
+    <File Path=".github/workflows/dotnet.yml" />
+    <File Path=".ruleset" />
+    <File Path="Directory.Build.targets" />
+    <File Path="Directory.Packages.props" />
+    <File Path="GitVersion.yml" />
+    <File Path="global.json" />
+    <File Path="stryker-config.json" />
+    <File Path="test/Directory.Build.props" />
+  </Folder>
+</Solution>

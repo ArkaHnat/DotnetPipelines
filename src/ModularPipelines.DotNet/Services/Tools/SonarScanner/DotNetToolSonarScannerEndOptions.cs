@@ -2,7 +2,7 @@
 using ModularPipelines.DotNet.Options;
 using ModularPipelines.Options;
 
-namespace ModularPipelines.DotNet.Services.Tools;
+namespace ModularPipelines.DotNet.Services.Tools.SonarScanner;
 
 public record DotNetToolSonarScannerEndOptions : DotNetOptions
 {
