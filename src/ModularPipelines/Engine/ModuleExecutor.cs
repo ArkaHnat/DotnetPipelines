@@ -31,7 +31,7 @@ internal class ModuleExecutor : IModuleExecutor
 
     private readonly ConcurrentDictionary<string, Semaphore> _notInParallelKeyedLocks = new();
     private readonly object _notInParallelDictionaryLock = new();
-    
+
     public ModuleExecutor(IPipelineSetupExecutor pipelineSetupExecutor,
         IOptions<PipelineOptions> pipelineOptions,
         ISafeModuleEstimatedTimeProvider moduleEstimatedTimeProvider,
@@ -80,7 +80,7 @@ internal class ModuleExecutor : IModuleExecutor
             var keyedNonParallelModules = nonParallelModules
                 .Where(x => x.GetType().GetCustomAttribute<NotInParallelAttribute>()!.ConstraintKeys.Length != 0)
                 .ToList();
-            
+
             await ProcessKeyedNonParallelModules(keyedNonParallelModules.ToList());
 
             var parallelModuleTasks = modules.Except(nonParallelModules).Where(a => !a.ToModule.TriggeredByModules.Any())
@@ -184,7 +184,7 @@ internal class ModuleExecutor : IModuleExecutor
                     await StartDependency(module, dependency.DependencyType, dependency.IgnoreIfNotRegistered);
                 }
 
-                foreach (var dependency in dependencies)
+                foreach (var dependency in dependencies.Reverse())
                 {
                     if (dependency.Optional == false && dependency.DependencyType.FullName!.Contains("AlwaysFail"))
                     {
@@ -247,7 +247,7 @@ internal class ModuleExecutor : IModuleExecutor
     {
         var parallelLimitAttributeType =
             module.GetType().GetCustomAttributes<ParallelLimiterAttribute>().FirstOrDefault()?.Type;
-        
+
         if (parallelLimitAttributeType != null)
         {
             return await _parallelLimitProvider.GetLock(parallelLimitAttributeType).WaitAsync();
@@ -259,7 +259,7 @@ internal class ModuleExecutor : IModuleExecutor
     private async Task StartDependency(ModuleBase requestingModule, Type dependencyType, bool ignoreIfNotRegistered)
     {
         _logger.LogDebug("Starting Dependency {Dependency} for Module {Module}", dependencyType.Name, requestingModule.GetType().Name);
-        
+
         var module = _allModules.FirstOrDefault(x => x.GetType() == dependencyType);
 
         if (module is null && ignoreIfNotRegistered)
@@ -272,7 +272,7 @@ internal class ModuleExecutor : IModuleExecutor
         {
             throw new ModuleNotRegisteredException($"The module {dependencyType.Name} has not been registered", null);
         }
-        
+
         requestingModule.Context.Logger.LogDebug("{RequestingModule} is waiting for {Module}", requestingModule.GetType().Name, dependencyType.Name);
 
         try

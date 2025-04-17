@@ -44,6 +44,11 @@ public class FindProjectsModule : Module<IReadOnlyList<File>>
             return true;
         }
 
+        if (path.Contains("Development"))
+        {
+            return false;
+        }
+
         if (path.Contains("ModularPipelines.Analyzers"))
         {
             return false;

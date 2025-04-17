@@ -16,10 +16,10 @@ public class HttpTests : TestBase
     [Category("Integration")]
     public async Task Can_Send_Request_With_String_To_Request_Implicit_Conversion()
     {
-        var result = await GetService<IHttp>((context, collection) => {});
+        var result = await GetService<IHttp>((context, collection) => { });
 
         var http = result.T;
-        
+
         await http.SendAsync(new Uri("https://thomhurst.github.io/TUnit"));
     }
 
@@ -137,7 +137,7 @@ public class HttpTests : TestBase
         var indexOfStatusCode = logFileLines.FindIndex(x => x.Contains("---HTTP Status Code---"));
         var indexOfDuration = logFileLines.FindIndex(x => x.Contains("---Duration---"));
         var indexOfResponse = logFileLines.FindIndex(x => x.Contains("---Response---"));
-        
+
         using (Assert.Multiple())
         {
             await Assert.That(indexOfRequest).IsLessThan(indexOfStatusCode);

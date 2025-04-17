@@ -2,6 +2,7 @@
   <PropertyGroup>
     <Description>Helpers for interacting with GitHub Actions build agents.</Description>
     <AssemblyName>Dotnet$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>Dotnet$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\ModularPipelines.Git\ModularPipelines.Git.csproj" />
