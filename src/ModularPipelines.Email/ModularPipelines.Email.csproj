@@ -3,6 +3,7 @@
   <PropertyGroup>
     <Description>Helpers for sending emails.</Description>
     <AssemblyName>Dotnet$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>Dotnets$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
   </PropertyGroup>
 
     <ItemGroup>

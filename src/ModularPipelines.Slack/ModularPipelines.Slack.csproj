@@ -2,6 +2,7 @@
   <PropertyGroup>
     <Description>Helpers for sending Slack cards.</Description>
     <AssemblyName>Dotnet$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>Dotnet$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\ModularPipelines\ModularPipelines.csproj" />

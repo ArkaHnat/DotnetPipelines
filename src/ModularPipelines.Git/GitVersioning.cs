@@ -74,7 +74,7 @@ internal class GitVersioning : IGitVersioning
         try
         {
             var file = new File(Path.Combine(_gitInformation.Root.Path, "GitVersion.yml"));
-            
+
             if (!file.Exists)
             {
                 await file.WriteAsync(

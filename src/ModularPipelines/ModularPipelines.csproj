@@ -3,8 +3,12 @@
     <ModularPipelineReadMeDescription>The base package for Modular Pipelines. This contains the framework for building, executing, controlling and reporting your modules.</ModularPipelineReadMeDescription>
     <Description>Write your pipelines in C#!</Description>
     <AssemblyName>Dotnet$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>Dotnet$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+      <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+          <_Parameter1>DotnetModularPipelines.GitHub</_Parameter1>
+      </AssemblyAttribute>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>ModularPipelines.UnitTests</_Parameter1>
     </AssemblyAttribute>

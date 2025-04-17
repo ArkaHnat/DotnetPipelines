@@ -27,7 +27,7 @@ public class GitTests : TestBase
         var module = await RunModule<GitVersionModule>();
 
         var moduleResult = await module;
-        
+
         using (Assert.Multiple())
         {
             await Assert.That(moduleResult.ModuleResultType).IsEqualTo(ModuleResultType.Success);
@@ -42,7 +42,7 @@ public class GitTests : TestBase
         var module = await RunModule<GitVersionModule>();
 
         var moduleResult = await module;
-        
+
         using (Assert.Multiple())
         {
             await Assert.That(moduleResult.Value!.StandardError).IsNull().Or.IsEmpty();

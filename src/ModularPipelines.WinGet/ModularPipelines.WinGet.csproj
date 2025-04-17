@@ -3,6 +3,7 @@
     <PropertyGroup>
         <Description>Helpers for interacting with the Windows Package Manager.</Description>
         <AssemblyName>Dotnet$(MSBuildProjectName)</AssemblyName>
+        <RootNamespace>Dotnet$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

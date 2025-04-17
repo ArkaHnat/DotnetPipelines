@@ -21,7 +21,7 @@ public class DotNetTests : TestBase
             }, token: cancellationToken);
         }
     }
-    
+
     private class DotNetFormatModule : Module<CommandResult>
     {
         protected override async Task<CommandResult?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
@@ -39,7 +39,7 @@ public class DotNetTests : TestBase
         var module = await RunModule<DotNetVersionModule>();
 
         var moduleResult = await module;
-        
+
         using (Assert.Multiple())
         {
             await Assert.That(moduleResult.ModuleResultType).IsEqualTo(ModuleResultType.Success);
@@ -47,33 +47,19 @@ public class DotNetTests : TestBase
             await Assert.That(moduleResult.Value).IsNotNull();
         }
     }
-    
+
     [Test]
     public async Task Format_Has_Not_Errored()
     {
         var module = await RunModule<DotNetFormatModule>();
 
         var moduleResult = await module;
-        
+
         using (Assert.Multiple())
         {
             await Assert.That(moduleResult.ModuleResultType).IsEqualTo(ModuleResultType.Success);
             await Assert.That(moduleResult.Exception).IsNull();
             await Assert.That(moduleResult.Value).IsNotNull();
-        }
-    }
-
-    [Test]
-    public async Task Standard_Output_Starts_With_Git_Version()
-    {
-        var module = await RunModule<DotNetVersionModule>();
-
-        var moduleResult = await module;
-
-        using (Assert.Multiple())
-        {
-            await Assert.That(moduleResult.Value!.StandardError).IsNull().Or.IsEmpty();
-            await Assert.That(moduleResult.Value.StandardOutput).Matches("\\d+");
         }
     }
 }

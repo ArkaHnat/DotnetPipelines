@@ -32,7 +32,7 @@ internal class DependencyPrinter : IDependencyPrinter
         {
             return;
         }
-        
+
         var alreadyPrinted = new HashSet<ModuleDependencyModel>();
 
         var stringBuilder = new StringBuilder();
@@ -67,7 +67,7 @@ internal class DependencyPrinter : IDependencyPrinter
         {
             return;
         }
-        
+
         _logger.LogDebug("\n");
         _collapsableLogging.StartConsoleLogGroupDirectToConsole("Dependency Chains", LogLevel.Debug);
         _logger.LogDebug("The following dependency chains have been detected:\r\n{Chain}", value);
