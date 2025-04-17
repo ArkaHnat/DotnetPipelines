@@ -82,11 +82,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModularPipelines.Google", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3640F399-8592-4310-A655-D76F2AAEEAAD}"
 	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
 		.editorconfig = .editorconfig
 		.ruleset = .ruleset
 		test\Directory.Build.props = test\Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
 		Directory.Packages.props = Directory.Packages.props
+		Dockerfile = Dockerfile
 		.config\dotnet-tools.json = .config\dotnet-tools.json
 		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 		GitVersion.yml = GitVersion.yml

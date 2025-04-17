@@ -7,7 +7,7 @@ public record DotnetToolOutdatedRunOptions : DotNetOptions, IDotnetToolOutdatedO
 {
 	public DotnetToolOutdatedRunOptions(string projectKey)
 	{
-		CommandParts = ["tool", "run", IDotnetToolOutdatedOptions.PackageNameConst, projectKey];
+		CommandParts = ["tool","run", IDotnetToolOutdatedOptions.PackageNameConst, projectKey];
 	}
 
 	/// <summary>
@@ -41,7 +41,7 @@ public record DotnetToolOutdatedRunOptions : DotNetOptions, IDotnetToolOutdatedO
 
 	// <summary>
 
-	// Gets or sets fail-on-updates "
+	// Gets or sets fail-on-updates"
 	// Specifies whether it should return a non-zero exit code when updates are found.
 	// </summary>
 	[BooleanCommandSwitch("--fail-on-updates")]
@@ -57,23 +57,23 @@ public record DotnetToolOutdatedRunOptions : DotNetOptions, IDotnetToolOutdatedO
 
 	// <summary>
 
-	// Gets or sets ExcludeFilter "
+	// Gets or sets ExcludeFilter"
 	// Specifies to only look at packages where the name does not contain the provided string. Culture and case insensitive. If provided multiple times, a single match is enough to exclude a package.
 	// </summary>
-	[CommandSwitch("--exclude ")]
+	[CommandSwitch("--exclude")]
 	public string? ExcludeFilter { get; set; }
 
 	// <summary>
 
-	// Gets or sets output "
+	// Gets or sets output"
 	// Specifies the filename for a generated report. (Use the -of|--output-format option to specify the format. JSON by default.)
 	// </summary>
-	[CommandSwitch("--output ")]
+	[CommandSwitch("--output","")]
 	public string? OutputFilename { get; set; }
 
 	// <summary>
 
-	// Gets or sets output-format "
+	// Gets or sets output-format"
 	// pecifies the output format for the generated report. Possible values: json (default), csv, or markdown.
 	// Allowed values are: Json, Csv, Markdown. 
 	// Default value is: Json.
@@ -83,11 +83,11 @@ public record DotnetToolOutdatedRunOptions : DotNetOptions, IDotnetToolOutdatedO
 
 	// <summary>
 
-	// Gets or sets older-than "
+	// Gets or sets older-than"
 	// SOnly include package versions that are older than the specified number of days.
 	// Default value is: 0.
 	// </summary>
-	[CommandSwitch("--older-than ")]
+	[CommandSwitch("--older-than")]
 	public int? OlderThan { get; set; }
 
 	// <summary>
@@ -100,7 +100,7 @@ public record DotnetToolOutdatedRunOptions : DotNetOptions, IDotnetToolOutdatedO
 
 	// <summary>
 
-	// Gets or sets recursive "
+	// Gets or sets recursive"
 	// Specifies whether it should return a non-zero exit code when updates are found.
 	// </summary>
 	[CommandSwitch("--recursive")]
@@ -111,21 +111,21 @@ public record DotnetToolOutdatedRunOptions : DotNetOptions, IDotnetToolOutdatedO
 	// Gets or sets ignore-failed-sources"
 	// Specifies whether it should return a non-zero exit code when updates are found.
 	// </summary>
-	[CommandSwitch("--ignore-failed-sources ")]
+	[CommandSwitch("--ignore-failed-sources")]
 	public bool? IgnoreFailedSources { get; set; }
 
 	// <summary>
 
-	// Gets or sets fail-on-updates "
+	// Gets or sets fail-on-updates"
 	// Specifies whether it should return a non-zero exit code when updates are found.
 	// </summary>
-	[CommandSwitch("--fail-on-updates ")]
+	[CommandSwitch("--fail-on-updates")]
 	public bool? IncludeUpToDate { get; set; }
 
 	// <summary>
-	// Gets or sets runtime "
+	// Gets or sets runtime"
 	// Specifies whether it should return a non-zero exit code when updates are found.
 	// </summary>
-	[CommandSwitch("--runtime ")]
+	[CommandSwitch("--runtime")]
 	public string? Runtime { get; set; }
 }

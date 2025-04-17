@@ -9,7 +9,7 @@ using ModularPipelines.Modules;
 
 namespace ModularPipelines.Build.Modules;
 
-public class DotnetOutdatedToolModule : Module<CommandResult>
+public class DotNetToolOutdatedModule : Module<CommandResult>
 {
     public override ModuleRunType ModuleRunType => ModuleRunType.BeforePipeline;
 
@@ -19,7 +19,8 @@ public class DotnetOutdatedToolModule : Module<CommandResult>
         var currentDIrectorty = Directory.GetCurrentDirectory();
         
         var options = new DotnetToolOutdatedRunOptions(context.Git().RootDirectory / "ModularPipelines.Merged.sln");
-        options.Upgrade = true;
+
+        options.OutputFilename = "dotnet-outdated-output";
 		var result = await context.DotNet().Tool.DotnetOutdated.Run(options);
 
         return result;
