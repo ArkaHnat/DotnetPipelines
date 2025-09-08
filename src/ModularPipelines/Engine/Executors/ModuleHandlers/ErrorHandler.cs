@@ -29,10 +29,13 @@ internal class ErrorHandler<T> : BaseHandler<T>, IErrorHandler
             Module.Status = Status.PipelineTerminated;
             Context.Logger.LogInformation("Pipeline has been canceled");
 
-            // Wait so this exception isn't propogated first and the actual exception from another module is
-            await Task.Delay(TimeSpan.FromSeconds(5));
+            // DON'T throw PipelineCancelledException - just complete the module
+            Module.Exception = exception;
 
-            throw new PipelineCancelledException(Context.EngineCancellationToken);
+            // Set result as cancelled without throwing
+            var cancelledResult = new ModuleResult<T>(exception, Module);
+            ModuleResultTaskCompletionSource.TrySetResult(cancelledResult);
+            return; // Exit without throwing
         }
         else
         {
@@ -94,12 +97,11 @@ internal class ErrorHandler<T> : BaseHandler<T>, IErrorHandler
 
         var moduleFailedException = new ModuleFailedException(Module, exception);
 
-        Task.Delay(TimeSpan.FromSeconds(1)).ContinueWith(_ =>
-        {
-            Context.EngineCancellationToken.Cancel();
-            ModuleResultTaskCompletionSource.TrySetException(moduleFailedException);
-        });
+        // Store the original exception in the cancellation token
+        Context.EngineCancellationToken.CancelWithException(moduleFailedException);
 
+        // Throw immediately (no delay)
+        ModuleResultTaskCompletionSource.TrySetException(moduleFailedException);
         throw moduleFailedException;
     }
 }
