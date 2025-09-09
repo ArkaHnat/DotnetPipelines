@@ -48,6 +48,7 @@ await PipelineHostBuilder.Create()
             .AddModule<DependabotCommitsModule>()
             .AddModule<PrintEnvironmentVariablesModule>()
             .AddModule<PrintGitInformationModule>()
+            .AddModule<PushVersionTagModule>()
             .AddPipelineModuleHooks<MyModuleHooks>();
 
         collection.AddSingleton<IGitHubClient>(sp =>

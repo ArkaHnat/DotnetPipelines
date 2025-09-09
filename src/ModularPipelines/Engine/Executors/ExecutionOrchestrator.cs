@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
+using ModularPipelines.Exceptions;
 using ModularPipelines.Helpers;
 using ModularPipelines.Logging;
 using ModularPipelines.Models;
@@ -18,6 +19,7 @@ internal class ExecutionOrchestrator : IExecutionOrchestrator
     private readonly IAfterPipelineLogger _afterPipelineLogger;
     private readonly EngineCancellationToken _engineCancellationToken;
     private readonly ILogger<ExecutionOrchestrator> _logger;
+    private readonly IExceptionBuffer _exceptionBuffer;
 
     private readonly object _lock = new();
 
@@ -31,7 +33,8 @@ internal class ExecutionOrchestrator : IExecutionOrchestrator
         IConsolePrinter consolePrinter,
         IAfterPipelineLogger afterPipelineLogger,
         EngineCancellationToken engineCancellationToken,
-        ILogger<ExecutionOrchestrator> logger)
+        ILogger<ExecutionOrchestrator> logger,
+        IExceptionBuffer exceptionBuffer)
     {
         _pipelineInitializer = pipelineInitializer;
         _moduleDisposeExecutor = moduleDisposeExecutor;
@@ -42,6 +45,7 @@ internal class ExecutionOrchestrator : IExecutionOrchestrator
         _afterPipelineLogger = afterPipelineLogger;
         _engineCancellationToken = engineCancellationToken;
         _logger = logger;
+        _exceptionBuffer = exceptionBuffer;
     }
 
     public async Task<PipelineSummary> ExecuteAsync(CancellationToken cancellationToken = default)
@@ -50,9 +54,15 @@ internal class ExecutionOrchestrator : IExecutionOrchestrator
         {
             return await ExecuteInternal(cancellationToken);
         }
-        catch
+        catch (Exception exception) when (exception is PipelineCancelledException or TaskCanceledException or OperationCanceledException)
         {
-            await Task.Delay(TimeSpan.FromSeconds(1), CancellationToken.None);
+            // Check if we have an original exception stored with preserved stack trace
+            if (_engineCancellationToken.OriginalExceptionDispatchInfo != null)
+            {
+                _engineCancellationToken.OriginalExceptionDispatchInfo.Throw();
+            }
+
+            // Otherwise throw the cancellation exception
             throw;
         }
         finally
@@ -105,7 +115,16 @@ internal class ExecutionOrchestrator : IExecutionOrchestrator
 
         await Console.Out.FlushAsync();
 
-        if (!string.IsNullOrEmpty(_engineCancellationToken.Reason))
+        // Flush any buffered exceptions after the results table has been printed
+        _exceptionBuffer.FlushExceptions();
+
+        // Check for original exception before logging cancellation reason
+        if (_engineCancellationToken.OriginalException != null)
+        {
+            _logger.LogInformation("Pipeline failed due to: {ExceptionType}",
+                _engineCancellationToken.OriginalException.GetType().Name);
+        }
+        else if (!string.IsNullOrEmpty(_engineCancellationToken.Reason))
         {
             _logger.LogInformation("Cancellation Reason: {Reason}", _engineCancellationToken.Reason);
         }

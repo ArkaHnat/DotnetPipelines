@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -130,12 +129,10 @@ public abstract partial class Module<T> : ModuleBase<T>
 
     internal override async Task StartInternal()
     {
-        if (IsStarted || ModuleResultTaskCompletionSource.Task.IsCompleted)
+        if (ModuleResultTaskCompletionSource.Task.IsCompleted)
         {
             return;
         }
-
-        IsStarted = true;
 
         try
         {
@@ -312,8 +309,14 @@ public abstract partial class Module<T> : ModuleBase<T>
     private async Task<T?> ExecuteInternal()
     {
         var isRetry = false;
-        var executeAsyncTask = RetryPolicy.ExecuteAsync(() =>
+        var executeAsyncTask = RetryPolicy.ExecuteAsync(async () =>
         {
+            // Check for timeout/cancellation before each retry attempt
+            if (Timeout != TimeSpan.Zero && ModuleCancellationTokenSource.IsCancellationRequested)
+            {
+                throw new ModuleTimeoutException(this);
+            }
+
             ModuleCancellationTokenSource.Token.ThrowIfCancellationRequested();
 
             if (isRetry)
@@ -331,62 +334,72 @@ public abstract partial class Module<T> : ModuleBase<T>
 
             isRetry = true;
 
-            return ExecuteAsync(Context, ModuleCancellationTokenSource.Token);
+            try
+            {
+                return await ExecuteAsync(Context, ModuleCancellationTokenSource.Token);
+            }
+            catch (OperationCanceledException) when (Timeout != TimeSpan.Zero && ModuleCancellationTokenSource.IsCancellationRequested)
+            {
+                // If ExecuteAsync throws OperationCanceledException due to timeout, convert it
+                throw new ModuleTimeoutException(this);
+            }
         });
 
-        if (Timeout == TimeSpan.Zero)
+        if (Timeout != TimeSpan.Zero)
         {
-            await await Task.WhenAny(executeAsyncTask, ThrowQuicklyOnFailure(executeAsyncTask, null));
-            return await executeAsyncTask;
+            ModuleCancellationTokenSource.CancelAfter(Timeout);
         }
 
-        ModuleCancellationTokenSource.CancelAfter(Timeout);
+        // Create cancellation token for background tasks
+        using var backgroundCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(ModuleCancellationTokenSource.Token);
 
-        using var timeoutCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(ModuleCancellationTokenSource.Token);
+        // Only create timeout task if we have a non-zero timeout
+        if (Timeout != TimeSpan.Zero)
+        {
+            var timeoutExceptionTask = CreateTimeoutTask(backgroundCancellationTokenSource.Token);
 
-        var timeoutExceptionTask = Task.Delay(Timeout, timeoutCancellationTokenSource.Token)
-            .ContinueWith(t =>
-            {
-                if (executeAsyncTask.IsCompleted)
-                {
-                    return;
-                }
+            await Task.WhenAny(timeoutExceptionTask, executeAsyncTask);
 
-                if (ModuleRunType == ModuleRunType.OnSuccessfulDependencies)
-                {
-                    Context.EngineCancellationToken.Token.ThrowIfCancellationRequested();
-                }
+            backgroundCancellationTokenSource.Cancel();
 
-                throw new ModuleTimeoutException(this);
-            }, CancellationToken.None);
+            await Task.WhenAll(timeoutExceptionTask, executeAsyncTask);
+        }
+        else
+        {
+            await executeAsyncTask;
+        }
 
-        var finishedTask = await Task.WhenAny(timeoutExceptionTask, executeAsyncTask, ThrowQuicklyOnFailure(executeAsyncTask, timeoutExceptionTask));
+        ModuleCancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-#if NET8_0_OR_GREATER
-        await timeoutCancellationTokenSource.CancelAsync();
-#else
-        timeoutCancellationTokenSource.Cancel();
-#endif
-
-        // Will throw a timeout exception if configured and timeout is reached
-        await finishedTask;
-
+        // If we reach here without exception, still return the main task result
         return await executeAsyncTask;
     }
 
-    private async Task ThrowQuicklyOnFailure(IAsyncResult mainExecutionTask, IAsyncResult? timeoutTask)
+    private async Task CreateTimeoutTask(CancellationToken cancellationToken)
     {
-        while (!mainExecutionTask.IsCompleted)
+        try
         {
-            if (timeoutTask?.IsCompleted == true)
-            {
-                throw new ModuleTimeoutException(this);
-            }
-
-            ModuleCancellationTokenSource.Token.ThrowIfCancellationRequested();
-
-            await Task.Delay(TimeSpan.FromMilliseconds(500));
+            await Task.Delay(Timeout, cancellationToken);
         }
+        catch (OperationCanceledException)
+        {
+            // Task was cancelled, exit gracefully
+            return;
+        }
+
+        if (Status == Status.Successful)
+        {
+            return;
+        }
+
+        // Check if engine cancellation was requested (for modules that should terminate on pipeline cancellation)
+        if (ModuleRunType == ModuleRunType.OnSuccessfulDependencies)
+        {
+            Context.EngineCancellationToken.Token.ThrowIfCancellationRequested();
+        }
+
+        // Timeout expired, throw timeout exception
+        throw new ModuleTimeoutException(this);
     }
 
     private void SetEndTime()

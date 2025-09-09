@@ -3,7 +3,9 @@
     <Project Path="src/ModularPipelines.Analyzers/ModularPipelines.Analyzers.CodeFixes/ModularPipelines.Analyzers.CodeFixes.csproj" />
     <Project Path="src/ModularPipelines.Analyzers/ModularPipelines.Analyzers.Package/ModularPipelines.Analyzers.Package.csproj" />
     <Project Path="src/ModularPipelines.Analyzers/ModularPipelines.Analyzers.Test/ModularPipelines.Analyzers.Test.csproj" />
+    <Project Path="src/ModularPipelines.Analyzers/ModularPipelines.Analyzers.Vsix/ModularPipelines.Analyzers.Vsix.csproj" />
     <Project Path="src/ModularPipelines.Analyzers/ModularPipelines.Analyzers/ModularPipelines.Analyzers.csproj" />
+    <Project Path="src/ModularPipelines.Development.Analyzers/ModularPipelines.Development.Analyzers.csproj" />
   </Folder>
   <Folder Name="/ModularPipelines.Examples/">
     <Project Path="src/ModularPipelines.Examples/ModularPipelines.Examples.csproj" />
