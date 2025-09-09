@@ -21,7 +21,7 @@ internal class ProgressPrinter : IProgressPrinter,
     INotificationHandler<SubModuleCompletedNotification>
 {
     private readonly IOptions<PipelineOptions> _options;
-    private readonly ConcurrentDictionary<ModuleBase, ProgressTask> _progressTasks = new();
+    private readonly ConcurrentDictionary<IModule, ProgressTask> _progressTasks = new();
     private readonly ConcurrentDictionary<SubModuleBase, ProgressTask> _subModuleProgressTasks = new();
     private ProgressContext? _progressContext;
     private ProgressTask? _totalProgressTask;
@@ -80,7 +80,13 @@ internal class ProgressPrinter : IProgressPrinter,
         lock (_progressLock)
         {
             var moduleName = notification.Module.GetType().Name;
-            var progressTask = _progressContext.AddTask(moduleName, new ProgressTaskSettings
+
+            if (_progressTasks.Keys.Contains(notification.Module))
+            {
+				return ValueTask.CompletedTask;
+			}
+
+			var progressTask = _progressContext.AddTask(moduleName, new ProgressTaskSettings
             {
                 AutoStart = true,
             });
