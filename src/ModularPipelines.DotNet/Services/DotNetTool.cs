@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using ModularPipelines.Context;
 using ModularPipelines.DotNet.Options;
+using ModularPipelines.DotNet.Services.Tools.DotnetEntityFramework;
 using ModularPipelines.DotNet.Services.Tools.DotnetOutdated;
 using ModularPipelines.DotNet.Services.Tools.SonarScanner;
 using ModularPipelines.Models;
@@ -10,11 +11,12 @@ namespace ModularPipelines.DotNet.Services;
 [ExcludeFromCodeCoverage]
 public class DotNetTool
 {
-    public DotNetTool(ICommand internalCommand, DotNetToolSonarScanner dotNetToolSonarScanner, DotNetToolOutdated dotnetToolOutdated)
+    public DotNetTool(ICommand internalCommand, DotNetToolSonarScanner dotNetToolSonarScanner, DotNetToolOutdated dotnetToolOutdated, DotnetToolEntityFramework dotnetToolEntityFramework)
     {
         _command = internalCommand;
 		this.dotNetToolSonarScanner = dotNetToolSonarScanner;
         this.dotnetToolOutdated = dotnetToolOutdated;
+        this.dotnetToolEntityFramework = dotnetToolEntityFramework;
 	}
 
     private readonly ICommand _command;
@@ -22,7 +24,9 @@ public class DotNetTool
     private DotNetToolSonarScanner dotNetToolSonarScanner;
 
 	private DotNetToolOutdated dotnetToolOutdated;
-    public virtual async Task<CommandResult> Install(DotNetToolInstallOptions options, CancellationToken token = default)
+	private DotnetToolEntityFramework dotnetToolEntityFramework;
+
+	public virtual async Task<CommandResult> Install(DotNetToolInstallOptions options, CancellationToken token = default)
     {
         return await _command.ExecuteCommandLineTool(options, token);
     }
@@ -58,5 +62,7 @@ public class DotNetTool
 	public DotNetToolSonarScanner SonarCubeScanner => dotNetToolSonarScanner;
 
 	public DotNetToolOutdated DotnetOutdated => dotnetToolOutdated;
+
+	public DotnetToolEntityFramework DotnetToolEntityFramework => dotnetToolEntityFramework;
 
 }

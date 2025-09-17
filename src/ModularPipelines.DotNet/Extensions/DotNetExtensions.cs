@@ -5,8 +5,10 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using ModularPipelines.Context;
 using ModularPipelines.DotNet.Parsers.Trx;
 using ModularPipelines.DotNet.Services;
+using ModularPipelines.DotNet.Services.Tools.DotnetEntityFramework;
 using ModularPipelines.DotNet.Services.Tools.DotnetOutdated;
 using ModularPipelines.DotNet.Services.Tools.SonarScanner;
+using ModularPipelines.DotNet.Services.Tools.Stryker;
 using ModularPipelines.Engine;
 
 namespace ModularPipelines.DotNet.Extensions;
@@ -41,6 +43,7 @@ public static class DotNetExtensions
         services.TryAddScoped<DotNetSdk>();
         services.TryAddScoped<DotNetTool>();
 		services.TryAddScoped<DotNetToolSonarScanner>();
+		services.TryAddScoped<DotnetToolEntityFramework>();
 		services.TryAddScoped<DotNetToolOutdated>();
 		services.TryAddScoped<DotNetWorkload>();
 
