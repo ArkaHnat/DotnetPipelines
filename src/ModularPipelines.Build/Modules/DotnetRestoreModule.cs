@@ -16,6 +16,7 @@ namespace ModularPipelines.Build.Modules;
 [DependsOn<DotnetCleanModule>]
 [DependsOn<FindProjectDependenciesModule>]
 [DependsOn<ChangedFilesInPullRequestModule>]
+[DependsOn<DotnetToolRestoreModule>]
 [ResolveDependencies]
 public class DotnetRestoreModule : Module<CommandResult[]>
 {
