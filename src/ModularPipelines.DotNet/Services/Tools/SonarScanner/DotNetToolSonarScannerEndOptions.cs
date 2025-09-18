@@ -6,7 +6,6 @@ namespace ModularPipelines.DotNet.Services.Tools.SonarScanner;
 
 public record DotNetToolSonarScannerEndOptions : DotNetOptions
 {
-
 	public DotNetToolSonarScannerEndOptions() : base()
 	{
 		CommandParts = ["tool", "run", IDotnetToolSonarScanner.PackageNameConst, "end"];

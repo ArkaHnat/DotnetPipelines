@@ -1,3 +1,6 @@
+using DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Json;
+using DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Options;
+using DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Options.DbContext;
 using ModularPipelines.Context;
 using ModularPipelines.DotNet.Extensions;
 using ModularPipelines.DotNet.Options;
@@ -11,18 +14,29 @@ namespace ModularPipelines.UnitTests.Helpers;
 
 public class DotNetTests : TestBase
 {
-    private class DotNetVersionModule : Module<CommandResult>
+    private class DotnetEfModule : Module<List<DotnetEfDbContextListElement>>
     {
-        protected override async Task<CommandResult?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+        protected override async Task<List<DotnetEfDbContextListElement>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
         {
-            return await context.DotNet().List.Package(new DotNetListPackageOptions
+            var result = await context.DotNet().Tool.EntityFramework.DbContext.List(new DotNetToolEntityFrameworkDbContextListOptions()
             {
-                ProjectSolution = context.Git().RootDirectory.FindFile(x => x.Extension == ".sln").AssertExists(),
-            }, token: cancellationToken);
+                Json = true
+            });
+            return result;
         }
     }
-
-    private class DotNetFormatModule : Module<CommandResult>
+	private class
+	DotNetVersionModule : Module<CommandResult>
+	{
+		protected override async Task<CommandResult?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+		{
+			return await context.DotNet().List.Package(new DotNetListPackageOptions
+			{
+				ProjectSolution = context.Git().RootDirectory.FindFile(x => x.Extension == ".sln").AssertExists(),
+			}, token: cancellationToken);
+		}
+	}
+	private class DotNetFormatModule : Module<CommandResult>
     {
         protected override async Task<CommandResult?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
         {
@@ -48,7 +62,7 @@ public class DotNetTests : TestBase
         }
     }
 
-    [Test]
+	[Test]
     public async Task Format_Has_Not_Errored()
     {
         var module = await RunModule<DotNetFormatModule>();

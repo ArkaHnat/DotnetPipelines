@@ -96,6 +96,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		stryker-config.json = stryker-config.json
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModularPipelines.Development.Analyzers", "src\ModularPipelines.Development.Analyzers\ModularPipelines.Development.Analyzers.csproj", "{E4B370D1-E97D-9768-D753-113399F98E6A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -234,6 +236,10 @@ Global
 		{F4A50CC1-B68F-485B-AC33-5FCC578EA1ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4A50CC1-B68F-485B-AC33-5FCC578EA1ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4A50CC1-B68F-485B-AC33-5FCC578EA1ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4B370D1-E97D-9768-D753-113399F98E6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4B370D1-E97D-9768-D753-113399F98E6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4B370D1-E97D-9768-D753-113399F98E6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4B370D1-E97D-9768-D753-113399F98E6A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -275,6 +281,7 @@ Global
 		{0DAB08B0-E75B-4F4E-9BE0-1B70B4AA739B} = {F213898F-1E32-48F1-AB8C-83D2BD01A93B}
 		{DC02DAC7-2EE3-47B9-ACD7-C105B3087962} = {87E9D101-2B57-4D04-9488-CF8E720AF379}
 		{F4A50CC1-B68F-485B-AC33-5FCC578EA1ED} = {87E9D101-2B57-4D04-9488-CF8E720AF379}
+		{E4B370D1-E97D-9768-D753-113399F98E6A} = {980A3521-6A61-4C8D-8621-E174ABA061A2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {71EDA4EF-173E-486A-9C61-227CAC426FC9}

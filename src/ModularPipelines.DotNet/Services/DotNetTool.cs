@@ -63,6 +63,6 @@ public class DotNetTool
 
 	public DotNetToolOutdated DotnetOutdated => dotnetToolOutdated;
 
-	public DotnetToolEntityFramework DotnetToolEntityFramework => dotnetToolEntityFramework;
+	public DotnetToolEntityFramework EntityFramework => dotnetToolEntityFramework;
 
 }

@@ -24,7 +24,7 @@ public class BeforeTests : TestBase
 
 		var module1 = pipelineSummary.Modules.FirstOrDefault(a => a.GetType() == typeof(Module1));
         var module2 = pipelineSummary.Modules.FirstOrDefault(a => a.GetType() == typeof(Module2));
-        await Assert.That(module2.StartTime).IsLessThan(module1.EndTime);
+        await Assert.That(module2.StartTime).IsGreaterThanOrEqualTo(module1.EndTime);
     }
 
     [Test]
