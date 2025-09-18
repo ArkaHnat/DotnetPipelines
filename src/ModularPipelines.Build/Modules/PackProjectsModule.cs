@@ -70,18 +70,22 @@ public class PackProjectsModule : Module<CommandResult[]>
 
     private async Task<CommandResult> Pack(IPipelineContext context, CancellationToken cancellationToken, File projectFile, ModuleResult<string> packageVersion, string configuration)
     {
-        return await context.DotNet().Pack(new DotNetPackOptions
+        var options = new DotNetPackOptions
         {
             ProjectSolution = projectFile.Path,
             Configuration = configuration,
             IncludeSource = !projectFile.Path.Contains("Analyzer"),
             NoRestore = true,
             NoBuild = true,
-            Properties = new List<KeyValue>
-            {
+            Properties =
+            [
                 ("PackageVersion", packageVersion.Value!),
                 ("Version", packageVersion.Value!),
-            },
-        }, cancellationToken);
+            ],
+            OutputDirectory = context.Git().RootDirectory / "_buildOutput" / packageVersion.Value!
+,
+        };
+
+        return await context.DotNet().Pack(options, cancellationToken);
     }
 }
