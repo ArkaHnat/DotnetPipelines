@@ -1,7 +1,9 @@
 ﻿using ModularPipelines.Attributes;
 
 namespace DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Options.Migrations;
-
+/// <summary>
+/// 
+/// </summary>
 public record DotNetToolEntityFrameworkMigrationsBundleOptions : DotNetToolEntityFrameworkMigrationsOptions
 {
 	public DotNetToolEntityFrameworkMigrationsBundleOptions() : base()

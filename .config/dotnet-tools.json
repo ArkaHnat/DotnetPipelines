@@ -15,7 +15,7 @@
         "dotnet-stryker"
       ],
       "rollForward": false
-    }
+    },
     "dotnet-reportgenerator-globaltool": {
       "version": "5.4.1",
       "commands": [

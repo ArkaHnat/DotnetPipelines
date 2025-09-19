@@ -1,9 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Json;
+﻿using DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Json;
 using DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Options.DbContext;
 using ModularPipelines.Context;
 using ModularPipelines.Models;
 using Newtonsoft.Json;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DotnetModularPipelines.DotNet.Services.Tools.EntityFramework;
 
@@ -39,5 +39,10 @@ public class DotnetToolEntityFrameworkDbContext
     public virtual async Task<CommandResult> Scaffold(DotNetToolEntityFrameworkDbContextListOptions options)
     {
         return await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkDbContextListOptions());
+    }
+
+    public virtual async Task<CommandResult> Script(DotNetToolEntityFrameworkDbContextScriptOptions options)
+    {
+        return await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkDbContextScriptOptions());
     }
 }

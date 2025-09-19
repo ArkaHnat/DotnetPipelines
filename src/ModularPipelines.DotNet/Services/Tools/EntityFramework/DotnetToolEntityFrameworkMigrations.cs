@@ -1,9 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Json;
-using DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Options.DbContext;
+﻿using DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Options.Migrations;
 using ModularPipelines.Context;
 using ModularPipelines.Models;
-using Newtonsoft.Json;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DotnetModularPipelines.DotNet.Services.Tools.EntityFramework;
 
@@ -22,20 +20,42 @@ public class DotnetToolEntityFrameworkMigrations
     /// </summary>
     /// <param name="options"></param>
     /// <returns></returns>
-    public virtual async Task<CommandResult> Add(DotNetToolEntityFrameworkDbContextListOptions options)
+    public virtual async Task<CommandResult> Add(DotNetToolEntityFrameworkMigrationsAddOptions options)
     {
-        var cmdResult = await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkDbContextListOptions());
+        var cmdResult = await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkMigrationsAddOptions());
         return cmdResult;
     }
 
     /// <summary>
-    /// Creates an executable to update the database.
+    /// Removes the last migration, rolling back the code changes that were done for the latest migration.
     /// </summary>
     /// <param name="options"></param>
     /// <returns></returns>
-    public virtual async Task<CommandResult> Bundle(DotNetToolEntityFrameworkDbContextInfoOptions options)
+    public virtual async Task<CommandResult> Add(DotNetToolEntityFrameworkMigrationsRemoveOptions options)
     {
-        var cmdResult = await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkDbContextInfoOptions());
+        var cmdResult = await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkMigrationsRemoveOptions());
+        return cmdResult;
+    }
+
+    /// <summary>
+    /// Lists available migrations.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <returns></returns>
+    public virtual async Task<CommandResult> List(DotNetToolEntityFrameworkMigrationsListOptions options)
+    {
+        var cmdResult = await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkMigrationsListOptions());
+        return cmdResult;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="options"></param>
+    /// <returns></returns>
+    public virtual async Task<CommandResult> Bundle(DotNetToolEntityFrameworkMigrationsBundleOptions options)
+    {
+        var cmdResult = await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkMigrationsBundleOptions());
         return cmdResult;
     }
 
@@ -44,38 +64,9 @@ public class DotnetToolEntityFrameworkMigrations
     /// </summary>
     /// <param name="options"></param>
     /// <returns></returns>
-    public virtual async Task<CommandResult> HasPendingModelChanges(DotNetToolEntityFrameworkDbContextOptimizeOptions options)
+    public virtual async Task<CommandResult> HasPendingMigrations(DotNetToolEntityFrameworkMigrationsHasPendingMigrationsOptions options)
     {
-        return await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkDbContextOptimizeOptions());
-    }
-
-    /// <summary>
-    /// Lists available migrations.
-    /// </summary>
-    /// <param name="options"></param>
-    /// <returns></returns>
-    public virtual async Task<CommandResult> List(DotNetToolEntityFrameworkDbContextListOptions options)
-    {
-        return await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkDbContextListOptions());
-    }
-
-    /// <summary>
-    /// Removes the last migration, rolling back the code changes that were done for the latest migration.
-    /// </summary>
-    /// <param name="options"></param>
-    /// <returns></returns>
-    public virtual async Task<CommandResult> Remove(DotNetToolEntityFrameworkDbContextListOptions options)
-    {
-        return await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkDbContextListOptions());
-    }
-
-    /// <summary>
-    /// Generates a SQL script from migrations.
-    /// </summary>
-    /// <param name="options"></param>
-    /// <returns></returns>
-    public virtual async Task<CommandResult> Script(DotNetToolEntityFrameworkDbContextListOptions options)
-    {
-        return await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkDbContextListOptions());
+        var cmdResult = await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkMigrationsHasPendingMigrationsOptions());
+        return cmdResult;
     }
 }

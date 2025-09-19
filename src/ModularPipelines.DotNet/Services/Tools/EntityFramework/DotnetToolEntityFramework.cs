@@ -24,4 +24,7 @@ public class DotnetToolEntityFramework
     }
 
     public DotnetToolEntityFrameworkDbContext DbContext { get; }
+
+	public DotnetToolEntityFrameworkMigrations Migrations { get; }
+    
 }
