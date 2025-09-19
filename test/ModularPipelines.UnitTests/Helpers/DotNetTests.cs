@@ -14,17 +14,6 @@ namespace ModularPipelines.UnitTests.Helpers;
 
 public class DotNetTests : TestBase
 {
-    private class DotnetEfModule : Module<List<DotnetEfDbContextListElement>>
-    {
-        protected override async Task<List<DotnetEfDbContextListElement>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
-        {
-            var result = await context.DotNet().Tool.EntityFramework.DbContext.List(new DotNetToolEntityFrameworkDbContextListOptions()
-            {
-                Json = true
-            });
-            return result;
-        }
-    }
 	private class
 	DotNetVersionModule : Module<CommandResult>
 	{
