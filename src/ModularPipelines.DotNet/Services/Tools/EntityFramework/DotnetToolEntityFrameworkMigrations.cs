@@ -33,7 +33,7 @@ public class DotnetToolEntityFrameworkMigrations
     /// </summary>
     /// <param name="options"></param>
     /// <returns></returns>
-    public virtual async Task<CommandResult> Add(DotNetToolEntityFrameworkMigrationsRemoveOptions options)
+    public virtual async Task<CommandResult> Remove(DotNetToolEntityFrameworkMigrationsRemoveOptions options)
     {
         var cmdResult = await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkMigrationsRemoveOptions());
         return cmdResult;
@@ -48,8 +48,9 @@ public class DotnetToolEntityFrameworkMigrations
     {
         var cmdResult = await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkMigrationsListOptions());
         try
-        {
-            var deserializedOutput = JsonConvert.DeserializeObject<List<DotnetEfMigrationsListElement>>(cmdResult.StandardOutput);
+		{
+			var sanitizedOutput = JsonStringSanitizer.SanitizeOutput(cmdResult.StandardOutput);
+			var deserializedOutput = JsonConvert.DeserializeObject<List<DotnetEfMigrationsListElement>>(sanitizedOutput);
             return deserializedOutput;
         }
         catch (Exception ex)
