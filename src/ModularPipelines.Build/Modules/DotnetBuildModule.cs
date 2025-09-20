@@ -7,7 +7,6 @@ using ModularPipelines.DotNet.Options;
 using ModularPipelines.Git.Extensions;
 using ModularPipelines.Models;
 using ModularPipelines.Modules;
-using Octokit;
 using File = ModularPipelines.FileSystem.File;
 
 namespace ModularPipelines.Build.Modules;
@@ -15,72 +14,69 @@ namespace ModularPipelines.Build.Modules;
 [DependsOn<ChangedFilesInPullRequestModule>]
 [DependsOn<FindProjectDependenciesModule>]
 [DependsOn<DotnetRestoreModule>]
+[DependsOn<NugetVersionGeneratorModule>]
 [ResolveDependencies]
 public class DotnetBuildModule : Module<CommandResult[]>
 {
-    public static string BuildConfiguration = Configuration.Release;
+	public static string BuildConfiguration = Configuration.Release;
 
 	public static string DotnetVersion = "net9.0";
 
 	/// <inheritdoc/>
 	protected override async Task<CommandResult[]?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
-    {
-        var changedFiles = await GetModule<ChangedFilesInPullRequestModule>();
-        var projectFiles = await GetModule<FindProjectDependenciesModule>();
+	{
+		var packageVersion = await GetModule<NugetVersionGeneratorModule>();
+		var changedFiles = await GetModule<ChangedFilesInPullRequestModule>();
+		var projectFiles = await GetModule<FindProjectDependenciesModule>();
 
-        var dependencies = await projectFiles.Value!.Dependencies
-            .ToAsyncProcessorBuilder()
-            .SelectAsync(async projectFile => await Build(context, cancellationToken, projectFile))
-            .ProcessOneAtATime();
+		var dependencies = await projectFiles.Value!.Dependencies
+			.ToAsyncProcessorBuilder()
+			.SelectAsync(async projectFile => await Build(context, cancellationToken, projectFile, packageVersion.Value!))
+			.ProcessOneAtATime();
 
-        var others = await projectFiles.Value!.Others
-            .Where(x =>
-            {
-                if (changedFiles.SkipDecision.ShouldSkip)
-                {
-                    return true;
-                }
+		var others = await projectFiles.Value!.Others
+			.Where(x =>
+			{
+				return changedFiles.SkipDecision.ShouldSkip || ProjectHasChanged(x,
+					changedFiles.Value!, context);
+			})
+			.ToAsyncProcessorBuilder()
+			.SelectAsync(async projectFile => await Build(context, cancellationToken, projectFile, packageVersion.Value!))
+			.ProcessInParallel();
 
-                return ProjectHasChanged(x,
-                    changedFiles.Value!, context);
-            })
-            .ToAsyncProcessorBuilder()
-            .SelectAsync(async projectFile => await Build(context, cancellationToken, projectFile))
-            .ProcessInParallel();
+		return dependencies.Concat(others).ToArray();
+	}
 
-        return dependencies.Concat(others).ToArray();
-    }
+	private bool ProjectHasChanged(File projectFile, IEnumerable<File> changedFiles,
+		IPipelineContext context)
+	{
+		var projectDirectory = projectFile.Folder!;
 
-    private bool ProjectHasChanged(File projectFile, IEnumerable<File> changedFiles,
-        IPipelineContext context)
-    {
-        var projectDirectory = projectFile.Folder!;
+		if (!changedFiles.Any(x => x.Path.Contains(projectDirectory.Path)))
+		{
+			context.Logger.LogInformation("{Project} has not changed so not building it", projectFile.Name);
+			return false;
+		}
 
-        if (!changedFiles.Any(x => x.Path.Contains(projectDirectory.Path)))
-        {
-            context.Logger.LogInformation("{Project} has not changed so not building it", projectFile.Name);
-            return false;
-        }
+		context.Logger.LogInformation("{Project} has changed so building it", projectFile.Name);
 
-        context.Logger.LogInformation("{Project} has changed so building it", projectFile.Name);
+		return true;
+	}
 
-        return true;
-    }
+	private async Task<CommandResult> Build(IPipelineContext context, CancellationToken cancellationToken, File projectFile, string version)
+	{
+		return await context.DotNet().Build(new DotNetBuildOptions
+		{
+			NoRestore = true,
+			Configuration = BuildConfiguration,
 
-    private async Task<CommandResult> Build(IPipelineContext context, CancellationToken cancellationToken, File projectFile)
-    {
-        return await context.DotNet().Build(new DotNetBuildOptions
-        {
-            NoRestore = true,
-            Configuration = BuildConfiguration,
-
-            // OutputDirectory = context.Git().RootDirectory+"/_buildOutput/" + projectFile.Name,
-            ProjectSolution = projectFile,
-            Properties = new KeyValue[]
-                {
-                    new("RunAnalyzersDuringBuild", "false"),
-                    new("RunAnalyzers", "false"),
-                },
-        }, cancellationToken);
-    }
+			//OutputDirectory = context.Git().RootDirectory / "_buildOutput" / version / projectFile.NameWithoutExtension / BuildConfiguration,
+			ProjectSolution = projectFile,
+			Properties = new KeyValue[]
+				{
+					new("RunAnalyzersDuringBuild", "false"),
+					new("RunAnalyzers", "false"),
+				},
+		}, cancellationToken);
+	}
 }

@@ -6,12 +6,14 @@ using ModularPipelines.DotNet.Options;
 using ModularPipelines.Git.Extensions;
 using ModularPipelines.Models;
 using ModularPipelines.Modules;
+using Octokit;
 using Polly.Retry;
 
 namespace ModularPipelines.Build.Modules;
 
 [DependsOn<DotnetBuildModule>]
 [DependsOn<CodeFormattedNicelyModule>]
+[DependsOn<NugetVersionGeneratorModule>]
 [ResolveDependencies]
 public class RunUnitTestsModule : Module<CommandResult[]>
 {
@@ -19,17 +21,19 @@ public class RunUnitTestsModule : Module<CommandResult[]>
 
     /// <inheritdoc/>
     protected override async Task<CommandResult[]?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
-    {
-        return await context.Git().RootDirectory
+	{
+		var packageVersion = await GetModule<NugetVersionGeneratorModule>();
+		return await context.Git().RootDirectory
             .GetFiles(file => file.Path.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase)
                               && file.Path.Contains("UnitTests", StringComparison.OrdinalIgnoreCase))
             .ToAsyncProcessorBuilder()
             .SelectAsync(async unitTestProjectFile => await context.DotNet().Run(new DotNetRunOptions
             {
+
                 Project = unitTestProjectFile.Path,
                 NoBuild = true,
                 Framework = DotnetBuildModule.DotnetVersion,
-                Arguments = ["--coverage", "--coverage-output-format", "cobertura"],
+                Arguments = ["--coverage", "--coverage-output-format", "cobertura", "--report-trx"],
                 Configuration = DotnetBuildModule.BuildConfiguration,
                 EnvironmentVariables = new Dictionary<string, string?>
                 {
