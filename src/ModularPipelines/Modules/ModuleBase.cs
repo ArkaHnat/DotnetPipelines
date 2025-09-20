@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
+using DotnetModularPipelines.Events;
 using Mediator;
 using Microsoft.Extensions.DependencyInjection;
 using ModularPipelines.Attributes;

@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using CliWrap;
 using CliWrap.Exceptions;
+using DotnetModularPipelines.Extensions;
 using ModularPipelines.Attributes;
 using ModularPipelines.Exceptions;
 using ModularPipelines.Helpers;

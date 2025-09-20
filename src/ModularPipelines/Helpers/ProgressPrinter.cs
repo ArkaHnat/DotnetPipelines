@@ -1,16 +1,18 @@
-using System.Collections.Concurrent;
-using System.Diagnostics.CodeAnalysis;
+using DotnetModularPipelines.Events;
 using Mediator;
 using Microsoft.Extensions.Options;
 using ModularPipelines.Events;
 using ModularPipelines.Extensions;
+using ModularPipelines.Helpers;
 using ModularPipelines.Models;
 using ModularPipelines.Modules;
 using ModularPipelines.Options;
 using Spectre.Console;
+using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using Status = ModularPipelines.Enums.Status;
 
-namespace ModularPipelines.Helpers;
+namespace DotnetModularPipelines.Helpers;
 
 [ExcludeFromCodeCoverage]
 internal class ProgressPrinter : IProgressPrinter,
@@ -81,12 +83,7 @@ internal class ProgressPrinter : IProgressPrinter,
         {
             var moduleName = notification.Module.GetType().Name;
 
-            if (_progressTasks.Keys.Contains(notification.Module))
-            {
-				return ValueTask.CompletedTask;
-			}
-
-			var progressTask = _progressContext.AddTask(moduleName, new ProgressTaskSettings
+            var progressTask = _progressContext.AddTask(moduleName, new ProgressTaskSettings
             {
                 AutoStart = true,
             });
@@ -211,30 +208,30 @@ internal class ProgressPrinter : IProgressPrinter,
             }
 
             var progressTask = _progressContext.AddTaskAfter($"- {notification.SubModule.Name}",
-                new ProgressTaskSettings { AutoStart = true }, parentTask);
+               new ProgressTaskSettings { AutoStart = true }, parentTask);
 
             _subModuleProgressTasks[notification.SubModule] = progressTask;
 
             // Start ticking progress based on estimated duration
             _ = Task.Run(async () =>
-            {
-                try
-                {
-                    var estimatedDuration = notification.EstimatedDuration * 1.1; // Give 10% headroom
-                    var totalEstimatedSeconds = estimatedDuration.TotalSeconds >= 1 ? estimatedDuration.TotalSeconds : 1;
-                    var ticksPerSecond = 100 / totalEstimatedSeconds;
+           {
+               try
+               {
+                   var estimatedDuration = notification.EstimatedDuration * 1.1; // Give 10% headroom
+                   var totalEstimatedSeconds = estimatedDuration.TotalSeconds >= 1 ? estimatedDuration.TotalSeconds : 1;
+                   var ticksPerSecond = 100 / totalEstimatedSeconds;
 
-                    while (progressTask is { IsFinished: false, Value: < 95 })
-                    {
-                        await Task.Delay(TimeSpan.FromSeconds(1), CancellationToken.None);
-                        progressTask.Increment(ticksPerSecond);
-                    }
-                }
-                catch
-                {
-                    // Ignore exceptions in progress updates to prevent unobserved task exceptions
-                }
-            }, CancellationToken.None);
+                   while (progressTask is { IsFinished: false, Value: < 95 })
+                   {
+                       await Task.Delay(TimeSpan.FromSeconds(1), CancellationToken.None);
+                       progressTask.Increment(ticksPerSecond);
+                   }
+               }
+               catch
+               {
+                   // Ignore exceptions in progress updates to prevent unobserved task exceptions
+               }
+           }, CancellationToken.None);
         }
 
         return ValueTask.CompletedTask;
@@ -279,18 +276,18 @@ internal class ProgressPrinter : IProgressPrinter,
             Expand = true,
         };
 
-        table.AddColumn("Module");
-        table.AddColumn("Duration");
-        table.AddColumn("Status");
-        table.AddColumn("Start");
-        table.AddColumn("End");
-        table.AddColumn("Information");
+        _ = table.AddColumn("Module");
+        _ = table.AddColumn("Duration");
+        _ = table.AddColumn("Status");
+        _ = table.AddColumn("Start");
+        _ = table.AddColumn("End");
+        _ = table.AddColumn("Information");
 
         foreach (var module in pipelineSummary.Modules.OrderBy(x => x.EndTime))
         {
             var isSameDay = module.StartTime.Date == module.EndTime.Date;
 
-            table.AddRow(
+            _ = table.AddRow(
                 $"[cyan]{module.GetType().Name}[/]",
                 module.Duration.ToDisplayString(),
                 module.Status.ToDisplayString(),
@@ -302,7 +299,7 @@ internal class ProgressPrinter : IProgressPrinter,
             {
                 foreach (var subModule in module.SubModuleBases)
                 {
-                    table.AddRow(
+                    _ = table.AddRow(
                         $"[lightcyan1]--{subModule.Name}[/]",
                         subModule.Duration.ToDisplayString(),
                         subModule.Status.ToDisplayString(),
@@ -312,12 +309,12 @@ internal class ProgressPrinter : IProgressPrinter,
                 }
             }
 
-            table.AddEmptyRow();
+            _ = table.AddEmptyRow();
         }
 
         var isSameDayTotal = pipelineSummary.Start.Date == pipelineSummary.End.Date;
 
-        table.AddRow(
+        _ = table.AddRow(
             "Total",
             pipelineSummary.TotalDuration.ToDisplayString(),
             pipelineSummary.Status.ToDisplayString(),
@@ -345,12 +342,9 @@ internal class ProgressPrinter : IProgressPrinter,
 
     private static string GetTime(DateTimeOffset dateTimeOffset, bool isSameDay)
     {
-        if (dateTimeOffset == DateTimeOffset.MinValue)
-        {
-            return string.Empty;
-        }
-
-        return isSameDay
+        return dateTimeOffset == DateTimeOffset.MinValue
+            ? string.Empty
+            : isSameDay
             ? dateTimeOffset.ToTimeOnly().ToString("h:mm:ss tt")
             : dateTimeOffset.ToString("yyyy/MM/dd h:mm:ss tt");
     }
@@ -362,11 +356,6 @@ internal class ProgressPrinter : IProgressPrinter,
             return $"[yellow]{module.SkipResult.Reason}[/]";
         }
 
-        if (module.Exception != null)
-        {
-            return $"[red]{module.Exception?.GetType().Name}[/]";
-        }
-
-        return string.Empty;
+        return module.Exception != null ? $"[red]{module.Exception?.GetType().Name}[/]" : string.Empty;
     }
 }
