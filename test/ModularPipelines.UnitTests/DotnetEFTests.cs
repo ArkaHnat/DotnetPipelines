@@ -53,7 +53,7 @@ public class DotnetEfTests : TestBase
 	}
 
 
-			[ModularPipelines.Attributes.DependsOn<DbContetextListModule>]
+	[ModularPipelines.Attributes.DependsOn<DbContetextListModule>]
 	[ResolveDependencies]
 	public class MyInfoModule : Module<DotnetEfDbContextInfoElement>
 	{
