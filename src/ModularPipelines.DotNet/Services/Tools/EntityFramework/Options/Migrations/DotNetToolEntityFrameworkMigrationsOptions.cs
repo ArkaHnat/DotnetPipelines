@@ -7,7 +7,7 @@ public record DotNetToolEntityFrameworkMigrationsOptions : DotnetToolEntityFrame
 {
     public DotNetToolEntityFrameworkMigrationsOptions() : base()
     {
-        CommandParts = [IDotnetToolEntityFrameworkConsts.PackageNameConst, "migrations"];
+		CommandParts.Add("migrations");
     }
 
     /// <summary>

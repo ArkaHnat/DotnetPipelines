@@ -14,6 +14,7 @@ public class DotnetToolEntityFramework
     {
         _command = internalCommand;
         DbContext = new DotnetToolEntityFrameworkDbContext(_command);
+        Migrations = new DotnetToolEntityFrameworkMigrations(_command);
     }
 
     private readonly ICommand _command;

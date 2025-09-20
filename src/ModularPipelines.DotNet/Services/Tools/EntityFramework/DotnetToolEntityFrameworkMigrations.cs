@@ -1,7 +1,9 @@
-﻿using DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Options.Migrations;
+﻿using System.Diagnostics.CodeAnalysis;
+using DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Json;
+using DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Options.Migrations;
 using ModularPipelines.Context;
 using ModularPipelines.Models;
-using System.Diagnostics.CodeAnalysis;
+using Newtonsoft.Json;
 
 namespace DotnetModularPipelines.DotNet.Services.Tools.EntityFramework;
 
@@ -42,10 +44,21 @@ public class DotnetToolEntityFrameworkMigrations
     /// </summary>
     /// <param name="options"></param>
     /// <returns></returns>
-    public virtual async Task<CommandResult> List(DotNetToolEntityFrameworkMigrationsListOptions options)
+    public virtual async Task<List<DotnetEfMigrationsListElement>> List(DotNetToolEntityFrameworkMigrationsListOptions options)
     {
         var cmdResult = await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkMigrationsListOptions());
-        return cmdResult;
+        try
+        {
+            var deserializedOutput = JsonConvert.DeserializeObject<List<DotnetEfMigrationsListElement>>(cmdResult.StandardOutput);
+            return deserializedOutput;
+        }
+        catch (Exception ex)
+        {
+            ex.Data["CmdStandardOutput"] = cmdResult.StandardOutput;
+            ex.Data["CmdStandardError"] = cmdResult.StandardError;
+            ex.Data["CommandInput"] = cmdResult.CommandInput;
+            throw;
+        }
     }
 
     /// <summary>

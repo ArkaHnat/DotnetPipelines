@@ -8,7 +8,7 @@ public record DotNetToolEntityFrameworkMigrationsListOptions : DotNetToolEntityF
 {
     public DotNetToolEntityFrameworkMigrationsListOptions() : base()
     {
-        CommandParts = ["list"];
+        CommandParts.Add("list");
     }
 
 	/// <summary>
