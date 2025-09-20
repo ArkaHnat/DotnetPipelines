@@ -4,11 +4,12 @@ namespace DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Options.M
 /// <summary>
 /// Removes the last migration, rolling back the code changes that were done for the latest migration.
 /// </summary>
+/// 
+[CommandPrecedingArguments("remove")]
 public record DotNetToolEntityFrameworkMigrationsRemoveOptions : DotNetToolEntityFrameworkMigrationsOptions
 {
     public DotNetToolEntityFrameworkMigrationsRemoveOptions() : base()
     {
-        CommandParts = ["remove"];
     }
 
     /// <summary>

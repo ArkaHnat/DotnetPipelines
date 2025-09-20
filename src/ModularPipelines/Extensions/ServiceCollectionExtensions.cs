@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using DotnetModularPipelines.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
 using ModularPipelines.Attributes;

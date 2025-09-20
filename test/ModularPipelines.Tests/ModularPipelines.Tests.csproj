@@ -11,6 +11,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
 	  <PackageReference Include="TUnit.Assertions" />
 	</ItemGroup>
 	<ItemGroup>

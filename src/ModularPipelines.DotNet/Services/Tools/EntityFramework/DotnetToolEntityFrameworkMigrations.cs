@@ -1,9 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Json;
+﻿using DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Json;
 using DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Options.Migrations;
 using ModularPipelines.Context;
 using ModularPipelines.Models;
 using Newtonsoft.Json;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DotnetModularPipelines.DotNet.Services.Tools.EntityFramework;
 
@@ -48,9 +48,9 @@ public class DotnetToolEntityFrameworkMigrations
     {
         var cmdResult = await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkMigrationsListOptions());
         try
-		{
-			var sanitizedOutput = JsonStringSanitizer.SanitizeOutput(cmdResult.StandardOutput);
-			var deserializedOutput = JsonConvert.DeserializeObject<List<DotnetEfMigrationsListElement>>(sanitizedOutput);
+        {
+            var sanitizedOutput = JsonStringSanitizer.SanitizeOutput(cmdResult.StandardOutput);
+            var deserializedOutput = JsonConvert.DeserializeObject<List<DotnetEfMigrationsListElement>>(sanitizedOutput);
             return deserializedOutput;
         }
         catch (Exception ex)

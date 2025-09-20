@@ -4,23 +4,23 @@ namespace DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Options.M
 /// <summary>
 /// Lists available migrations.
 /// </summary>
+/// 
+[CommandPrecedingArguments("list")]
 public record DotNetToolEntityFrameworkMigrationsListOptions : DotNetToolEntityFrameworkMigrationsOptions
 {
-    public DotNetToolEntityFrameworkMigrationsListOptions() : base()
-    {
-        CommandParts.Add("list");
-    }
+	public DotNetToolEntityFrameworkMigrationsListOptions() : base()
+	{
+	}
 
 	/// <summary>
-	/// The connection string to the database. Defaults to the one specified in AddDbContext or OnConfiguring.
+	/// Gets or sets the connection string to the database. Defaults to the one specified in AddDbContext or OnConfiguring.
 	/// </summary>
 	[CommandSwitch("--connection")]
-    public virtual string? connection { get; set; }
-
+	public virtual string? Connection { get; set; }
 
 	/// <summary>
-	/// Don't connect to the database.
+	/// Gets or sets don't connect to the database.
 	/// </summary>
 	[BooleanCommandSwitch("--no-connect")]
-    public virtual bool? NoConnect { get; set; }
+	public virtual bool? NoConnect { get; set; }
 }

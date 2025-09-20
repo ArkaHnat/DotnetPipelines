@@ -1,5 +1,5 @@
+using DotnetModularPipelines.Extensions;
 using ModularPipelines.Attributes;
-using ModularPipelines.Extensions;
 using ModularPipelines.Helpers;
 using ModularPipelines.Modules;
 

@@ -90,8 +90,10 @@ public sealed class Command(ICommandLogger commandLogger) : ICommand
             return commandLineToolOptions.CommandParts.ToList();
         }
 
-        return optionsObject.GetType().GetCustomAttribute<CommandPrecedingArgumentsAttribute>()
-            ?.PrecedingArguments.ToList() ?? new List<string>();
+        var customAttributesIncludingParent = optionsObject.GetType().GetCustomAttributesIncludingInherited<CommandPrecedingArgumentsAttribute>();
+        var proceedingArguments = customAttributesIncludingParent.Select(a => a.PrecedingArguments).Reverse().SelectMany(a=>a);
+
+        return proceedingArguments.ToList() ?? [];
     }
 
     private static object GetOptionsObject(CommandLineToolOptions options)
