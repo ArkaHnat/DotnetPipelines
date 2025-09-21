@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Json;
 using DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Options.DbContext;
+using DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Options.Migrations;
 using ModularPipelines.Context;
 using ModularPipelines.Models;
 using Newtonsoft.Json;
@@ -53,8 +54,8 @@ public class DotnetToolEntityFrameworkDbContext
 		return await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkDbContextListOptions());
 	}
 
-	public virtual async Task<CommandResult> Script(DotNetToolEntityFrameworkDbContextScriptOptions options)
+	public virtual async Task<CommandResult> Script(DotNetToolEntityFrameworkMigrationsScriptOptions options)
 	{
-		return await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkDbContextScriptOptions());
+		return await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkMigrationsScriptOptions());
 	}
 }

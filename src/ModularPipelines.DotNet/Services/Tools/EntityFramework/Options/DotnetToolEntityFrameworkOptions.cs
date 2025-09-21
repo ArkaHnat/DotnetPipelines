@@ -13,7 +13,7 @@ public record DotnetToolEntityFrameworkOptions : DotNetOptions
 	/// Gets or sets show JSON output.
 	/// </summary>
 	[BooleanCommandSwitch("--json")]
-	public virtual bool? Json { get; set; } = true;
+	public virtual bool? Json { get; set; }
 
 	/// <summary>
 	/// Gets or sets the DbContext class to use. Class name only or fully qualified with namespaces. If this option is omitted, EF Core will find the context class. If there are multiple context classes, this option is required.

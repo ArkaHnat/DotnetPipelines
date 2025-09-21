@@ -1,14 +1,15 @@
-﻿using ModularPipelines.Attributes;
+﻿using DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Options.DbContext;
+using ModularPipelines.Attributes;
 
-namespace DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Options.DbContext;
+namespace DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Options.Migrations;
 /// <summary>
 /// Generates a SQL script from the DbContext. Bypasses any migrations.
 /// </summary>
 
 [CommandPrecedingArguments("script")]
-public record DotNetToolEntityFrameworkDbContextScriptOptions : DotnetToolEntityFrameworkToolRunEFDbContextOptions
+public record DotNetToolEntityFrameworkMigrationsScriptOptions : DotnetToolEntityFrameworkToolRunEFMigrationsOptions
 {
-	public DotNetToolEntityFrameworkDbContextScriptOptions() : base()
+	public DotNetToolEntityFrameworkMigrationsScriptOptions() : base()
 	{
 		CommandParts = ["<FROM>", "<TO>"];
 	}
@@ -17,7 +18,7 @@ public record DotNetToolEntityFrameworkDbContextScriptOptions : DotnetToolEntity
 	///     Gets or sets the starting migration. Migrations may be identified by name or by ID. The number 0 is a special case that means before the first migration. Defaults to 0.
 	/// </summary>
 	[PositionalArgument(PlaceholderName = "<FROM>")]
-	public string? FromMigration { get; set; }
+	public string? FromMigration { get; set; } = "0";
 
 	/// <summary>
 	///     Gets or sets the ending migration. Defaults to the last migration.
@@ -32,9 +33,9 @@ public record DotNetToolEntityFrameworkDbContextScriptOptions : DotnetToolEntity
 	public virtual string Output { get; set; }
 
 	/// <summary>
-	/// Gets or sets revert the latest migration, rolling back both code and database changes that were done for the latest migration. Continues to roll back only the code changes if an error occurs while connecting to the database.
+	/// Generate a script that can be used on a database at any migration
 	/// </summary>
-	[BooleanCommandSwitch("--Generate a script that can be used on a database at any migration.")]
+	[BooleanCommandSwitch("--idempotent")]
 	public virtual bool? Idempotent { get; set; }
 
 	/// <summary>

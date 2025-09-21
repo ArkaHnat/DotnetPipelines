@@ -86,15 +86,15 @@ public sealed class Command(ICommandLogger commandLogger) : ICommand
 
     private static List<string> GetPrecedingArguments(object optionsObject)
     {
-        if (optionsObject is CommandLineToolOptions { CommandParts: not null } commandLineToolOptions)
-        {
-            return commandLineToolOptions.CommandParts.ToList();
-        }
-
         var customAttributesIncludingParent = optionsObject.GetType().GetCustomAttributesIncludingInherited<CommandPrecedingArgumentsAttribute>();
         var proceedingArguments = customAttributesIncludingParent.Select(a => a.PrecedingArguments).Reverse().SelectMany(a=>a);
+		
+        if (optionsObject is CommandLineToolOptions { CommandParts: not null } commandLineToolOptions)
+		{
+			return proceedingArguments.Concat(commandLineToolOptions.CommandParts).ToList();
+		}
 
-        return proceedingArguments.ToList() ?? [];
+		return proceedingArguments.ToList() ?? [];
     }
 
     private static object GetOptionsObject(CommandLineToolOptions options)
