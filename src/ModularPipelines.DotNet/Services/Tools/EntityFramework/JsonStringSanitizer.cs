@@ -1,36 +1,75 @@
-﻿namespace DotnetModularPipelines.DotNet.Services.Tools.EntityFramework;
+﻿using Newtonsoft.Json.Linq;
+
+namespace DotnetModularPipelines.DotNet.Services.Tools.EntityFramework;
 
 public static class JsonStringSanitizer
 {
-    public static string? SanitizeOutput(string stringWithJsonArray)
+    public static string? SanitizeOutput(string output)
     {
-        var startIndex = stringWithJsonArray.IndexOf('[');
-        if (startIndex == -1)
+        if (string.IsNullOrEmpty(output))
         {
-            return null; // No array found
+            return null;
         }
 
-        var bracketCount = 1;
-        var currentIndex = startIndex + 1;
+        var index = output.Length - 1;
+        var bracketCount = 0;
+        var inString = false;
+        var escapeNext = false;
 
-        // Traverse the string to find the matching closing bracket
-        while (bracketCount > 0 && currentIndex < stringWithJsonArray.Length)
+        while (index >= 0)
         {
-            switch (stringWithJsonArray[currentIndex])
+            var currentChar = output[index];
+
+            if (inString)
             {
-                case '[':
+                if (currentChar == '"' && !escapeNext)
+                {
+                    inString = false;
+                }
+                else
+                {
+                    escapeNext = currentChar == '\\' && !escapeNext;
+                }
+            }
+            else
+            {
+                if (currentChar == '"')
+                {
+                    inString = true;
+                    escapeNext = false;
+                }
+                else if (currentChar is ']' or '}')
+                {
                     bracketCount++;
-                    break;
-                case ']':
+                }
+                else if (currentChar is '[' or '{')
+                {
                     bracketCount--;
-                    break;
+                    if (bracketCount == 0 && currentChar == '[')
+                    {
+                        break;
+                    }
+                }
             }
 
-            currentIndex++;
+            index--;
         }
 
-        return bracketCount == 0
-            ? stringWithJsonArray[startIndex..currentIndex]
-            : null; // Unbalanced brackets
+        if (index < 0)
+        {
+            return null;
+        }
+
+        var candidate = output[index..].Trim();
+
+        try
+        {
+            _ = JArray.Parse(candidate);
+            return candidate;
+        }
+        catch
+        {
+            return null;
+        }
     }
 }
