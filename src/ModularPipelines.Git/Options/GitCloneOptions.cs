@@ -7,7 +7,13 @@ namespace ModularPipelines.Git.Options;
 [ExcludeFromCodeCoverage]
 public record GitCloneOptions : GitOptions
 {
-    [BooleanCommandSwitch("--local")]
+	public GitCloneOptions() : base()
+	{
+		CommandParts = ["<REPOSITORY_URL>"];
+	}
+	[PositionalArgument(PlaceholderName = "<REPOSITORY_URL>")]
+	public string? RepositoryUrl { get; set; }
+	[BooleanCommandSwitch("--local")]
     public virtual bool? Local { get; set; }
 
     [BooleanCommandSwitch("--no-hardlinks")]

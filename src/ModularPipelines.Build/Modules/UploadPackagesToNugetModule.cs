@@ -13,7 +13,7 @@ using ModularPipelines.Modules;
 
 namespace ModularPipelines.Build.Modules;
 
-[DependsOn<RunUnitTestsModule>(Optional = true)]
+[DependsOn<RunUnitTestsModule>()]
 [DependsOn<PackagePathsParserModule>]
 [ResolveDependencies]
 public class UploadPackagesToNugetModule : Module<CommandResult[]>

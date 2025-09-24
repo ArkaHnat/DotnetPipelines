@@ -3,7 +3,6 @@
     <Project Path="src/ModularPipelines.Analyzers/ModularPipelines.Analyzers.CodeFixes/ModularPipelines.Analyzers.CodeFixes.csproj" />
     <Project Path="src/ModularPipelines.Analyzers/ModularPipelines.Analyzers.Package/ModularPipelines.Analyzers.Package.csproj" />
     <Project Path="src/ModularPipelines.Analyzers/ModularPipelines.Analyzers.Test/ModularPipelines.Analyzers.Test.csproj" />
-    <Project Path="src/ModularPipelines.Analyzers/ModularPipelines.Analyzers.Vsix/ModularPipelines.Analyzers.Vsix.csproj" />
     <Project Path="src/ModularPipelines.Analyzers/ModularPipelines.Analyzers/ModularPipelines.Analyzers.csproj" />
     <Project Path="src/ModularPipelines.Development.Analyzers/ModularPipelines.Development.Analyzers.csproj" />
   </Folder>
@@ -40,6 +39,7 @@
   </Folder>
   <Folder Name="/ModularPipelines/Test/">
     <Project Path="test/ModularPipelines.Azure.UnitTests/ModularPipelines.Azure.UnitTests.csproj" />
+    <Project Path="test/ModularPipelines.EFForTests/ModularPipelines.EFForTests.csproj" />
     <Project Path="test/ModularPipelines.TestHelpers/ModularPipelines.TestHelpers.csproj" />
     <Project Path="test/ModularPipelines.Tests/ModularPipelines.Tests.csproj" />
     <Project Path="test/ModularPipelines.TestsForTests/ModularPipelines.TestsForTests.csproj" />
@@ -47,11 +47,13 @@
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".config/dotnet-tools.json" />
+    <File Path=".dockerignore" />
     <File Path=".editorconfig" />
     <File Path=".github/workflows/dotnet.yml" />
     <File Path=".ruleset" />
     <File Path="Directory.Build.targets" />
     <File Path="Directory.Packages.props" />
+    <File Path="Dockerfile" />
     <File Path="GitVersion.yml" />
     <File Path="global.json" />
     <File Path="stryker-config.json" />

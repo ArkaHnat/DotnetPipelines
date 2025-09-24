@@ -56,4 +56,18 @@ public class GitTests : TestBase
         var git = await GetService<IGit>();
         await Assert.That(git.Information.DefaultBranchName).IsEqualTo("main");
     }
+	[Test]
+    [Skip("Temporary.")]
+	public async Task GitCloneTest()
+	{
+		var options = new GitCloneOptions()
+		{
+			Branch = "main",
+			Depth = "1",
+			RepositoryUrl = "https://github.com/codecov/uploader.git"
+		};
+		var git = await GetService<IGit>();
+
+        await git.Commands.Clone(options);
+	}
 }
