@@ -1,11 +1,10 @@
-using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Reflection;
 using EnumerableAsyncProcessor.Extensions;
 using Mediator;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ModularPipelines.Attributes;
+using ModularPipelines.Engine;
+using ModularPipelines.Enums;
 using ModularPipelines.Events;
 using ModularPipelines.Exceptions;
 using ModularPipelines.Extensions;
@@ -14,11 +13,14 @@ using ModularPipelines.Logging;
 using ModularPipelines.Models;
 using ModularPipelines.Modules;
 using ModularPipelines.Options;
+using System.Collections.Concurrent;
+using System.Reflection;
 
-namespace ModularPipelines.Engine;
+namespace DotnetModularPipelines.Engine;
 
 internal class ModuleExecutor : IModuleExecutor
 {
+    private readonly IDependencyChainProvider dependencyChainProvider;
     private readonly IPipelineSetupExecutor _pipelineSetupExecutor;
     private readonly IOptions<PipelineOptions> _pipelineOptions;
     private readonly ISafeModuleEstimatedTimeProvider _moduleEstimatedTimeProvider;
@@ -40,8 +42,10 @@ internal class ModuleExecutor : IModuleExecutor
         ISecondaryExceptionContainer secondaryExceptionContainer,
         IParallelLimitProvider parallelLimitProvider,
         IMediator mediator,
-        ILogger<ModuleExecutor> logger)
+        ILogger<ModuleExecutor> logger,
+        IDependencyChainProvider dependencyChainProvider)
     {
+        this.dependencyChainProvider = dependencyChainProvider;
         _pipelineSetupExecutor = pipelineSetupExecutor;
         _pipelineOptions = pipelineOptions;
         _moduleEstimatedTimeProvider = moduleEstimatedTimeProvider;
@@ -59,10 +63,15 @@ internal class ModuleExecutor : IModuleExecutor
     {
         try
         {
+            foreach (var dependencyModel in dependencyChainProvider.ModuleDependencyModels.OrderBy(a => a.AllDescendantDependencies().Count()))
+            {
+                await _mediator.Publish(new ModuleAddedNotification(dependencyModel.Module, TimeSpan.FromSeconds(120)));
+            }
+
             var beforePipelineModules = modules.Where(a => a.ModuleRunType == ModuleRunType.BeforePipeline).ToList();
             foreach (var beforePipelineModule in beforePipelineModules)
             {
-                await StartModule(beforePipelineModule, false);
+                _ = await StartModule(beforePipelineModule, false);
             }
 
             var nonParallelModules = modules
@@ -76,7 +85,7 @@ internal class ModuleExecutor : IModuleExecutor
 
             foreach (var nonParallelModule in unKeyedNonParallelModules)
             {
-                await StartModule(nonParallelModule, false);
+                _ = await StartModule(nonParallelModule, false);
             }
 
             var keyedNonParallelModules = nonParallelModules
@@ -92,11 +101,11 @@ internal class ModuleExecutor : IModuleExecutor
 
             if (_pipelineOptions.Value.ExecutionMode == ExecutionMode.StopOnFirstException)
             {
-                await parallelModuleTasks.WhenAllFailFast();
+                _ = await parallelModuleTasks.WhenAllFailFast();
             }
             else
             {
-                await Task.WhenAll(parallelModuleTasks);
+                _ = await Task.WhenAll(parallelModuleTasks);
             }
 
             return modules;
@@ -108,7 +117,7 @@ internal class ModuleExecutor : IModuleExecutor
                 var moduleTask = StartModule(moduleBase, false);
                 try
                 {
-                    await moduleTask;
+                    _ = await moduleTask;
                 }
                 catch
                 {
@@ -152,13 +161,13 @@ internal class ModuleExecutor : IModuleExecutor
 
                 try
                 {
-                    await StartModule(module, false);
+                    _ = await StartModule(module, false);
                 }
                 finally
                 {
                     foreach (var semaphore in locks)
                     {
-                        semaphore.Release();
+                        _ = semaphore.Release();
                     }
                 }
             }))
@@ -177,25 +186,25 @@ internal class ModuleExecutor : IModuleExecutor
                 _logger.LogDebug("Starting Module {Module}", module.GetType().Name);
 
                 var dependencies = module.GetModuleDependencies();
-                
-                foreach (var dependency in module.GetAfterModules())
+
+                foreach (var (DependencyType, IgnoreIfNotRegistered, Optional) in module.GetAfterModules())
                 {
-                    if (dependency.Optional == false && dependency.DependencyType.FullName!.Contains("AlwaysFail"))
+                    if (Optional == false && DependencyType.FullName!.Contains("AlwaysFail"))
                     {
                         Console.WriteLine("This if for some reason fixes failing test when using pipelines in release mode");
                     }
 
-                    await StartDependency(module, dependency.DependencyType, dependency.IgnoreIfNotRegistered);
+                    await StartDependency(module, DependencyType, IgnoreIfNotRegistered);
                 }
 
-                foreach (var dependency in dependencies.Reverse())
+                foreach (var (DependencyType, IgnoreIfNotRegistered, Optional) in dependencies.Reverse())
                 {
-                    if (dependency.Optional == false && dependency.DependencyType.FullName!.Contains("AlwaysFail"))
+                    if (Optional == false && DependencyType.FullName!.Contains("AlwaysFail"))
                     {
                         Console.WriteLine("This if for some reason fixes failing test when using pipelines in release mode");
                     }
 
-                    await StartDependency(module, dependency.DependencyType, dependency.IgnoreIfNotRegistered);
+                    await StartDependency(module, DependencyType, IgnoreIfNotRegistered);
                 }
 
                 try
@@ -213,7 +222,7 @@ internal class ModuleExecutor : IModuleExecutor
                     await module.StartInternal();
 
                     // Check if module was skipped
-                    if (module.Status == Enums.Status.Skipped)
+                    if (module.Status == Status.Skipped)
                     {
                         await _mediator.Publish(new ModuleSkippedNotification(module, module.SkipResult));
                         return;
@@ -224,7 +233,7 @@ internal class ModuleExecutor : IModuleExecutor
                     await _pipelineSetupExecutor.OnAfterModuleEndAsync(module);
 
                     // Publish module completed event
-                    var isSuccessful = module.Status == Enums.Status.Successful;
+                    var isSuccessful = module.Status == Status.Successful;
                     await _mediator.Publish(new ModuleCompletedNotification(module, isSuccessful));
 
                     return;
@@ -232,19 +241,19 @@ internal class ModuleExecutor : IModuleExecutor
                 finally
                 {
                     var triggers = module.GetTriggerModules();
-                    foreach (var triggered in triggers)
+                    foreach (var (DependencyType, IgnoreIfNotRegistered) in triggers)
                     {
-                        await StartDependency(module, triggered.DependencyType, triggered.IgnoreIfNotRegistered);
+                        await StartDependency(module, DependencyType, IgnoreIfNotRegistered);
                     }
 
-                    foreach (var dependency in module.GetBeforeModules())
+                    foreach (var (DependencyType, IgnoreIfNotRegistered, Optional) in module.GetBeforeModules())
                     {
-                        if (dependency.Optional == false && dependency.DependencyType.FullName!.Contains("AlwaysFail"))
+                        if (Optional == false && DependencyType.FullName!.Contains("AlwaysFail"))
                         {
                             Console.WriteLine("This if for some reason fixes failing test when using pipelines in release mode");
                         }
 
-                        await StartDependency(module, dependency.DependencyType, dependency.IgnoreIfNotRegistered);
+                        await StartDependency(module, DependencyType, IgnoreIfNotRegistered);
                     }
 
                     if (!_pipelineOptions.Value.ShowProgressInConsole)
@@ -270,12 +279,9 @@ internal class ModuleExecutor : IModuleExecutor
         var parallelLimitAttributeType =
             module.GetType().GetCustomAttributes<ParallelLimiterAttribute>().FirstOrDefault()?.Type;
 
-        if (parallelLimitAttributeType != null)
-        {
-            return await _parallelLimitProvider.GetLock(parallelLimitAttributeType).WaitAsync();
-        }
-
-        return NoOpDisposable.Instance;
+        return parallelLimitAttributeType != null
+            ? await _parallelLimitProvider.GetLock(parallelLimitAttributeType).WaitAsync()
+            : NoOpDisposable.Instance;
     }
 
     private async Task StartDependency(ModuleBase requestingModule, Type dependencyType, bool ignoreIfNotRegistered)
@@ -301,7 +307,7 @@ internal class ModuleExecutor : IModuleExecutor
 
         try
         {
-            await moduleTask;
+            _ = await moduleTask;
         }
         catch (Exception e) when (requestingModule.ModuleRunType == ModuleRunType.AlwaysRun)
         {

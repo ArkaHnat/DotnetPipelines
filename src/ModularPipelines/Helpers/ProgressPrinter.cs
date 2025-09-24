@@ -1,3 +1,5 @@
+using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using DotnetModularPipelines.Events;
 using Mediator;
 using Microsoft.Extensions.Options;
@@ -8,8 +10,6 @@ using ModularPipelines.Models;
 using ModularPipelines.Modules;
 using ModularPipelines.Options;
 using Spectre.Console;
-using System.Collections.Concurrent;
-using System.Diagnostics.CodeAnalysis;
 using Status = ModularPipelines.Enums.Status;
 
 namespace DotnetModularPipelines.Helpers;
@@ -20,7 +20,8 @@ internal class ProgressPrinter : IProgressPrinter,
     INotificationHandler<ModuleCompletedNotification>,
     INotificationHandler<ModuleSkippedNotification>,
     INotificationHandler<SubModuleCreatedNotification>,
-    INotificationHandler<SubModuleCompletedNotification>
+    INotificationHandler<SubModuleCompletedNotification>,
+    INotificationHandler<ModuleAddedNotification>
 {
     private readonly IOptions<PipelineOptions> _options;
     private readonly ConcurrentDictionary<IModule, ProgressTask> _progressTasks = new();
@@ -72,7 +73,7 @@ internal class ProgressPrinter : IProgressPrinter,
             });
     }
 
-    public ValueTask Handle(ModuleStartedNotification notification, CancellationToken cancellationToken)
+    public ValueTask Handle(ModuleAddedNotification notification, CancellationToken cancellationToken)
     {
         if (_progressContext == null || !_options.Value.ShowProgressInConsole)
         {
@@ -85,13 +86,44 @@ internal class ProgressPrinter : IProgressPrinter,
 
             var progressTask = _progressContext.AddTask(moduleName, new ProgressTaskSettings
             {
-                AutoStart = true,
+                AutoStart = false,
             });
 
             _progressTasks[notification.Module] = progressTask;
+        }
 
-            // Start ticking progress based on estimated duration
-            _ = Task.Run(async () =>
+        return ValueTask.CompletedTask;
+    }
+
+    public ValueTask Handle(ModuleStartedNotification notification, CancellationToken cancellationToken)
+    {
+        if (_progressContext == null || !_options.Value.ShowProgressInConsole)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        lock (_progressLock)
+        {
+            var moduleName = notification.Module.GetType().Name;
+            ProgressTask progressTask;
+            if (_progressTasks[notification.Module] != null)
+            {
+
+                _progressTasks[notification.Module].StartTask();
+                progressTask = _progressTasks[notification.Module];
+
+            }
+            else {
+                progressTask = _progressContext.AddTask(moduleName, new ProgressTaskSettings
+                {
+                    AutoStart = true,
+                });
+
+				_progressTasks[notification.Module] = progressTask;
+			}
+
+			// Start ticking progress based on estimated duration
+			_ = Task.Run(async () =>
             {
                 try
                 {
@@ -351,11 +383,8 @@ internal class ProgressPrinter : IProgressPrinter,
 
     private static string GetModuleExtraInformation(ModuleBase module)
     {
-        if (module.SkipResult.ShouldSkip && !string.IsNullOrWhiteSpace(module.SkipResult.Reason))
-        {
-            return $"[yellow]{module.SkipResult.Reason}[/]";
-        }
-
-        return module.Exception != null ? $"[red]{module.Exception?.GetType().Name}[/]" : string.Empty;
+        return module.SkipResult.ShouldSkip && !string.IsNullOrWhiteSpace(module.SkipResult.Reason)
+            ? $"[yellow]{module.SkipResult.Reason}[/]"
+            : module.Exception != null ? $"[red]{module.Exception?.GetType().Name}[/]" : string.Empty;
     }
 }
