@@ -1,10 +1,12 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace DotnetModularPipelines.DotNet.Services.Tools.EntityFramework;
 
-public static class JsonStringSanitizer
+public static class JsonHelpers
 {
-    public static string? SanitizeOutput(string output)
+	public static JsonSerializerSettings JsonSerialiazerSettings = new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore, MissingMemberHandling = MissingMemberHandling.Ignore}
+	public static string? SanitizeString(string output)
     {
         if (string.IsNullOrEmpty(output))
         {

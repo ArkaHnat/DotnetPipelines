@@ -8,6 +8,6 @@ public class DotnetEfMigrationsListElement
 
     public required string SafeName { get; set; }
 
-    public bool Applied { get; set; }
+    public bool? Applied { get; set; }
 
 }

@@ -21,7 +21,7 @@ public class JsonStringSanitizerTests : TestBase
 	[Test]
 	public void Verify()
 	{
-		var output = JsonStringSanitizer.SanitizeOutput(sample1);
+		var output = JsonHelpers.SanitizeString(sample1);
 		_ = output.ShouldNotBeNull();
 	}
 }

@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using ModularPipelines.Attributes;
 
 namespace ModularPipelines.DotNet.Options;
+namespace DotnetModularPipelines.DotNet.Options;
 
 [ExcludeFromCodeCoverage]
 public record DotNetNugetPushOptions : DotNetOptions
@@ -44,6 +45,9 @@ public record DotNetNugetPushOptions : DotNetOptions
     [CommandSwitch("--source")]
     public virtual string? Source { get; set; }
 
+    /// <summary>
+    /// Gets or sets when pushing multiple packages to an HTTP(S) server, treats any 409 Conflict response as a warning so that other pushes can continue.
+    /// </summary>
     [BooleanCommandSwitch("--skip-duplicate")]
     public virtual bool? SkipDuplicate { get; set; }
 

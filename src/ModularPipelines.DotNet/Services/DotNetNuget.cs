@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using DotnetModularPipelines.DotNet.Options;
 using ModularPipelines.Context;
 using ModularPipelines.DotNet.Options;
 using ModularPipelines.Models;

@@ -49,8 +49,8 @@ public class DotnetToolEntityFrameworkMigrations
         var cmdResult = await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkMigrationsListOptions());
         try
         {
-            var sanitizedOutput = JsonStringSanitizer.SanitizeOutput(cmdResult.StandardOutput);
-            var deserializedOutput = JsonConvert.DeserializeObject<List<DotnetEfMigrationsListElement>>(sanitizedOutput);
+            var sanitizedOutput = JsonHelpers.SanitizeString(cmdResult.StandardOutput);
+            var deserializedOutput = JsonConvert.DeserializeObject<List<DotnetEfMigrationsListElement>>(sanitizedOutput, JsonHelpers.JsonSerialiazerSettings);
             return deserializedOutput;
         }
         catch (Exception ex)
