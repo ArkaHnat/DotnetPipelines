@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
+using DotnetModularPipelines.DotNet.Services.Tools.DotnetOutdated;
 using ModularPipelines.Context;
 using ModularPipelines.DotNet.Options;
 using ModularPipelines.DotNet.Services.Tools.DotnetEntityFramework;
-using ModularPipelines.DotNet.Services.Tools.DotnetOutdated;
 using ModularPipelines.DotNet.Services.Tools.SonarScanner;
 using ModularPipelines.Models;
 

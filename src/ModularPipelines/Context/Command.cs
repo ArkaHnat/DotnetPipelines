@@ -1,7 +1,3 @@
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Reflection;
-using System.Text;
 using CliWrap;
 using CliWrap.Exceptions;
 using DotnetModularPipelines.Extensions;
@@ -10,6 +6,9 @@ using ModularPipelines.Exceptions;
 using ModularPipelines.Helpers;
 using ModularPipelines.Logging;
 using ModularPipelines.Options;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Text;
 using CommandResult = ModularPipelines.Models.CommandResult;
 
 namespace ModularPipelines.Context;
@@ -24,12 +23,14 @@ public sealed class Command(ICommandLogger commandLogger) : ICommand
 
         var precedingArgs = GetPrecedingArguments(optionsObject);
 
+        var followingArguments = GetFollowingArguments(optionsObject);
+
         CommandOptionsObjectArgumentParser.AddArgumentsFromOptionsObject(precedingArgs, optionsObject);
 
         var parsedArgs = (string.Equals(options.Arguments?.ElementAtOrDefault(0), options.Tool)
-            ? options.Arguments?.Skip(1).ToList() : options.Arguments?.ToList()) ?? new List<string>();
+            ? options.Arguments?.Skip(1).ToList() : options.Arguments?.ToList()) ?? [];
 
-        parsedArgs = precedingArgs.Concat(parsedArgs).ToList();
+        parsedArgs = precedingArgs.Concat(parsedArgs).Concat(followingArguments).ToList();
 
         if (options.RunSettings != null)
         {
@@ -79,7 +80,7 @@ public sealed class Command(ICommandLogger commandLogger) : ICommand
 
     private List<string> SantiseArguments(List<string> parsedArgs)
     {
-        parsedArgs.RemoveAll(x => x.StartsWith("<"));
+        _ = parsedArgs.RemoveAll(x => x.StartsWith("<"));
 
         return parsedArgs;
     }
@@ -87,14 +88,19 @@ public sealed class Command(ICommandLogger commandLogger) : ICommand
     private static List<string> GetPrecedingArguments(object optionsObject)
     {
         var customAttributesIncludingParent = optionsObject.GetType().GetCustomAttributesIncludingInherited<CommandPrecedingArgumentsAttribute>();
-        var proceedingArguments = customAttributesIncludingParent.Select(a => a.PrecedingArguments).Reverse().SelectMany(a=>a);
-		
-        if (optionsObject is CommandLineToolOptions { CommandParts: not null } commandLineToolOptions)
-		{
-			return proceedingArguments.Concat(commandLineToolOptions.CommandParts).ToList();
-		}
+        var proceedingArguments = customAttributesIncludingParent.Select(a => a.PrecedingArguments).Reverse().SelectMany(a => a);
 
-		return proceedingArguments.ToList() ?? [];
+        return optionsObject is CommandLineToolOptions { CommandParts: not null } commandLineToolOptions
+            ? proceedingArguments.Concat(commandLineToolOptions.CommandParts).ToList()
+            : proceedingArguments.ToList() ?? [];
+    }
+
+    private static List<string> GetFollowingArguments(object optionsObject)
+    {
+        var customAttributesIncludingParent = optionsObject.GetType().GetCustomAttributesIncludingInherited<CommandFollowingArgumentsAttribute>();
+        var following = customAttributesIncludingParent.Select(a => a.FollowingArguments).Reverse().SelectMany(a => a);
+
+        return following.ToList() ?? [];
     }
 
     private static object GetOptionsObject(CommandLineToolOptions options)
@@ -116,7 +122,7 @@ public sealed class Command(ICommandLogger commandLogger) : ICommand
 
         using var forcefulCancellationToken = new CancellationTokenSource();
 
-        cancellationToken.Register(() =>
+        _ = cancellationToken.Register(() =>
         {
             try
             {

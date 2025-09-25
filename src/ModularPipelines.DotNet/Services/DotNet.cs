@@ -1,4 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
+using DotnetModularPipelines.DotNet.Options;
+using DotnetModularPipelines.DotNet.Services.Tools.DotnetOutdated;
 using ModularPipelines.Context;
 using ModularPipelines.DotNet.Options;
 using ModularPipelines.Logging;
@@ -20,7 +22,8 @@ public class DotNet : IDotNet
         ICommand internalCommand,
         IModuleLoggerProvider moduleLoggerProvider,
         IFileSystemContext fileSystemContext,
-        ITrxParser trxParser
+        ITrxParser trxParser,
+        DotnetSln dotnetSln
     )
     {
         Tool = tool;
@@ -34,14 +37,16 @@ public class DotNet : IDotNet
         _moduleLoggerProvider = moduleLoggerProvider;
         _fileSystemContext = fileSystemContext;
         _trxParser = trxParser;
+		this.dotnetSln = dotnetSln;
     }
 
     private readonly ICommand _command;
     private readonly IModuleLoggerProvider _moduleLoggerProvider;
     private readonly IFileSystemContext _fileSystemContext;
     private readonly ITrxParser _trxParser;
+	private readonly DotnetSln dotnetSln;
 
-    public DotNetTool Tool { get; }
+	public DotNetTool Tool { get; }
 
     public DotNetWorkload DotNetWorkload { get; }
 
@@ -105,10 +110,6 @@ public class DotNet : IDotNet
         return await _command.ExecuteCommandLineTool(options ?? new DotNetCleanOptions(), token);
     }
 
-    public virtual async Task<CommandResult> Sln(DotNetSlnOptions? options = default, CancellationToken token = default)
-    {
-        return await _command.ExecuteCommandLineTool(options ?? new DotNetSlnOptions(), token);
-    }
 
     public virtual async Task<CommandResult> Store(DotNetStoreOptions options, CancellationToken token = default)
     {
@@ -143,5 +144,6 @@ public class DotNet : IDotNet
     public virtual async Task<CommandResult> DevCerts(DotNetDevCertsOptions? options = default, CancellationToken token = default)
     {
         return await _command.ExecuteCommandLineTool(options ?? new DotNetDevCertsOptions(), token);
-    }
+	}
+	public DotnetSln Sln => dotnetSln;
 }

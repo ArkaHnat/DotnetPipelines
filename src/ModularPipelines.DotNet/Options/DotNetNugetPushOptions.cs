@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using ModularPipelines.Attributes;
+using ModularPipelines.DotNet.Options;
 
-namespace ModularPipelines.DotNet.Options;
 namespace DotnetModularPipelines.DotNet.Options;
 
 [ExcludeFromCodeCoverage]

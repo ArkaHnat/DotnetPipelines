@@ -22,7 +22,7 @@ public static class GitHelpers
             Local = true,
             Arguments = new List<string>
             {
-                "user.name", "Tom Longhurst",
+                "user.name", "ArkaHnat",
             },
         }, cancellationToken);
     }
@@ -34,7 +34,7 @@ public static class GitHelpers
             Local = true,
             Arguments = new List<string>
             {
-                "user.email", "thomhurst@users.noreply.github.com",
+                "user.email", "arkahnat@users.noreply.github.com",
             },
         }, cancellationToken);
     }
@@ -50,7 +50,7 @@ public static class GitHelpers
             Arguments =
             [
                 "set-url", "origin",
-                $"https://x-access-token:{token}@github.com/thomhurst/ModularPipelines"
+                $"https://x-access-token:{token}@github.com/arkahnat/ModularPipelines"
             ],
         }, cancellationToken);
 

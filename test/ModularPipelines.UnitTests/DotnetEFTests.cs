@@ -6,6 +6,7 @@ using ModularPipelines.Attributes;
 using ModularPipelines.Context;
 using ModularPipelines.DotNet.Extensions;
 using ModularPipelines.Git.Extensions;
+using ModularPipelines.Models;
 using ModularPipelines.Modules;
 using ModularPipelines.TestHelpers;
 using Shouldly;
@@ -13,6 +14,19 @@ namespace ModularPipelines.UnitTests;
 
 public class DotnetEfTests : TestBase
 {
+	public class SlnTestModule : Module<CommandResult>
+	{
+		protected override async Task<CommandResult?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+		{
+
+			var result = await context.DotNet().Sln.List(new DotnetModularPipelines.DotNet.Options.DotNetSlnListOptions()
+			{
+				SolutionFile = context.Git().RootDirectory + "/ModularPipelines.Merged.sln"
+			});
+
+			return result;
+		}
+	}
 	public class DbContetextListModule : Module<List<DotnetEfDbContextListElement>>
 	{
 		protected override async Task<List<DotnetEfDbContextListElement>?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
@@ -51,10 +65,11 @@ public class DotnetEfTests : TestBase
 			return result;
 		}
 	}
-	public class MigrationsScriptModule : Module<string>
+	public class MigrationsScriptModule : Module<string[]?>
 	{
-		protected override async Task<string?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+		protected override async Task<string[]?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
 		{
+		var results = new List<String>();
 			var project = context.Git().RootDirectory + "\\test\\ModularPipelines.EFForTests\\ModularPipelines.EFForTests.csproj";
 			var dbContextListOptions = new DotNetToolEntityFrameworkDbContextListOptions()
 			{
@@ -63,26 +78,28 @@ public class DotnetEfTests : TestBase
 				Project = project
 			};
 			var contexts = await context.DotNet().Tool.EntityFramework.DbContext.List(dbContextListOptions);
-
-			var migrationListOptions = new DotNetToolEntityFrameworkMigrationsListOptions()
+			foreach (var dbContext in contexts)
 			{
-				Json = true,
-				NoBuild = true,
-				Context = contexts.FirstOrDefault().Name,
-				Project = project
-			};
-			var migrations = await context.DotNet().Tool.EntityFramework.Migrations.List(migrationListOptions);
+				var migrationListOptions = new DotNetToolEntityFrameworkMigrationsListOptions()
+				{
+					Json = true,
+					NoBuild = true,
+					Context = dbContext.Name,
+					Project = project
+				};
+				var migrations = await context.DotNet().Tool.EntityFramework.Migrations.List(migrationListOptions);
 
-			var scriptOptions = new DotNetToolEntityFrameworkMigrationsScriptOptions()
-			{
-				Idempotent = true,
-				FromMigration = migrations.FirstOrDefault().Name,
-				ToMigration = migrations.Last().Name,
-				Context = contexts.FirstOrDefault().Name,
-				Project = project
-			};
-			var script = await context.DotNet().Tool.EntityFramework.DbContext.Script(scriptOptions);
-			return script.StandardOutput;
+				var scriptOptions = new DotNetToolEntityFrameworkMigrationsScriptOptions()
+				{
+					Idempotent = true,
+					FromMigration = migrations.FirstOrDefault().Name,
+					ToMigration = migrations.Last().Name,
+					Context = dbContext.Name,
+					Project = project
+				};
+				results.Add((await context.DotNet().Tool.EntityFramework.DbContext.Script(scriptOptions)).StandardOutput);
+			}
+			return results.ToArray();
 		}
 	}
 
@@ -134,5 +151,12 @@ public class DotnetEfTests : TestBase
 	public async Task MigrationScript()
 	{
 		var myModule1 = await RunModule<MigrationsScriptModule>();
+	}
+
+	[Test]
+	public async Task TestSln()
+	{
+		var myModule1 = await RunModule<SlnTestModule>();
+		myModule1.Result.Value!.StandardOutput.Split(Environment.NewLine).Where(a => a.Contains(".csproj")).Any();
 	}
 }

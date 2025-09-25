@@ -1,12 +1,12 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using DotnetModularPipelines.DotNet.Services.Tools.DotnetOutdated;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ModularPipelines.Context;
 using ModularPipelines.DotNet.Parsers.Trx;
 using ModularPipelines.DotNet.Services;
 using ModularPipelines.DotNet.Services.Tools.DotnetEntityFramework;
-using ModularPipelines.DotNet.Services.Tools.DotnetOutdated;
 using ModularPipelines.DotNet.Services.Tools.SonarScanner;
 using ModularPipelines.DotNet.Services.Tools.Stryker;
 using ModularPipelines.Engine;
@@ -45,6 +45,7 @@ public static class DotNetExtensions
 		services.TryAddScoped<DotNetToolSonarScanner>();
 		services.TryAddScoped<DotnetToolEntityFramework>();
 		services.TryAddScoped<DotNetToolOutdated>();
+		services.TryAddScoped<DotnetSln>();
 		services.TryAddScoped<DotNetWorkload>();
 
         return services;

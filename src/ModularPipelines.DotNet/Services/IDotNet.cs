@@ -1,4 +1,6 @@
-﻿using ModularPipelines.DotNet.Options;
+﻿using DotnetModularPipelines.DotNet.Options;
+using DotnetModularPipelines.DotNet.Services.Tools.DotnetOutdated;
+using ModularPipelines.DotNet.Options;
 using ModularPipelines.Models;
 
 namespace ModularPipelines.DotNet.Services;
@@ -18,6 +20,7 @@ public interface IDotNet
     DotNetList List { get; }
 
     DotNetNuget Nuget { get; }
+    DotnetSln Sln { get; }
 
     Task<CommandResult> New(DotNetNewOptions options, CancellationToken token = default);
 
@@ -39,7 +42,6 @@ public interface IDotNet
 
     Task<CommandResult> Clean(DotNetCleanOptions? options = default, CancellationToken token = default);
 
-    Task<CommandResult> Sln(DotNetSlnOptions? options = default, CancellationToken token = default);
 
     Task<CommandResult> Store(DotNetStoreOptions options, CancellationToken token = default);
 
