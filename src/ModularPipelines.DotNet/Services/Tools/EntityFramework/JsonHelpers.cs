@@ -5,73 +5,78 @@ namespace DotnetModularPipelines.DotNet.Services.Tools.EntityFramework;
 
 public static class JsonHelpers
 {
-	public static JsonSerializerSettings JsonSerialiazerSettings = new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore, MissingMemberHandling = MissingMemberHandling.Ignore}
+	public static JsonSerializerSettings JsonSerialiazerSettings = new()
+	{
+		NullValueHandling = NullValueHandling.Ignore,
+		MissingMemberHandling = MissingMemberHandling.Ignore,
+	};
+
 	public static string? SanitizeString(string output)
-    {
-        if (string.IsNullOrEmpty(output))
-        {
-            return null;
-        }
+	{
+		if (string.IsNullOrEmpty(output))
+		{
+			return null;
+		}
 
-        var index = output.Length - 1;
-        var bracketCount = 0;
-        var inString = false;
-        var escapeNext = false;
+		var index = output.Length - 1;
+		var bracketCount = 0;
+		var inString = false;
+		var escapeNext = false;
 
-        while (index >= 0)
-        {
-            var currentChar = output[index];
+		while (index >= 0)
+		{
+			var currentChar = output[index];
 
-            if (inString)
-            {
-                if (currentChar == '"' && !escapeNext)
-                {
-                    inString = false;
-                }
-                else
-                {
-                    escapeNext = currentChar == '\\' && !escapeNext;
-                }
-            }
-            else
-            {
-                if (currentChar == '"')
-                {
-                    inString = true;
-                    escapeNext = false;
-                }
-                else if (currentChar is ']' or '}')
-                {
-                    bracketCount++;
-                }
-                else if (currentChar is '[' or '{')
-                {
-                    bracketCount--;
-                    if (bracketCount == 0 && currentChar == '[')
-                    {
-                        break;
-                    }
-                }
-            }
+			if (inString)
+			{
+				if (currentChar == '"' && !escapeNext)
+				{
+					inString = false;
+				}
+				else
+				{
+					escapeNext = currentChar == '\\' && !escapeNext;
+				}
+			}
+			else
+			{
+				if (currentChar == '"')
+				{
+					inString = true;
+					escapeNext = false;
+				}
+				else if (currentChar is ']' or '}')
+				{
+					bracketCount++;
+				}
+				else if (currentChar is '[' or '{')
+				{
+					bracketCount--;
+					if (bracketCount == 0 && currentChar == '[')
+					{
+						break;
+					}
+				}
+			}
 
-            index--;
-        }
+			index--;
+		}
 
-        if (index < 0)
-        {
-            return null;
-        }
+		if (index < 0)
+		{
+			return null;
+		}
 
-        var candidate = output[index..].Trim();
+		var candidate = output[index..].Trim();
 
-        try
-        {
-            _ = JArray.Parse(candidate);
-            return candidate;
-        }
-        catch
-        {
-            return null;
-        }
-    }
+		try
+		{
+			_ = JArray.Parse(candidate);
+			return candidate;
+		}
+		catch
+		{
+			return null;
+		}
+	}
 }

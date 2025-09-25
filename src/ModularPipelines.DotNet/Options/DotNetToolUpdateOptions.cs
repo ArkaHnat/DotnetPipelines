@@ -1,17 +1,20 @@
 using System.Diagnostics.CodeAnalysis;
+using DotnetModularPipelines.DotNet.Options;
 using ModularPipelines.Attributes;
 
 namespace ModularPipelines.DotNet.Options;
 
 [ExcludeFromCodeCoverage]
-public record DotNetToolUpdateOptions : DotNetOptions
+[CommandPrecedingArguments("update")]
+
+public record DotNetToolUpdateOptions : DotnetToolOptions
 {
     public DotNetToolUpdateOptions(
         string packageId,
         string toolPath
     )
     {
-        CommandParts = ["tool", "update", "<PACKAGE_ID>"];
+        CommandParts = ["<PACKAGE_ID>"];
 
         PackageId = packageId;
         ToolPath = toolPath;
@@ -21,7 +24,7 @@ public record DotNetToolUpdateOptions : DotNetOptions
         string packageId
     )
     {
-        CommandParts = ["tool", "update", "<PACKAGE_ID>"];
+        CommandParts = ["<PACKAGE_ID>"];
 
         PackageId = packageId;
     }

@@ -1,3 +1,4 @@
+using DotnetModularPipelines.Git.Options;
 using ModularPipelines.Git.Options;
 using ModularPipelines.Models;
 

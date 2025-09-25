@@ -1,23 +1,21 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ModularPipelines.Attributes;
 using ModularPipelines.Build.Settings;
 using ModularPipelines.Context;
-using ModularPipelines.DotNet.Extensions;
 using ModularPipelines.Extensions;
-using ModularPipelines.Git;
 using ModularPipelines.Git.Extensions;
 using ModularPipelines.Models;
 using ModularPipelines.Modules;
 
 namespace ModularPipelines.Build.Modules;
 
+[DependsOn<DotNetToolOutdatedModule>]
+[ResolveDependencies]
 public class NugetVersionGeneratorModule : Module<string>
 {
-    private readonly IOptions<PublishSettings> _publishSettings;
-
-    public NugetVersionGeneratorModule(IOptions<PublishSettings> publishSettings)
+    public NugetVersionGeneratorModule()
     {
-        _publishSettings = publishSettings;
     }
 
     /// <inheritdoc/>
@@ -27,12 +25,10 @@ public class NugetVersionGeneratorModule : Module<string>
 
         var version = gitVersionInformation.FullSemVer;
 
-
-		context.LogOnPipelineEnd($"Generated Version Number: {version}");
+        context.LogOnPipelineEnd($"Generated Version Number: {version}");
 
         return version;
     }
-
     /// <inheritdoc/>
     protected override async Task OnAfterExecute(IPipelineContext context)
     {

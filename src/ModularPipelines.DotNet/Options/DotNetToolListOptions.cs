@@ -1,21 +1,31 @@
-using System.Diagnostics.CodeAnalysis;
-using ModularPipelines.Attributes;
 
-namespace ModularPipelines.DotNet.Options;
+
+using ModularPipelines.Attributes;
+using ModularPipelines.DotNet.Options;
+using System.Diagnostics.CodeAnalysis;
+
+namespace DotnetModularPipelines.DotNet.Options;
 
 [ExcludeFromCodeCoverage]
-public record DotNetToolListOptions : DotNetOptions
+[CommandPrecedingArguments("tool")]
+public record DotnetToolOptions : DotNetOptions
+{
+}
+
+[ExcludeFromCodeCoverage]
+[CommandPrecedingArguments("list")]
+public record DotNetToolListOptions : DotnetToolOptions
 {
     public DotNetToolListOptions()
     {
-        CommandParts = ["tool", "list", "[<PACKAGE_ID>]"];
+        CommandParts = ["[<PACKAGE_ID>]"];
     }
 
     public DotNetToolListOptions(
         string packageId
     )
     {
-        CommandParts = ["tool", "list", "[<PACKAGE_ID>]"];
+        CommandParts = ["[<PACKAGE_ID>]"];
 
         PackageId = packageId;
     }
@@ -31,4 +41,13 @@ public record DotNetToolListOptions : DotNetOptions
 
     [PositionalArgument(PlaceholderName = "[<PACKAGE_ID>]")]
     public string? PackageId { get; set; }
+
+    [CommandSwitch("--format")]
+    public virtual DotnetToolListFormat? Format { get; set; }
+
+    public enum DotnetToolListFormat
+    {
+        Json,
+        Table,
+    }
 }

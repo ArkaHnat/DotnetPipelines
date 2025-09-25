@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using DotnetModularPipelines.Git.Options;
 using ModularPipelines.Context;
 using ModularPipelines.Git.Options;
 using ModularPipelines.Models;
