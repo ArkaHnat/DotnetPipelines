@@ -6,8 +6,9 @@ WORKDIR /App
 # Copy everything
 COPY . ./
 # Restore as distinct layers
-RUN dotnet restore ModularPipelines.Merged.sln
-# Build and publish a release
-#RUN dotnet build ModularPipelines.Merged.sln
 WORKDIR "/App/src/ModularPipelines.Build"
-RUN dotnet run -c Release --framework net9.0 #--project ModularPipelines.Build.csproj
+RUN dotnet restore ModularPipelines.Build.csproj
+# Build and publish a release
+RUN dotnet build ModularPipelines.Build.csproj -c Release --no-restore
+
+RUN dotnet run ModularPipelines.Build.csproj -c Release --no-build --framework net9.0 
