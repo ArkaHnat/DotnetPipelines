@@ -65,17 +65,14 @@ public record DotnetToolOutdatedRunOptions : DotNetOptions, IDotnetToolOutdatedO
     public string? ExcludeFilter { get; set; }
 
     // <summary>
-
     // Gets or sets output"
     // Specifies the filename for a generated report. (Use the -of|--output-format option to specify the format. JSON by default.)
     // </summary>
-    [CommandSwitch("--output", "")]
+    [CommandSwitch("--output")]
     public string? OutputFilename { get; set; }
 
     // <summary>
-
-    // Gets or sets output-format"
-    // pecifies the output format for the generated report. Possible values: json (default), csv, or markdown.
+    // Gets or sets output-format specifies the output format for the generated report. Possible values: json (default), csv, or markdown.
     // Allowed values are: Json, Csv, Markdown. 
     // Default value is: Json.
     // </summary>

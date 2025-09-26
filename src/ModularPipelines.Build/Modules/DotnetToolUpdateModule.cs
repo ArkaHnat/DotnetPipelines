@@ -1,4 +1,5 @@
-﻿using DotnetModularPipelines.DotNet.Options;
+﻿using System.Text.RegularExpressions;
+using DotnetModularPipelines.DotNet.Options;
 using Microsoft.Extensions.Logging;
 using ModularPipelines.Context;
 using ModularPipelines.DotNet.Extensions;
@@ -7,12 +8,12 @@ using ModularPipelines.Modules;
 
 namespace ModularPipelines.Build.Modules;
 
-public class DotnetToolUpdateModule : Module<(string packageId, string version)?>
+public class DotnetToolUpdateModule : Module<(string packageId, string fromVersion, string toVersion)?>
 {
     public override ModuleRunType ModuleRunType => ModuleRunType.BeforePipeline;
 
     /// <inheritdoc/>
-    protected override async Task<(string packageId, string version)?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+    protected override async Task<(string packageId, string fromVersion, string toVersion)?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
     {
         _ = Directory.GetCurrentDirectory();
         var list = await context.DotNet().Tool.List(new DotNetToolListOptions
@@ -31,10 +32,25 @@ public class DotnetToolUpdateModule : Module<(string packageId, string version)?
                 continue;
             }
 
-            return (item.packageId, item.version);
-        }
+            var pattern = @"Tool '(?<package>[^']+)' was successfully updated from version '(?<oldVersion>[^']+)' to version '(?<newVersion>[^']+)'";
 
-        return null;
+            var matches = Regex.Matches(result.StandardOutput, pattern);
+
+            var oldVersion = string.Empty;
+            var newVersion= string.Empty;
+            foreach (Match match in matches)
+            {
+                if (match.Success)
+                {
+                    var package = match.Groups["package"].Value;
+                    oldVersion = match.Groups["oldVersion"].Value;
+                    newVersion = match.Groups["newVersion"].Value;
+                }
+            }
+
+            return (item.packageId, oldVersion, newVersion);
+        }
+        return ("", "", "");
     }
 
     /// <inheritdoc/>
