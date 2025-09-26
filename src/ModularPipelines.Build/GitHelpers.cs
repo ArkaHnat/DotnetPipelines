@@ -1,3 +1,4 @@
+using DotnetModularPipelines.Git.Options;
 using Microsoft.Extensions.Options;
 using ModularPipelines.Build.Settings;
 using ModularPipelines.Context;

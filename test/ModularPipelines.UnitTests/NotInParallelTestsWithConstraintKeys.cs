@@ -74,8 +74,8 @@ public class NotInParallelTestsWithConstraintKeys : TestBase
         var firstModule = modules.OrderBy(x => x.StartTime).First();
         var secondModule = modules.OrderBy(x => x.StartTime).Last();
 
-        await Assert.That(secondModule.StartTime)
-            .IsGreaterThanOrEqualTo(firstModule.EndTime);
+        await Assert.That(secondModule.StartTime.ToString(formatString))
+            .IsGreaterThanOrEqualTo(firstModule.EndTime.ToString(formatString));
     }
 
     private async Task AssertParallel(ModuleBase one, ModuleBase two)
@@ -84,9 +84,9 @@ public class NotInParallelTestsWithConstraintKeys : TestBase
         var firstModule = modules.OrderBy(x => x.StartTime).First();
         var secondModule = modules.OrderBy(x => x.StartTime).Last();
 
-        await Assert.That(secondModule.StartTime)
-            .IsGreaterThanOrEqualTo(firstModule.StartTime)
+        await Assert.That(secondModule.StartTime.ToString(formatString))
+            .IsGreaterThanOrEqualTo(firstModule.StartTime.ToString(formatString))
             .And
-            .IsLessThanOrEqualTo(firstModule.EndTime);
+            .IsLessThanOrEqualTo(firstModule.EndTime.ToString(formatString));
     }
 }
