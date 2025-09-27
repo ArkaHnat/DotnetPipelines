@@ -23,13 +23,13 @@ public class DotnetCleanModule : Module<CommandResult[]>
 
         var dependencies = await projectFiles.Value!.Dependencies
             .ToAsyncProcessorBuilder()
-            .SelectAsync(async projectFile => await Restore(context, cancellationToken, projectFile))
+            .SelectAsync(async projectFile => await Clean(context, cancellationToken, projectFile))
             .ProcessOneAtATime();
 
         return dependencies.ToArray();
     }
 
-    private static async Task<CommandResult> Restore(IPipelineContext context, CancellationToken cancellationToken, File projectFile)
+    private static async Task<CommandResult> Clean(IPipelineContext context, CancellationToken cancellationToken, File projectFile)
     {
         return await context.DotNet().Clean(new DotNetCleanOptions
         {
