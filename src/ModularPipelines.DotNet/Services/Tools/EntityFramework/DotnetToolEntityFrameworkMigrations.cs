@@ -62,12 +62,12 @@ public class DotnetToolEntityFrameworkMigrations
         }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="options"></param>
-    /// <returns></returns>
-    public virtual async Task<CommandResult> Bundle(DotNetToolEntityFrameworkMigrationsBundleOptions options)
+	/// <summary>
+	/// Creates an executable to update the database.
+	/// </summary>
+	/// <param name="options"></param>
+	/// <returns></returns>
+	public virtual async Task<CommandResult> Bundle(DotNetToolEntityFrameworkMigrationsBundleOptions options)
     {
         var cmdResult = await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkMigrationsBundleOptions());
         return cmdResult;
