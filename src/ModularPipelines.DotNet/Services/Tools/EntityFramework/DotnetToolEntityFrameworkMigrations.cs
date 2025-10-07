@@ -1,9 +1,9 @@
-﻿using DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Json;
 using DotnetModularPipelines.DotNet.Services.Tools.EntityFramework.Options.Migrations;
 using ModularPipelines.Context;
 using ModularPipelines.Models;
 using Newtonsoft.Json;
-using System.Diagnostics.CodeAnalysis;
 
 namespace DotnetModularPipelines.DotNet.Services.Tools.EntityFramework;
 
@@ -62,12 +62,12 @@ public class DotnetToolEntityFrameworkMigrations
         }
     }
 
-	/// <summary>
-	/// Creates an executable to update the database.
-	/// </summary>
-	/// <param name="options"></param>
-	/// <returns></returns>
-	public virtual async Task<CommandResult> Bundle(DotNetToolEntityFrameworkMigrationsBundleOptions options)
+    /// <summary>
+    /// Creates an executable to update the database.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <returns></returns>
+    public virtual async Task<CommandResult> Bundle(DotNetToolEntityFrameworkMigrationsBundleOptions options)
     {
         var cmdResult = await _command.ExecuteCommandLineTool(options ?? new DotNetToolEntityFrameworkMigrationsBundleOptions());
         return cmdResult;

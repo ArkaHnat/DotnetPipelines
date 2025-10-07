@@ -46,7 +46,7 @@ public class MergeCoverageModule : Module<File>
             coverageFiles.AddRange(coverageFilesFromThisRun);
         }
 
-        var outputPath = context.Git().RootDirectory / "_buildOutput" / packageVersion.Value! / "TestResults";
+        var outputPath = context.Git().RootDirectory / "_buildOutput" / packageVersion.Value! / "MergedCoverage.xml";
 
         await context.Command.ExecuteCommandLineTool(new CommandLineToolOptions("dotnet")
         {

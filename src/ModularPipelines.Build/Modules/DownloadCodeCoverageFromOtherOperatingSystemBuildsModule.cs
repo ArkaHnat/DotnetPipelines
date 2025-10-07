@@ -16,6 +16,7 @@ namespace ModularPipelines.Build.Modules;
 [SkipIfNoGitHubToken]
 [SkipIfNoStandardGitHubToken]
 [DependsOn<WaitForOtherOperatingSystemBuilds>]
+[ResolveDependents]
 public class DownloadCodeCoverageFromOtherOperatingSystemBuildsModule : Module<List<File>>
 {
     /// <inheritdoc/>
