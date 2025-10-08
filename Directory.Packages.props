@@ -83,7 +83,7 @@
     <PackageVersion Include="Spectre.Console" Version="0.51.1" />
     <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
     <PackageVersion Include="System.Text.Json" Version="9.0.9" />
-    <PackageVersion Include="TUnit" Version="0.61.39" />
+    <PackageVersion Include="TUnit" Version="0.67.10" />
     <PackageVersion Include="TUnit.Assertions" Version="0.67.10" />
     <PackageVersion Include="TUnit.Core" Version="0.67.10" />
     <PackageVersion Include="vertical-spectreconsolelogger" Version="0.10.1-dev.20241201.35" />
