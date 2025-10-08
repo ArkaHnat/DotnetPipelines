@@ -10,7 +10,7 @@ using ModularPipelines.Modules;
 
 namespace ModularPipelines.Build.Modules;
 
-[DependsOn<DotNetToolUpdatePackagesModule>]
+[DependsOn<GitCommitDotnetPackagesUpdates>]
 [ResolveDependencies]
 public class NugetVersionGeneratorModule : Module<string>
 {
