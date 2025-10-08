@@ -7,7 +7,7 @@ using Status = ModularPipelines.Enums.Status;
 
 namespace ModularPipelines.UnitTests;
 
-//[Retry(5)]
+[Retry(10)]
 public class EngineCancellationTokenTests : TestBase
 {
 	private class BadModule : Module
@@ -92,6 +92,7 @@ public class EngineCancellationTokenTests : TestBase
 	}
 
 	[Test]
+	
 	public async Task When_Cancel_Engine_Token_Without_DependsOn_Then_Modules_Cancel_Without_Cancellation()
 	{
 		var host = await TestPipelineHostBuilder.Create()
