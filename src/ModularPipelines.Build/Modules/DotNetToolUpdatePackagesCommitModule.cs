@@ -15,65 +15,68 @@ namespace ModularPipelines.Build.Modules;
 [ResolveDependencies]
 public class DotNetToolUpdatePackagesCommitModule : Module<CommandResult>
 {
-    private (string Name, string fromVersion, string toVersion) upgradedProjectInfo = default((string Name, string fromVersion, string toVersion));
+	private (string Name, string fromVersion, string toVersion) upgradedProjectInfo = default;
 
-    public override ModuleRunType ModuleRunType => ModuleRunType.BeforePipeline;
+	public override ModuleRunType ModuleRunType => ModuleRunType.BeforePipeline;
 
-    /// <inheritdoc/>
-    protected override async Task<CommandResult?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
-    {
-        _ = Directory.GetCurrentDirectory();
-        var status = await context.Git().Commands.Add(new GitAddOptions()
-        {
-            FilePattern = context.Git().RootDirectory / "Directory.Packages.props",
-        });
-        var commit = await context.Git().Commands.Commit(new Git.Options.GitCommitOptions()
-        {
-            Message = $"chore(deps): Updated dotnet package [{upgradedProjectInfo.Name}] from version [{upgradedProjectInfo.fromVersion}] to version [{upgradedProjectInfo.toVersion}]",
-        });
-        return commit;
-    }
+	/// <inheritdoc/>
+	protected override async Task<CommandResult?> ExecuteAsync(IPipelineContext context, CancellationToken cancellationToken)
+	{
+		_ = Directory.GetCurrentDirectory();
+		_ = await context.Git().Commands.Add(new GitAddOptions()
+		{
+			FilePattern = context.Git().RootDirectory / "Directory.Packages.props",
+		});
+		var commit = await context.Git().Commands.Commit(new Git.Options.GitCommitOptions()
+		{
+			Message = $"chore(deps): Updated dotnet package [{upgradedProjectInfo.Name}] from version [{upgradedProjectInfo.fromVersion}] to version [{upgradedProjectInfo.toVersion}]",
+		});
+		return commit;
+	}
 
-    protected override async Task<SkipDecision> ShouldSkip(IPipelineContext context)
-    {
-        _ = Directory.GetCurrentDirectory();
+	protected override async Task<SkipDecision> ShouldSkip(IPipelineContext context)
+	{
+		var dotnetOutdatedOutputJson = new FileSystem.File(context.Git().RootDirectory / "_buildOutput/dotnet-outdated-output.json");
 
-        var dotnetOutdatedOutputJson = new FileSystem.File(context.Git().RootDirectory / "_buildOutput/dotnet-outdated-output.json");
+		if (dotnetOutdatedOutputJson.Exists)
+		{
+			var dotnetOutdatedOutputJsonContent = await dotnetOutdatedOutputJson.ReadAsync();
+			var deserializedFileContent = JsonConvert.DeserializeObject<DotnetOutdatedToolOutput>(dotnetOutdatedOutputJsonContent, JsonHelpers.JsonSerialiazerSettings);
+			var updatedProjects = deserializedFileContent.Projects
+				.SelectMany(a => a.TargetFrameworks)
+				.SelectMany(a => a.Dependencies)
+				.Where(a => a.Upgraded);
+			var leftToUpdate = deserializedFileContent.Projects
+				.SelectMany(a => a.TargetFrameworks)
+				.SelectMany(a => a.Dependencies)
+				.Where(a => !a.Upgraded);
+			if (leftToUpdate.Any())
+			{
+				context.Logger.LogInformation(@$"There are [{leftToUpdate.Count()}] to update");
+			}
 
-        if (dotnetOutdatedOutputJson.Exists)
-        {
-            var dotnetOutdatedOutputJsonContent = await dotnetOutdatedOutputJson.ReadAsync();
-            var deserializedFileContent = JsonConvert.DeserializeObject<DotnetOutdatedToolOutput>(dotnetOutdatedOutputJsonContent, JsonHelpers.JsonSerialiazerSettings);
-            var upgradedProjects = deserializedFileContent.Projects
-            .SelectMany(a => a.TargetFrameworks)
-            .SelectMany(a => a.Dependencies)
-            .Where(a => a.Upgraded);
-            var numberOfChanges = upgradedProjects.Select(a => a.Name).Distinct().Count();
-            switch (numberOfChanges)
-            {
-                case > 1:
+			var numberOfChanges = updatedProjects.Select(a => a.Name).Distinct().Count();
+			switch (numberOfChanges)
+			{
+				case > 1:
+					return SkipDecision.Skip("Upgraded more than one project. Not commiting.");
+				case < 1:
+					return SkipDecision.Skip("Nothing. Upgraded Not commiting.");
+				case 1:
+					upgradedProjectInfo.Name = updatedProjects.FirstOrDefault()!.Name;
+					upgradedProjectInfo.fromVersion = updatedProjects.FirstOrDefault()!.ResolvedVersion;
+					upgradedProjectInfo.toVersion = updatedProjects.FirstOrDefault()!.LatestVersion;
+					return SkipDecision.DoNotSkip;
+			}
+		}
 
-                    SkipDecision.Skip("Upgraded more than one project. Not commiting.");
-                    break;
-                case < 1:
+		return SkipDecision.Skip("No output from dotnet outdated tool");
+	}
 
-                    SkipDecision.Skip("Nothing. Upgraded Not commiting.");
-                    break;
-                case 1:
-                    upgradedProjectInfo.Name = upgradedProjects.FirstOrDefault().Name;
-                    upgradedProjectInfo.fromVersion = upgradedProjects.FirstOrDefault().ResolvedVersion;
-                    upgradedProjectInfo.toVersion = upgradedProjects.FirstOrDefault().LatestVersion;
-                    return SkipDecision.DoNotSkip;
-            }
-        }
-
-        return SkipDecision.Skip("No output from dotnet outdated tool");
-    }
-
-    /// <inheritdoc/>
-    protected override async Task OnAfterExecute(IPipelineContext context)
-    {
-        _ = await this;
-        context.Logger.LogInformation("Restored dotnet tools.");
-    }
+	/// <inheritdoc/>
+	protected override async Task OnAfterExecute(IPipelineContext context)
+	{
+		_ = await this;
+		context.Logger.LogInformation("Restored dotnet tools.");
+	}
 }
