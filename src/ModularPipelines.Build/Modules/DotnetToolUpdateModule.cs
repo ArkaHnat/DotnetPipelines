@@ -50,6 +50,7 @@ public class DotnetToolUpdateModule : Module<(string packageId, string fromVersi
 
             return (item.packageId, oldVersion, newVersion);
         }
+
         return ("", "", "");
     }
 

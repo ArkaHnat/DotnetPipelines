@@ -25,7 +25,7 @@ public class GitCommitDotnetToolUpdates : Module<CommandResult>
         });
         var commit = await context.Git().Commands.Commit(new Git.Options.GitCommitOptions()
         {
-            Message = $"chore(deps): Updated dotnet tool [{updatedTool.Value.Value.packageId}] to version [{updatedTool.Value.Value.toVersion}]",
+            Message = $"chore(deps): Updated dotnet tool [{updatedTool.Value.Value.packageId}] from version [{updatedTool.Value.Value.fromVersion}] to version [{updatedTool.Value.Value.toVersion}]",
         });
         return commit;
     }
