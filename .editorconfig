@@ -74,6 +74,10 @@ resharper_unused_member_global_highlighting = none
 resharper_not_accessed_positional_property_global_highlighting = none
 resharper_class_never_instantiated_global_highlighting = none
 csharp_style_prefer_primary_constructors = true:suggestion
+csharp_prefer_system_threading_lock = true:suggestion
+
+# SA1027: Use tabs correctly
+dotnet_diagnostic.SA1027.severity = none
 
 [*.{cs,vb}]
 #### Naming styles ####
