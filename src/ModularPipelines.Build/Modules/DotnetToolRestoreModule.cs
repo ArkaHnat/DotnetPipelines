@@ -7,6 +7,7 @@ using ModularPipelines.Modules;
 
 namespace ModularPipelines.Build.Modules;
 [DependsOn<DotnetToolUpdateModule>]
+[ResolveDependencies]
 public class DotnetToolRestoreModule : Module<CommandResult>
 {
     public override ModuleRunType ModuleRunType => ModuleRunType.BeforePipeline;
